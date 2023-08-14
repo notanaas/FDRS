@@ -81,9 +81,12 @@ const FacultyButtons = () => {
           {selectedFaculty === faculty.id && (
             <div>
               {faculty.subjects.map((subject) => (
-                <Link key={subject.id} to={`/subject/${subject.name}`}>
-                  <SubjectButton>{subject.name}</SubjectButton>
-                </Link>
+                <SubjectButton
+                  key={subject.id}
+                  onClick={() => handleSubjectClick(subject.name)} // Handle subject button click
+                >
+                  {subject.name}
+                </SubjectButton>
               ))}
             </div>
           )}

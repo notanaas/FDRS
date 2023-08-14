@@ -49,6 +49,11 @@ const App = () => {
     }
   };
 
+  const handleSubjectClick = (subjectName) => {
+    setSelectedSubject(subjectName);
+  };
+
+
   return (
     <Router>
       <Header
@@ -66,6 +71,8 @@ const App = () => {
           <FacultyButtons selectedFaculty={selectedFaculty} setSelectedFaculty={handleFacultyChange} />
         </div>
       )}
+            <SubjectPage selectedSubject={selectedSubject} /> {/* Render the SubjectPage */}
+
       <Footer />
     </Router>
   );

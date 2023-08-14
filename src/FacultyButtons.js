@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { faculties } from './data';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 0 20px; /* Add margin on the left and right */
+  margin: 0 20px;
 `;
 
 const FacultyButton = styled.button`
@@ -26,7 +26,7 @@ const FacultyButton = styled.button`
   }
 `;
 
-const SubjectButton = styled.button`
+const SubjectButton = styled(Link)`
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
   background-color: #8b0000; /* Dark red color */
@@ -37,38 +37,25 @@ const SubjectButton = styled.button`
   margin-right: 10px;
   margin-bottom: 10px;
   transition: background-color 0.2s;
+  text-decoration: none; /* Add this line to remove default link underline */
 
   &:hover {
     background-color: #6a0000; /* Slightly darker shade of red when hovered */
   }
 `;
 
-const FileUploadButton = styled.button`
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  background-color: #8b0000; /* Dark red color */
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #6a0000; /* Slightly darker shade of red when hovered */
-  }
-  display: ${(props) => (props.show ? 'block' : 'none')};
-`;
-
-const FacultyButtons = () => {
-  const [selectedFaculty, setSelectedFaculty] = useState(null);
-  const [searchText, setSearchText] = useState('');
-
+const FacultyButtons = ({ setSelectedFaculty, setSelectedSubject, selectedFaculty }) => {
+  console.log('selectedFaculty:', selectedFaculty);
+  
   const handleFacultyClick = (facultyId) => {
+    console.log('Clicked faculty:', facultyId);
     setSelectedFaculty((prevSelectedFaculty) =>
       prevSelectedFaculty === facultyId ? null : facultyId
     );
+    setSelectedSubject(null); // Clear the selected subject when changing faculties
+  };
+  const handleSubjectClick = (subjectName) => {
+    setSelectedSubject(subjectName);
   };
 
   return (
@@ -83,7 +70,8 @@ const FacultyButtons = () => {
               {faculty.subjects.map((subject) => (
                 <SubjectButton
                   key={subject.id}
-                  onClick={() => handleSubjectClick(subject.name)} // Handle subject button click
+                  to={`/subjects/${subject.name}`} // Use Link with to attribute
+                  onClick={() => handleSubjectClick(subject.name)}
                 >
                   {subject.name}
                 </SubjectButton>

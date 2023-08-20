@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+
 const Logo = styled.img`
   height: 40px; 
   margin-right: 1rem;

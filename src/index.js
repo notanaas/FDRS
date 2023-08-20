@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import App from './App';
+import './App.css';
 
 
 ReactDOM.render(

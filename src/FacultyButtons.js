@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { faculties } from './data';
@@ -44,16 +44,17 @@ const SubjectButton = styled(Link)`
   }
 `;
 
-const FacultyButtons = ({ setSelectedFaculty, setSelectedSubject, selectedFaculty }) => {
-  console.log('selectedFaculty:', selectedFaculty);
-  
+const FacultyButtons = () => {
+  const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+
   const handleFacultyClick = (facultyId) => {
-    console.log('Clicked faculty:', facultyId);
     setSelectedFaculty((prevSelectedFaculty) =>
       prevSelectedFaculty === facultyId ? null : facultyId
     );
-    setSelectedSubject(null); // Clear the selected subject when changing faculties
+    setSelectedSubject(null);
   };
+
   const handleSubjectClick = (subjectName) => {
     setSelectedSubject(subjectName);
   };
@@ -65,12 +66,12 @@ const FacultyButtons = ({ setSelectedFaculty, setSelectedSubject, selectedFacult
           <FacultyButton onClick={() => handleFacultyClick(faculty.id)}>
             {faculty.name}
           </FacultyButton>
-          {selectedFaculty === faculty.id && (
+          {selectedFaculty !== null && faculty.id === selectedFaculty && (
             <div>
               {faculty.subjects.map((subject) => (
                 <SubjectButton
                   key={subject.id}
-                  to={`/subjects/${subject.name}`} // Use Link with to attribute
+                  to={`/subjects/${subject.name}`}
                   onClick={() => handleSubjectClick(subject.name)}
                 >
                   {subject.name}

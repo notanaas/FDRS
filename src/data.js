@@ -16,13 +16,6 @@ export const faculties = [
       { id: 4, name: 'Subject 4' },
     ],
   },
-  {
-    id: 2,
-    name: 'Faculty Of Pharmacy',
-    subjects: [
-      { id: 1, name: 'Subject 1' },
-      { id: 2, name: 'Subject 2' },
-    ],
-  },
+  
 
 ];

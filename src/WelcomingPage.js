@@ -21,8 +21,8 @@ const WelcomingPage = () => {
   return (
     <Container>
       <WelcomeText>Welcome to our FDRS!</WelcomeText>
-      <SubText>Explore our faculties and subjects:</SubText>
-      <FacultyButtons />
+      <SubText>Explore our faculties and subjects </SubText>
+      <FacultyButtons/>
     </Container>
   );
 };

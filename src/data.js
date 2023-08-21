@@ -4,8 +4,9 @@ export const faculties = [
     id: 1,
     name: 'Faculty Of IT',
     subjects: [
-      { id: 1, name: 'Subject 1' },
-      { id: 2, name: 'Subject 2' },
+      { id: 1, name: 'OOP'},
+      { id: 2, name: 'FUNDEMNTALS OF AI'},
+      { id: 3, name: 'SYSTEM ANALYSIS'},
     ],
   },
   {

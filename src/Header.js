@@ -9,6 +9,7 @@ const Logo = styled.img`
   font-weight: bold;
   margin-right: 1rem;
 `;
+
 const HeaderContainer = styled.header`
   display: flex;
   flex-direction: column;

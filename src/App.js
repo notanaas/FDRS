@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './Header';
 import WelcomingPage from './WelcomingPage';
-import FacultyButtons from './FacultyButtons';
 import Footer from './Footer';
 
 const App = () => {
@@ -30,10 +29,8 @@ const App = () => {
       <Switch>
         <Route path="/" exact component={WelcomingPage} />
       </Switch>
-      <WelcomingPage />
       {showFaculties && (
         <div id="faculty-section">
-          <FacultyButtons />
         </div>
       )}
       <Footer />

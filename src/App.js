@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './Header';
 import WelcomingPage from './WelcomingPage';
 import Footer from './Footer';
+import SubjectPage from './SubjectPage'; 
+
 
 const App = () => {
   const [showFaculties, setShowFaculties] = useState(false);
@@ -27,12 +29,10 @@ const App = () => {
     <Router>
       <Header />
       <Switch>
-        <Route path="/" exact component={WelcomingPage} />
+      <Route path="/" exact component={WelcomingPage} />
+      <Route path="/subjects/:subjectName" component={SubjectPage} /> {/* Dynamic route */}
+        {/* Add more routes for other pages if needed */}
       </Switch>
-      {showFaculties && (
-        <div id="faculty-section">
-        </div>
-      )}
       <Footer />
     </Router>
   );

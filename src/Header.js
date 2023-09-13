@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { Link } from 'react-router-dom';
 
 const Logo = styled.img`
-  height: 40px; 
+  height: 40px;
   margin-right: 1rem;
   font-size: 1.5rem;
   font-weight: bold;
@@ -14,10 +14,10 @@ const HeaderContainer = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #8b0000; 
+  background-color: #8b0000;
   color: #fff;
   padding: 1rem;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
   text-align: center;
 
   @media screen and (min-width: 768px) {
@@ -37,14 +37,12 @@ const LogoContainer = styled.div`
   }
 `;
 
-
-
 const SearchBar = styled.input`
   padding: 0.5rem;
   font-size: 1rem;
   border: none;
   border-radius: 5px;
-  background-color: #6a0000; 
+  background-color: #6a0000;
   color: #fff;
   margin-top: 10px;
 
@@ -57,7 +55,6 @@ const SearchBar = styled.input`
   }
 `;
 
-
 const AuthButtons = styled.div`
   display: flex;
   align-items: center;
@@ -68,7 +65,7 @@ const AuthInput = styled.input`
   font-size: 1rem;
   border: none;
   border-radius: 5px;
-  background-color: #6a0000; 
+  background-color: #6a0000;
   color: #fff;
   margin-left: 0.5rem;
   ::placeholder {
@@ -79,7 +76,7 @@ const AuthInput = styled.input`
 const AuthButton = styled.button`
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
-  background-color: #8b0000; 
+  background-color: #8b0000;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -88,16 +85,17 @@ const AuthButton = styled.button`
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #6a0000; 
+    background-color: #6a0000;
   }
 `;
-
 
 const Header = ({ selectedFacultyName, onSearchChange }) => {
   return (
     <HeaderContainer>
       <LogoContainer>
-        <Logo src="/logo.png" alt="Logo" />
+        <Link to="/">
+          <Logo src="/logo.png" alt="Logo" />
+        </Link>
         <SearchBar
           type="text"
           placeholder={`Search in ${selectedFacultyName}`}

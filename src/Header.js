@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -89,7 +89,36 @@ const AuthButton = styled.button`
   }
 `;
 
+const Form = styled.form`
+  display: flex;
+  align-items: center;
+`;
+
 const Header = ({ selectedFacultyName, onSearchChange }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // You can handle form submission here, e.g., send data to the server
+    console.log('Email:', email);
+    console.log('Password:', password);
+    console.log('Search:', selectedFacultyName); // You can replace this with your search value
+
+    // Reset the form fields
+    setEmail('');
+    setPassword('');
+  };
+
   return (
     <HeaderContainer>
       <LogoContainer>
@@ -103,9 +132,21 @@ const Header = ({ selectedFacultyName, onSearchChange }) => {
         />
       </LogoContainer>
       <AuthButtons>
-        <AuthInput type="text" placeholder="Email" />
-        <AuthInput type="password" placeholder="Password" />
-        <AuthButton>Login</AuthButton>
+        <Form onSubmit={handleSubmit}>
+          <AuthInput
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={handleEmailChange}
+          />
+          <AuthInput
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+          />
+          <AuthButton type="submit">Login</AuthButton>
+        </Form>
         <AuthButton>Sign Up</AuthButton>
       </AuthButtons>
     </HeaderContainer>

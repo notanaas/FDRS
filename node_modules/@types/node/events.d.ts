@@ -34,7 +34,7 @@
  * ```
  * @see [source](https://github.com/nodejs/node/blob/v20.2.0/lib/events.js)
  */
-declare module 'events' {
+declare module 'node:events' {
     // NOTE: This class is in the docs but is **not actually exported** by Node.
     // If https://github.com/nodejs/node/issues/39903 gets resolved and Node
     // actually starts exporting the class, uncomment below.
@@ -338,6 +338,41 @@ declare module 'events' {
          * objects.
          */
         static setMaxListeners(n?: number, ...eventTargets: Array<_DOMEventTarget | NodeJS.EventEmitter>): void;
+        /**
+         * Listens once to the `abort` event on the provided `signal`.
+         *
+         * Listening to the `abort` event on abort signals is unsafe and may
+         * lead to resource leaks since another third party with the signal can
+         * call `e.stopImmediatePropagation()`. Unfortunately Node.js cannot change
+         * this since it would violate the web standard. Additionally, the original
+         * API makes it easy to forget to remove listeners.
+         *
+         * This API allows safely using `AbortSignal`s in Node.js APIs by solving these
+         * two issues by listening to the event such that `stopImmediatePropagation` does
+         * not prevent the listener from running.
+         *
+         * Returns a disposable so that it may be unsubscribed from more easily.
+         *
+         * ```js
+         * import { addAbortListener } from 'node:events';
+         *
+         * function example(signal) {
+         *   let disposable;
+         *   try {
+         *     signal.addEventListener('abort', (e) => e.stopImmediatePropagation());
+         *     disposable = addAbortListener(signal, (e) => {
+         *       // Do something when signal is aborted.
+         *     });
+         *   } finally {
+         *     disposable?.[Symbol.dispose]();
+         *   }
+         * }
+         * ```
+         * @since v20.5.0
+         * @experimental
+         * @return that removes the `abort` listener.
+         */
+        static addAbortListener(signal: AbortSignal, resource: (event: Event) => void): Disposable;
         /**
          * This symbol shall be used to install a listener for only monitoring `'error'`events. Listeners installed using this symbol are called before the regular`'error'` listeners are called.
          *
@@ -747,7 +782,7 @@ declare module 'events' {
     }
     export = EventEmitter;
 }
-declare module 'node:events' {
-    import events = require('events');
+declare module 'events' {
+    import events = require('node:events');
     export = events;
 }

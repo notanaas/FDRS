@@ -10,6 +10,9 @@ const resourceSchema = new Schema({
     isAuthorized : {type:Boolean , default:false},
     ResourceType : {type : String},
     Description : {type : String , minLength : 100 , maxLength : 500 , required:true},
+    file_path : {type:String ,required:true },
+    file_size : {type: Number , required : true},
+    ResourceCover : {type: String}
 })
 
 resourceSchema.virtual("url").get(function(){

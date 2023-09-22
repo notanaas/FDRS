@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -8,6 +9,38 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+=======
+const createError = require('http-errors');
+const express = require('express');
+require("dotenv").config()
+// Import the mongoose module
+const mongoose = require("mongoose");
+
+// Set `strictQuery: false` to globally opt into filtering by properties that aren't in the schema
+// Included because it removes preparatory warnings for Mongoose 7.
+// See: https://mongoosejs.com/docs/migrating_to_6.html#strictquery-is-removed-and-replaced-by-strict
+mongoose.set("strictQuery", false);
+
+// Define the database URL to connect to.
+const mongoDB = process.env.MongoDB_URL
+
+// Wait for database to connect, logging an error if there is a problem
+main().catch((err) => console.log(err));
+async function main() {
+  console.log("Debug: About to connect");
+  await mongoose.connect(mongoDB);
+  console.log("Debug: Should be connected?");
+}
+
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+
+const app = express();
+>>>>>>> 80ded76f1f74d87ad6a5d89d38722ad0fbcfdb0d
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

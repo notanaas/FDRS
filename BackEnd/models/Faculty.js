@@ -8,7 +8,7 @@ const facultySchema  = new Schema({
 
 facultySchema.virtual("url").get(function(){
 
-    return `/profile/${this._id}`
+    return `/Faculty/${this._id}`
 })
 
 module.exports = mongoose.model("Faculty" , facultySchema)

@@ -1,13 +1,16 @@
+// App.js
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './Header';
 import WelcomingPage from './WelcomingPage';
 import Footer from './Footer';
-import SubjectPage from './SubjectPage'; 
-
+import SubjectPage from './SubjectPage';
+import { useParams } from 'react-router-dom';
 
 const App = () => {
   const [showFaculties, setShowFaculties] = useState(false);
+  const { subjectName } = useParams();
 
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
@@ -27,11 +30,10 @@ const App = () => {
 
   return (
     <Router>
-      <Header />
+      <Header subjectName={subjectName} /> {}
       <Switch>
-      <Route path="/" exact component={WelcomingPage} />
-      <Route path="/subjects/:subjectName" component={SubjectPage} /> {/* Dynamic route */}
-        {/* Add more routes for other pages if needed */}
+        <Route path="/" exact component={WelcomingPage} />
+        <Route path="/subjects/:subjectName" component={SubjectPage} />
       </Switch>
       <Footer />
     </Router>

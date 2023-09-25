@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import FacultyButtons from './FacultyButtons';
 import FileUpload from './FileUpload';
 
+
 const Container = styled.div`
   text-align: center;
   padding: 100px;
@@ -31,6 +32,7 @@ const WelcomingPage = () => {
   };
 
   return (
+
     <Container>
       <WelcomeText>Welcome to our FDRS!</WelcomeText>
       <SubText>Explore our faculties and subjects</SubText>
@@ -43,6 +45,7 @@ const WelcomingPage = () => {
       )}
     </Container>
   );
+  
 };
 
 export default WelcomingPage;

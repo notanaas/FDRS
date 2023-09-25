@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import Modal from './Modal';
 import { useParams } from 'react-router-dom';
-import ErrorMessage from './ErrorMessage'; // Import the ErrorMessage component
+import ErrorMessage from './ErrorMessage';
+import Header from './Header'; // Import the Header component
+
+const SubjectPageContainer = styled.div`
+  padding: 20px;
+`;
 
 const SubjectPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { subjectName } = useParams(); 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  // ... (other state variables)
+
+
+  const SubjectPageHeader = styled.h1`
+  /* Your header styles here */
+`;
+
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [link, setLink] = useState('');
@@ -19,12 +33,12 @@ const SubjectPage = () => {
   const [documentPhotoUrl, setDocumentPhotoUrl] = useState(''); // State to store the document photo URL
   const [linkPhotoUrl, setLinkPhotoUrl] = useState(''); // State to store the link photo URL
 
-  const { subjectName } = useParams();
-
   const openModal = () => {
     setIsModalOpen(true);
   };
-
+  const onUploadClick = () => {
+    openModal();
+  };
   const closeModal = () => {
     setIsModalOpen(false);
     setError(null); // Clear any previous error messages when closing the modal
@@ -123,25 +137,12 @@ const SubjectPage = () => {
     }
   };
 
+
+
+
   return (
     <div>
       <h1>{subjectName}</h1>
-      <button
-        onClick={openModal}
-        style={{
-          backgroundColor: '#8b0000',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '6px',
-          padding: '0.6rem 1.2rem',
-          fontSize: '1rem',
-          cursor: 'pointer',
-          marginTop: '10px',
-        }}
-      >
-        Upload
-      </button>
-
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2>Upload Document or Link</h2>
         {error && <ErrorMessage message={error} />}
@@ -271,73 +272,45 @@ const SubjectPage = () => {
       </Modal>
 
       <div>
-        <ul>
-          {uploadedDocuments.length > 0 && (
-            <div>
-              <h2>Uploaded Documents and Links</h2>
-              <ul>
-                {uploadedDocuments.map((item, index) => (
-                  <li key={index}>
-                    {item.title && <div>Title: {item.title}</div>}
-                    {item.author && <div>Author: {item.author}</div>}
-                    {item.file && (
-                      <div>
-                        <a
-                          href={
-                            item.file instanceof Blob
-                              ? URL.createObjectURL(item.file)
-                              : item.file
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          download={item.title || 'document'}
-                        >
-                          View/Download Document
-                        </a>
-                        {item.photo && (
-                          <div className="card">
-                            <img
-                              className="uploaded-photo"
-                              src={item.photo}
-                              alt="Document"
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title">{item.title}</h5>
-                              <p className="card-text">Author: {item.author}</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    {item.link && (
-                      <div>
-                        <div>Link: {item.link}</div>
-                        {item.description && (
-                          <div>Description: {item.description}</div>
-                        )}
-                        {item.photo && (
-                          <div className="card">
-                            <img
-                              className="uploaded-photo"
-                              src={item.photo}
-                              alt="Link"
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title">Link</h5>
-                              <p className="card-text">
-                                Description: {item.description}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        <ul className="card-container">
+          {uploadedDocuments.map((item, index) => (
+            <li key={index} className="card">
+              {item.title && <div className="card-title">{item.title}</div>}
+              {item.author && <div className="card-text">Author: {item.author}</div>}
+              {item.file && (
+                <div>
+                  <a
+                    href={
+                      item.file instanceof Blob
+                        ? URL.createObjectURL(item.file)
+                        : item.file
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={item.title || 'document'}
+                  >
+                    View/Download Document
+                  </a>
+                  {item.photo && <img src={item.photo} alt="Document" />}
+                </div>
+              )}
+              {item.link && (
+                <div>
+                  <div className="card-text">Link: {item.link}</div>
+                  {item.description && (
+                    <div className="card-text">Description: {item.description}</div>
+                  )}
+                  {item.photo && <img src={item.photo} alt="Link" />}
+                </div>
+              )}
+            </li>
+          ))}
         </ul>
+      </div>
+
+      {/* Centered "Upload" button at the bottom */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <button onClick={onUploadClick} className="upload-button">Upload</button>
       </div>
     </div>
   );

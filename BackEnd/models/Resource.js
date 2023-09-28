@@ -16,9 +16,6 @@ const resourceSchema = new Schema({
     Related_link : {type:String}
 })
 
-resourceSchema.virtual("url").get(function(){
 
-    return `/Faculty/Resource/${this._id}`
-})
 
 module.exports = mongoose.model("Resource" , resourceSchema)

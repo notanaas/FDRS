@@ -1,51 +1,50 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import FacultyButtons from './FacultyButtons';
 import FileUpload from './FileUpload';
-
-
-const Container = styled.div`
-  text-align: center;
-  padding: 100px;
-`;
-
-const WelcomeText = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-`;
-
-const SubText = styled.p`
-  font-size: 1.2rem;
-  margin-bottom: 40px;
-`;
-
-const SubjectUploadButton = styled(FileUpload)`
-  margin-top: 20px;
-`;
+import Header from './Header'; // Import the Header component
+import './App.css'; // Import your styles
+import Footer from './Footer'; // Import the Header component
+import { useDarkMode } from './DarkModeContext'; // Import the useDarkMode hook
 
 const WelcomingPage = () => {
-  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Function to handle subject selection
-  const handleSubjectSelection = (subjectName) => {
-    setSelectedSubject(subjectName);
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
   };
-
+  const handleFacultySelection = (FacultyName) => {
+    setSelectedFaculty(FacultyName);
+  };
   return (
+    <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
+      <Header />
+    
+      <div >
+        <p>Welcome to our FDRS!</p>
+        <p>Explore our faculties</p>
+        <FacultyButtons onFacultySelect={handleFacultySelection} />
+        <p>                                                      </p>
+        {selectedFaculty && (
+          <div>
+            <h2>Upload Files for {selectedFaculty}</h2>
+            <FileUpload />
+          </div>
+        )}
+      </div>
+      <Footer isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
 
-    <Container>
-      <WelcomeText>Welcome to our FDRS!</WelcomeText>
-      <SubText>Explore our faculties and subjects</SubText>
-      <FacultyButtons onSubjectSelect={handleSubjectSelection} />
-      {selectedSubject && (
-        <div>
-          <h2>Upload Files for {selectedSubject}</h2>
-          <SubjectUploadButton />
-        </div>
-      )}
-    </Container>
+    </div>
+    
   );
-  
 };
 
 export default WelcomingPage;

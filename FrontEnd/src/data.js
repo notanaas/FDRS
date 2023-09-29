@@ -3,18 +3,16 @@ export const faculties = [
   {
     id: 1,
     name: 'Faculty Of IT',
-    subjects: [
-      { id: 1, name: 'OOP'},
-      { id: 2, name: 'FUNDEMNTALS OF AI'},
-      { id: 3, name: 'SYSTEM ANALYSIS'},
+    Facultys: [
+    
     ],
   },
   {
     id: 2,
     name: 'Faculty Of Business',
-    subjects: [
-      { id: 3, name: 'Subject 3' },
-      { id: 4, name: 'Subject 4' },
+    Facultys: [
+      { id: 3, name: 'Faculty 3' },
+      { id: 4, name: 'Faculty 4' },
     ],
   },
   

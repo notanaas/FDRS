@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, {  } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import AppContent from './App'; // Renamed to avoid naming conflicts
-import { SubjectProvider } from './SubjectContext'; // Import SubjectProvider
+import AppContent from './App';
+import { FacultyProvider } from './FacultyContext';
+import { ThemeProvider } from './ThemeContext'; // Import ThemeProvider
 import './App.css';
 import ReactDOM from 'react-dom';
-
+import { DarkModeProvider } from './DarkModeContext'; // Import the context
 
 function MainApp() {
   return (
@@ -14,9 +15,13 @@ function MainApp() {
         <Helmet>
           <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
         </Helmet>
-        <SubjectProvider>
-          <AppContent />
-        </SubjectProvider>
+        <DarkModeProvider> 
+          <ThemeProvider>
+            <FacultyProvider>
+              <AppContent />
+            </FacultyProvider>
+          </ThemeProvider>
+        </DarkModeProvider> 
       </Router>
     </React.StrictMode>
   );

@@ -1,20 +1,125 @@
-html,body{
-  margin:0;
-  padding:0;
+body {
+  background-color: #ffffff; /* Set a light background color */
+  color: #333; /* Set the text color */
+  
 }
-.App {
+@media (prefers-color-scheme: dark) {
+  /* Styles for dark mode */
+  body {
+    background-color: #333;
+    color: #fff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  /* Styles for light mode */
+  body {
+    background-color: #fff;
+    color: #333;
+  }
+}
+
+.dark body {
+  background-color: #333;
+  color: #f0f0f0;
+}
+.page-light .facultyPage {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.page-dark .facultyPage {
+  background-color: #000000;
+  color: #333;
+}
+
+.headerContainer {
+  background-color: #8b0000;
+  color: #fff;
+  padding: 1rem;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logoContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.searchBar {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #6a0000;
+  color: #fff;
+  ::placeholder {
+    color: #fff;
   }
+}
+
+.searchButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.searchButton:hover {
+  background-color: #6a0000;
+}
+
+.themeToggle {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  margin-left: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.themeToggle:hover {
+  color: #8b0000;
+}
+
+/* Footer styles */
+.footerContainer {
+  background-color: #8b0000;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.footerText {
+  margin: 0;
+}
+
+.footerLink {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  transition: color 0.2s;
+}
+
+.footerLink:hover {
+  color: #6a0000;
+}
+
+
+.App {
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .App-header {
@@ -27,11 +132,11 @@ html,body{
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
 .uploaded-photo {
-  width: 200px; /* Adjust the width to your desired size */
-  height: 150px; /* Adjust the height to your desired size */
+  width: 200px;
+  height: 150px;
 }
-/* styles.css */
 
 .upload-button {
   background-color: #8b0000;
@@ -47,11 +152,12 @@ html,body{
 .upload-button:hover {
   background-color: #6a0000;
 }
+
 .uploaded-items-container {
   display: flex;
-  flex-direction: row; /* Horizontal arrangement */
-  flex-wrap: wrap; /* Allow items to wrap to the next row if necessary */
-  gap: 20px; /* Adjust the gap between items as needed */
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .card-container {
@@ -59,8 +165,8 @@ html,body{
   flex-wrap: wrap;
   gap: 20px;
   justify-content: flex-start;
-  list-style: none; /* This removes the bullet points */
-  padding: 1; /* Remove any default padding */
+  list-style: none;
+  padding: 1;
 }
 
 .card {
@@ -68,12 +174,12 @@ html,body{
   border-radius: 8px;
   padding: 10px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  width: 300px; /* Adjust the width as needed */
+  width: 300px;
   transition: transform 0.2s;
 }
 
 .card:hover {
-  transform: scale(1.02); /* Add a slight scale effect on hover */
+  transform: scale(1.02);
 }
 
 .card-title {
@@ -93,9 +199,363 @@ html,body{
   border-radius: 6px;
 }
 
-
 .App-link {
   color: #61dafb;
+}
+
+.errorContainer {
+  background-color: #ff0000;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.facultyButtonsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.facultyButton {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.2rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px;
+  transition: background-color 0.2s;
+  text-transform: capitalize;
+}
+
+.facultyButton:hover {
+  background-color: #ff0000;
+}
+
+.facultyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.styledButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.styledButton:hover {
+  background-color: #6a0000;
+}
+
+.fileInput {
+  display: none;
+}
+
+.chooseFileLabel {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.chooseFileLabel:hover {
+  background-color: #6a0000;
+}
+
+.footerContainer {
+  background-color: #8b0000;
+  color: #fff;
+  padding: 1rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.footerText {
+  margin: 0;
+}
+
+.footerLink {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  transition: color 0.2s;
+}
+
+.footerLink:hover {
+  color: #6a0000;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #8b0000;
+  color: #fff;
+  padding: 1rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.searchBar {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #6a0000;
+  color: #fff;
+}
+
+.searchBar::placeholder {
+  color: #fff;
+}
+
+.searchButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.searchButton:hover {
+  background-color: #6a0000;
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+}
+
+.authInput {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #6a0000;
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+.authInput::placeholder {
+  color: #fff;
+}
+
+.authButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.authButton:hover {
+  background-color: #6a0000;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+}
+
+.facultyName {
+  margin: 0;
+  padding: 0;
+}
+
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+
+.inputField {
+  padding: 0.5rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+}
+
+.faculties {
+  margin: 0;
+  font-weight: bold;
+}
+
+.modalContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modalContainer.dark {
+  background-color: rgba(0, 0, 0, 0.5); 
+  color: #ffffff; 
+}
+.modalContent {
+  background: white;
+  width: 80%;
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: 100px;
+  padding: 0px;
+  border-radius: 0px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #8b0000;
+  color: white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.modalContent button {
+  background-color: #ccc;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.modalHeader h2 {
+  margin: 0;
+}
+.modalContainer-light {
+  background-color: #ffffff; /* Set the background color for light mode */
+}
+
+/* Style for the modal background in dark mode */
+.modalContainer-dark {
+  background-color: #000000;
+}
+.share-button {
+  background-color: #007bff; 
+  color: #fff; /* White text color */
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.share-button:hover {
+  background-color: #8b0000; 
+}
+.closeButton {
+  background-color: #8b0000;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.modalBody {
+  padding: 20px;
+}
+.facultyPageContainer {
+  padding: 20px;
+}
+
+.styledButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.styledButton:hover {
+  background-color: #6a0000;
+}
+
+.container {
+  text-align: center;
+  padding: 100px;
+}
+
+.welcomeText {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+.welcome-container {
+  background-color: #ffffff; /* Light background color */
+  /* Other styles for the welcoming page */
+}
+
+/* Faculty page background */
+.facultyPageContainer {
+  background-color: #ffffff; /* Light background color */
+  /* Other styles for the faculty page */
+}
+.subText {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+}
+
+.cacultyUploadButton {
+  margin-top: 20px;
 }
 
 @keyframes App-logo-spin {

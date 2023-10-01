@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Create the context
 const ThemeContext = createContext();
 
-// Create a provider component that will wrap your entire app
-export function ThemeProvider({ children }) {
+export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // Function to toggle dark mode
   const toggleDarkMode = () => {
-    setIsDarkMode((prevMode) => !prevMode);
+    setIsDarkMode((prev) => !prev);
   };
 
   return (
@@ -16,8 +15,12 @@ export function ThemeProvider({ children }) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};
 
-export function useTheme() {
-  return useContext(ThemeContext);
-}
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};

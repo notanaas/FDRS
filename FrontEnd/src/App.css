@@ -557,6 +557,119 @@ body {
 .cacultyUploadButton {
   margin-top: 20px;
 }
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.popup-content {
+  text-align: center;
+}
+
+.close-button {
+  margin-top: 10px;
+}
+/* SignupModal.css */
+
+.signup-modal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.signup-modal h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.signup-modal label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.signup-modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.signup-modal button {
+  background-color: #007bff; /* Your desired button color */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.signup-modal button:hover {
+  background-color: #0056b3; /* Color on hover */
+}
+/* Default styles for all screen sizes */
+
+body {
+  font-size: 16px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+}
+
+/* Media queries for different screen sizes */
+
+/* For screens up to 768px wide (phones) */
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 14px; /* Decrease font size for smaller screens */
+  }
+
+  .container {
+    padding: 10px; /* Reduce padding for smaller screens */
+  }
+
+  .header {
+    font-size: 1.5rem; /* Increase font size for the header on smaller screens */
+  }
+}
+
+/* For screens between 768px and 1200px wide (tablets and smaller laptops) */
+@media screen and (min-width: 769px) and (max-width: 1200px) {
+  .container {
+    max-width: 960px; /* Adjust container width for medium-sized screens */
+  }
+}
+
+/* For screens larger than 1200px wide (larger laptops and desktops) */
+@media screen and (min-width: 1201px) {
+  .container {
+    max-width: 1140px; /* Adjust container width for larger screens */
+  }
+}
+
+
 
 @keyframes App-logo-spin {
   from {

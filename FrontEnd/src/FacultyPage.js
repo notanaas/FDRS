@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
@@ -9,7 +9,7 @@ import {
   TwitterShareButton,
   LinkedinShareButton,
   EmailShareButton,
-  FacebookIcon, // Import FacebookIcon here
+  FacebookIcon,
   TwitterIcon,
   LinkedinIcon,
   EmailIcon,
@@ -33,23 +33,23 @@ const FacultyPage = () => {
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedFaculty, setSelectedFaculty] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     // Check if the system prefers dark mode
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  
+
     // Set the initial dark mode state based on system preferences
     setIsDarkMode(prefersDarkMode);
-  
+
     // Add a listener for changes in system preferences
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const darkModeChangeListener = (e) => {
       // Update the state based on system preferences
       setIsDarkMode(e.matches);
-  
+
       // Apply or remove the 'dark' class to toggle dark mode
       if (e.matches) {
         document.documentElement.classList.add('dark');
@@ -57,18 +57,14 @@ const FacultyPage = () => {
         document.documentElement.classList.remove('dark');
       }
     };
-  
+
     darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
-  
+
     // Clean up the listener when the component unmounts
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, []); // Ensure that this effect runs only once when the component mounts
-  
-  
-  
-    
+  }, []);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -124,14 +120,44 @@ const FacultyPage = () => {
     console.log(`Sharing document: ${item.title}`);
   };
 
+  const toggleFavorite = (index) => {
+    const updatedFavorites = [...favorites];
+    const item = uploadedDocuments[index];
+
+    // Toggle the favorite status of the item
+    if (item.isFavorite) {
+      item.isFavorite = false;
+      const favoriteIndex = updatedFavorites.indexOf(index);
+      if (favoriteIndex !== -1) {
+        updatedFavorites.splice(favoriteIndex, 1);
+      }
+    } else {
+      item.isFavorite = true;
+      updatedFavorites.push(index);
+    }
+
+    setFavorites(updatedFavorites);
+  };
+
   const handleUpload = () => {
-    if (uploadChoice === 'document' && title && author  && documentPhoto) {
+    if (uploadChoice === 'document' && title && author && documentPhoto) {
       const uploadedDocument = {
         title,
         author,
         photo: documentPhotoUrl,
+        file: URL.createObjectURL(documentFile),
+        isFavorite: false, // Initialize the favorite status
       };
-      setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
+    
+      // Check if the document already exists in the uploadedDocuments array
+      const documentExists = uploadedDocuments.some(
+        (item) => item.title === uploadedDocument.title
+      );
+    
+      if (!documentExists) {
+        setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
+      }
+    
       setTitle('');
       setAuthor('');
       setDocumentFile(null);
@@ -139,13 +165,24 @@ const FacultyPage = () => {
       setDocumentPhotoUrl('');
       setSuccessMessage('Document uploaded successfully.');
       setIsModalOpen(false);
+    
     } else if (uploadChoice === 'link' && link && linkPhoto && linkPhotoUrl) {
       const uploadedLink = {
         link,
         photo: linkPhotoUrl,
         description: linkDescription,
+        isFavorite: false, // Initialize the favorite status
       };
-      setUploadedDocuments([...uploadedDocuments, uploadedLink]);
+
+      // Check if the link already exists in the uploadedDocuments array
+      const linkExists = uploadedDocuments.some(
+        (item) => item.link === uploadedLink.link
+      );
+
+      if (!linkExists) {
+        setUploadedDocuments([...uploadedDocuments, uploadedLink]);
+      }
+
       setLink('');
       setLinkPhoto(null);
       setLinkDescription('');
@@ -190,7 +227,7 @@ const FacultyPage = () => {
             {error}
           </div>
         )}
-        
+
         {uploadChoice === 'document' ? (
           <div>
             <label>Title:</label>
@@ -228,9 +265,7 @@ const FacultyPage = () => {
             )}
           </div>
         ) : (
-          <div>
-         
-          </div>
+          <div></div>
         )}
         <button
           onClick={handleUpload}
@@ -249,65 +284,63 @@ const FacultyPage = () => {
         </button>
       </Modal>
       <div>
-      <ul className="card-container">
-  {uploadedDocuments.map((item, index) => (
-    <li key={index} className="card">
-      {item.title && (
-        <div className="card-title">
-          <strong>Title:</strong> {item.title}
-        </div>
-      )}
-      {item.author && (
-        <div className="card-text">
-          <strong>Author:</strong> {item.author}
-        </div>
-      )}
-      {item.file && (
-        <div>
-          <a
-            href={
-              item.file instanceof Blob
-                ? URL.createObjectURL(item.file)
-                : item.file
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            download={item.title || 'document'}
-          >
-            View/Download Document
-          </a>
-        </div>
-      )}
-      {item.photo && (
-        <div>
-          <img
-            className="uploaded-photo"
-            src={item.photo}
-            alt="Document or Link"
-          />
-        </div>
-      )}
-      {item.description && (
-        <div className="card-description">
-          <strong>Description:</strong> {item.description}
-        </div>
-      )}
-      <div className="share-buttons">
-        <FacebookShareButton url={item.link || ''}>
-        <FacebookIcon size={32} round />
-        </FacebookShareButton>
-        <TwitterShareButton url={item.link || ''}>
-          <TwitterIcon size={32} round />
-        </TwitterShareButton>
-        <LinkedinShareButton url={item.link || ''}>
-          <LinkedinIcon size={32} round />
-        </LinkedinShareButton>
-        <EmailShareButton url={item.link || ''}>
-          <EmailIcon size={32} round />
-        </EmailShareButton>
-      </div>
-    </li>
-  ))}
+        <ul className="card-container">
+        {uploadedDocuments.map((item, index) => (
+          <li key={index} className="card">
+            <Link to={`/resource/${index}`}>
+              {/* Card content */}
+              <h3>{item.title}</h3>
+              <p>Author: {item.author}</p>
+              {/* Add more card content */}
+            </Link>
+            {item.photo && (
+              <div>
+                <img
+                  className="uploaded-photo"
+                  src={item.photo}
+                  alt="Document or Link"
+                />
+              </div>
+            )}
+            {item.description && (
+              <div className="card-description">
+                <strong>Description:</strong> {item.description}
+              </div>
+            )}
+            {item.file ? (
+              <div>
+                <a
+                  href={item.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={item.title || 'document'}
+                >
+                  Download Document
+                </a>
+              </div>
+            ) : null}
+            <div className="share-buttons">
+              <FacebookShareButton url={item.link || ''}>
+                <FacebookIcon size={32} round />
+              </FacebookShareButton>
+              <TwitterShareButton url={item.link || ''}>
+                <TwitterIcon size={32} round />
+              </TwitterShareButton>
+              <LinkedinShareButton url={item.link || ''}>
+                <LinkedinIcon size={32} round />
+              </LinkedinShareButton>
+              <EmailShareButton url={item.link || ''}>
+                <EmailIcon size={32} round />
+              </EmailShareButton>
+            </div>
+            <button
+              onClick={() => toggleFavorite(index)}
+              className={item.isFavorite ? 'favorite-button active' : 'favorite-button'}
+            >
+              {item.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+            </button>
+          </li>
+        ))}
         </ul>
       </div>
       <Footer isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />

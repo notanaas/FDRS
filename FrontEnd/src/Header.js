@@ -1,12 +1,44 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
+import Modal from './Modal';
+import { useTheme } from './ThemeContext'; // Import the useTheme hook
 
 const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSignupOpen, setIsSignupOpen] = useState(false); // State to manage signup popup
   const { facultyName } = useFaculty();
+  const [signupData, setSignupData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
+  const openSignupModal = () => {
+    setIsSignupOpen(true);
+  };
 
+  // Function to close the signup modal
+  const closeSignupModal = () => {
+    setIsSignupOpen(false);
+  };
+  const handleSignupInputChange = (e) => {
+    const { name, value } = e.target;
+    setSignupData({
+      ...signupData,
+      [name]: value,
+    });
+  };
+
+  // Function to handle signup form submission
+  const handleSignupSubmit = (e) => {
+    e.preventDefault();
+
+    // Perform your signup logic here with the data in signupData
+
+    // Close the signup modal
+    closeSignupModal();
+  };
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
@@ -28,6 +60,17 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     setPassword('');
   };
 
+  const openSignup = () => {
+    setIsSignupOpen(true);
+  };
+
+  const closeSignup = () => {
+    setIsSignupOpen(false);
+  };
+
+  // Use the useTheme hook to get the isDarkMode value
+  const { isDarkMode } = useTheme();
+
   return (
     <header className="headerContainer">
       <div className="logoContainer">
@@ -38,7 +81,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
       </div>
 
       <div>
-        {isFacultyPage && ( // Only render the search bar and button if isFacultyPage is true
+        {isFacultyPage && (
           <div>
             <input
               type="text"
@@ -70,10 +113,55 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
             Login
           </button>
         </form>
-        <button className="authButton">Sign Up</button>
+        <div className="authButtons">
+          {/* Signup button */}
+          <button className="authButton" onClick={openSignupModal}>
+            Sign Up
+          </button>
+        </div>
       </div>
+
+      {/* Signup Modal */}
+      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
+        <h2>Sign Up</h2>
+        <form onSubmit={handleSignupSubmit}>
+          <div className="form-group">
+            <label htmlFor="username">Username:</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={signupData.username}
+              onChange={handleSignupInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={signupData.email}
+              onChange={handleSignupInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={signupData.password}
+              onChange={handleSignupInputChange}
+              required
+            />
+          </div>
+          <button type="submit">Sign Up</button>
+        </form>
+      </Modal>
     </header>
-    
   );
 };
 

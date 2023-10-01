@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import FacultyButtons from './FacultyButtons';
 import FileUpload from './FileUpload';
-import Header from './Header'; // Import the Header component
-import './App.css'; // Import your styles
-import Footer from './Footer'; // Import the Header component
-import { useDarkMode } from './DarkModeContext'; // Import the useDarkMode hook
+import Header from './Header'; 
+import './App.css'; 
+import Footer from './Footer'; 
+import { useDarkMode } from './DarkModeContext'; 
 
 const WelcomingPage = () => {
   const [selectedFaculty, setSelectedFaculty] = useState(null);
@@ -32,7 +32,6 @@ const WelcomingPage = () => {
         <p>Welcome to our FDRS!</p>
         <p>Explore our faculties</p>
         <FacultyButtons onFacultySelect={handleFacultySelection} />
-        <p>                                                      </p>
         {selectedFaculty && (
           <div>
             <h2>Upload Files for {selectedFaculty}</h2>

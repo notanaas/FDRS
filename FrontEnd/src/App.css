@@ -1,10 +1,8 @@
 body {
-  background-color: #ffffff; /* Set a light background color */
-  color: #333; /* Set the text color */
-  
+  background-color: #ffffff; 
+  color: #333; 
 }
 @media (prefers-color-scheme: dark) {
-  /* Styles for dark mode */
   body {
     background-color: #333;
     color: #fff;
@@ -12,11 +10,24 @@ body {
 }
 
 @media (prefers-color-scheme: light) {
-  /* Styles for light mode */
   body {
     background-color: #fff;
     color: #333;
   }
+}
+.custom-copy-button {
+  color: white;
+  border: none;
+  border-radius: 30%; /* Make it round */
+  padding: 5px 5px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+}
+
+.custom-copy-button.copied {
+  background-color: #8b0000;
 }
 
 .dark body {
@@ -91,8 +102,34 @@ body {
 .themeToggle:hover {
   color: #8b0000;
 }
+.fa-star {
+  font-size: 24px; /* Adjust the size as needed */
+  color: #8b0000; /* Default star color */
+  cursor: pointer;
+  transition: color 0.2s;
+}
 
-/* Footer styles */
+.fa-star.active {
+  color: #ffcc00; /* Color when star is active (clicked) */
+}
+
+
+.copy-link-button {
+  background-color: #007bff; /* Example color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-right: 10px; /* Adjust the margin to match your design */
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-link-button:hover {
+  background-color: #8b0000; /* Color on hover */
+}
+
+
 .footerContainer {
   background-color: #8b0000;
   color: #fff;

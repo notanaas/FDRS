@@ -20,7 +20,7 @@ const FacultyPage = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [link, setLink] = useState('');
-  const [uploadChoice, setUploadChoice] = useState('document');
+  const [uploadChoice] = useState('document');
   const [documentFile, setDocumentFile] = useState(null);
   const [documentPhoto, setDocumentPhoto] = useState(null);
   const [linkPhoto, setLinkPhoto] = useState(null);
@@ -34,23 +34,34 @@ const FacultyPage = () => {
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [favorites, setFavorites] = useState([]);
-
-  useEffect(() => {
-    // Check if the system prefers dark mode
+  const [isStarActive, setIsStarActive] = useState(false);
+  const CustomCopyLinkButton = ({ url }) => {
+    const [isCopied, setIsCopied] = useState(false);
+  
+    const handleCopyLink = () => {
+      navigator.clipboard.writeText(url);
+      setIsCopied(true);
+      // You can add additional logic or UI updates here after copying the link
+    };
+    return (
+      <button
+    className={`custom-copy-button ${isCopied ? 'copied' : ''}`}
+    onClick={handleCopyLink}
+  >
+    {isCopied ? 'Copied!' : <img src="/link.png" alt="Copy Link" style={{ width: '20px', height: '20px' }} />}
+  </button>
+  );
+  };
+    useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Set the initial dark mode state based on system preferences
     setIsDarkMode(prefersDarkMode);
 
-    // Add a listener for changes in system preferences
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     const darkModeChangeListener = (e) => {
-      // Update the state based on system preferences
       setIsDarkMode(e.matches);
 
-      // Apply or remove the 'dark' class to toggle dark mode
       if (e.matches) {
         document.documentElement.classList.add('dark');
       } else {
@@ -60,15 +71,12 @@ const FacultyPage = () => {
 
     darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
 
-    // Clean up the listener when the component unmounts
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
   }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -88,14 +96,6 @@ const FacultyPage = () => {
     setAuthor(e.target.value);
   };
 
-  const handleLinkChange = (e) => {
-    setLink(e.target.value);
-  };
-
-  const handleUploadChoiceChange = (choice) => {
-    setUploadChoice(choice);
-  };
-
   const handleDocumentFileChange = (file) => {
     setDocumentFile(file);
   };
@@ -106,39 +106,6 @@ const FacultyPage = () => {
     setDocumentPhotoUrl(photoUrl);
   };
 
-  const handleLinkPhotoChange = (file) => {
-    setLinkPhoto(file);
-    const photoUrl = URL.createObjectURL(file);
-    setLinkPhotoUrl(photoUrl);
-  };
-
-  const handleLinkDescriptionChange = (e) => {
-    setLinkDescription(e.target.value);
-  };
-
-  const handleShare = (item) => {
-    console.log(`Sharing document: ${item.title}`);
-  };
-
-  const toggleFavorite = (index) => {
-    const updatedFavorites = [...favorites];
-    const item = uploadedDocuments[index];
-
-    // Toggle the favorite status of the item
-    if (item.isFavorite) {
-      item.isFavorite = false;
-      const favoriteIndex = updatedFavorites.indexOf(index);
-      if (favoriteIndex !== -1) {
-        updatedFavorites.splice(favoriteIndex, 1);
-      }
-    } else {
-      item.isFavorite = true;
-      updatedFavorites.push(index);
-    }
-
-    setFavorites(updatedFavorites);
-  };
-
   const handleUpload = () => {
     if (uploadChoice === 'document' && title && author && documentPhoto) {
       const uploadedDocument = {
@@ -146,53 +113,66 @@ const FacultyPage = () => {
         author,
         photo: documentPhotoUrl,
         file: URL.createObjectURL(documentFile),
-        isFavorite: false, // Initialize the favorite status
+        isFavorite: false,
       };
-    
+  
       // Check if the document already exists in the uploadedDocuments array
       const documentExists = uploadedDocuments.some(
         (item) => item.title === uploadedDocument.title
       );
-    
+  
       if (!documentExists) {
         setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
       }
-    
+  
+      // Reset document-related state
       setTitle('');
       setAuthor('');
       setDocumentFile(null);
       setDocumentPhoto(null);
       setDocumentPhotoUrl('');
+  
+      // Clear success message and close modal with a slight delay
       setSuccessMessage('Document uploaded successfully.');
-      setIsModalOpen(false);
-    
+      setTimeout(() => {
+        setSuccessMessage(null);
+        setIsModalOpen(false);
+      }, 10); // Adjust the delay if needed
     } else if (uploadChoice === 'link' && link && linkPhoto && linkPhotoUrl) {
       const uploadedLink = {
         link,
         photo: linkPhotoUrl,
         description: linkDescription,
-        isFavorite: false, // Initialize the favorite status
+        isFavorite: false,
       };
-
+  
       // Check if the link already exists in the uploadedDocuments array
       const linkExists = uploadedDocuments.some(
         (item) => item.link === uploadedLink.link
       );
-
+  
       if (!linkExists) {
         setUploadedDocuments([...uploadedDocuments, uploadedLink]);
       }
-
+  
+      // Reset link-related state
       setLink('');
       setLinkPhoto(null);
       setLinkDescription('');
       setLinkPhotoUrl('');
+  
+      // Clear success message and close modal with a slight delay
       setSuccessMessage('Link uploaded successfully.');
-      setIsModalOpen(false);
+      setTimeout(() => {
+        setSuccessMessage(null);
+        setIsModalOpen(false);
+      }, 10); // Adjust the delay if needed
     } else {
       setError('Please fill in all required fields.');
     }
   };
+  
+  
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
@@ -285,67 +265,70 @@ const FacultyPage = () => {
       </Modal>
       <div>
         <ul className="card-container">
-        {uploadedDocuments.map((item, index) => (
-          <li key={index} className="card">
-            <Link to={`/resource/${index}`}>
-              {/* Card content */}
-              <h3>{item.title}</h3>
-              <p>Author: {item.author}</p>
-              {/* Add more card content */}
-            </Link>
-            {item.photo && (
-              <div>
-                <img
-                  className="uploaded-photo"
-                  src={item.photo}
-                  alt="Document or Link"
-                />
+          {uploadedDocuments.map((item, index) => (
+            <li key={index} className="card">
+              <Link to={`/resource/${index}`}>
+                <h3>{item.title}</h3>
+                <p>Author: {item.author}</p>
+                {/* Add more card content */}
+              </Link>
+              {item.photo && (
+                <div>
+                  <img
+                    className="uploaded-photo"
+                    src={item.photo}
+                    alt="Document or Link"
+                  />
+                </div>
+              )}
+              {item.description && (
+                <div className="card-description">
+                  <strong>Description:</strong> {item.description}
+                </div>
+              )}
+              {item.file ? (
+                <div>
+                  <a
+                    href={item.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={item.title || 'document'}
+                  >
+                    Download Document
+                  </a>
+                </div>
+              ) : null}
+         
+              <div className="share-buttons">
+                <FacebookShareButton url={item.link || ''}>
+                  <FacebookIcon size={32} round />
+                </FacebookShareButton>
+                <TwitterShareButton url={item.link || ''}>
+                  <TwitterIcon size={32} round />
+                </TwitterShareButton>
+                <LinkedinShareButton url={item.link || ''}>
+                  <LinkedinIcon size={32} round />
+                </LinkedinShareButton>
+                <EmailShareButton url={item.link || ''}>
+                  <EmailIcon size={32} round />
+                </EmailShareButton>
+                <CustomCopyLinkButton url={item.link || ''} imageSrc="%PUBLIC_URL%/link.ico"/>
               </div>
-            )}
-            {item.description && (
-              <div className="card-description">
-                <strong>Description:</strong> {item.description}
-              </div>
-            )}
-            {item.file ? (
-              <div>
-                <a
-                  href={item.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download={item.title || 'document'}
-                >
-                  Download Document
-                </a>
-              </div>
-            ) : null}
-            <div className="share-buttons">
-              <FacebookShareButton url={item.link || ''}>
-                <FacebookIcon size={32} round />
-              </FacebookShareButton>
-              <TwitterShareButton url={item.link || ''}>
-                <TwitterIcon size={32} round />
-              </TwitterShareButton>
-              <LinkedinShareButton url={item.link || ''}>
-                <LinkedinIcon size={32} round />
-              </LinkedinShareButton>
-              <EmailShareButton url={item.link || ''}>
-                <EmailIcon size={32} round />
-              </EmailShareButton>
-            </div>
-            <button
-              onClick={() => toggleFavorite(index)}
-              className={item.isFavorite ? 'favorite-button active' : 'favorite-button'}
-            >
-              {item.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-            </button>
-          </li>
-        ))}
+              
+              <i className={`fa fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)} ></i>
+
+            </li>
+          ))}
         </ul>
       </div>
-      <Footer isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      <Footer/>
     </div>
   );
 };
 
 export default FacultyPage;
+
+
+
+
+

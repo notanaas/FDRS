@@ -7,6 +7,7 @@ import { ThemeProvider } from './ThemeContext'; // Import ThemeProvider
 import './App.css';
 import ReactDOM from 'react-dom';
 import { DarkModeProvider } from './DarkModeContext'; // Import the context
+import 'font-awesome/css/font-awesome.min.css';
 
 function MainApp() {
   return (

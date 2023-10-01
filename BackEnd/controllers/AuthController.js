@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 const Users = require("../models/Users")
+const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
+const crypto = require('crypto');  // for refreshTokens
 
 exports.register = [
     body('username' , "Username Must be required")
@@ -57,7 +59,7 @@ exports.register = [
                 errors : errors.array()
             })
     }
-    bcrypt.hash(rqe.body.password , 10 , async (err,hashedPassword)=>
+    bcrypt.hash(req.body.password , 10 , async (err,hashedPassword)=>
     {
         if(err)
         {
@@ -78,7 +80,7 @@ exports.register = [
 })
 ]
 
-exports.login = async (req, res, next) => {
+exports.login = asyncHandler(async (req, res, next) => {
     const user = await Users.findOne({
       $or: [
         { Username: req.body.username },
@@ -95,6 +97,11 @@ exports.login = async (req, res, next) => {
     if (!passwordMatch) {
       return res.status(400).json({ message: "Invalid username or password" });
     }
+    const refreshToken = crypto.randomBytes(40).toString('hex');
+    process.env.REFRESH_TOKEN_SECRET = refreshToken;
+    // Store the refresh token in the user's record
+    user.refreshToken = refreshToken;
+    await user.save();
   
     const body = {
       _id: user._id,
@@ -102,11 +109,49 @@ exports.login = async (req, res, next) => {
       email: user.Email 
     };
   
-    const token = jwt.sign({ user: body }, process.env.SECRET_KEY, {
-        expiresIn: "1m" // 1 minute expiration
+    const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
+        expiresIn: "1d" // 1 minute expiration
     });
   
     // Now, you can send the token in the response
-    return res.json({ token });
-  };
+    return res.json({message:"Logged in successfuly",token , refreshToken});
+  });
   
+exports.logout = asyncHandler(async(req,res,next)=>
+{
+const { refreshToken } = req.body;
+  const user = Users.find((u) => u.refreshToken === refreshToken);
+
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid refresh token' });
+  }
+
+  // Clear the refreshToken (set it to null)
+  user.refreshToken = null;
+
+  res.json({ message: 'User logged out successfully' });
+
+})
+
+exports.refresh_token = async(req,res)=>
+{
+    const { refreshToken } = req.body;
+    
+    try {
+        const decoded = jwt.verify(refreshToken ,process.env.REFRESH_TOKEN_SECRET)
+
+    // Find the user associated with the refresh token
+    const user = await Users.findById(decoded._id)
+
+    if(!user || user.refreshToken !== refreshToken)
+    {
+        return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+     // Generate a new access token
+     const accessToken = jwt.sign({ user: { _id: user._id, username: user.Username, email: user.Email } }, process.env.JWT_SECRET, {
+        expiresIn: '1d', // Set the expiration time for the new access token
+      });
+    } catch (error) {
+           
+    }
+}

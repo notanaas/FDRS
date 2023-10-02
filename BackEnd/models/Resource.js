@@ -12,7 +12,7 @@ const resourceSchema = new Schema({
     Description : {type : String , minLength : 100 , maxLength : 500 , required:true},
     file_path : {type:String ,required:true },
     file_size : {type: Number , required : true , max : 30},
-    ResourceCover : {type: String},
+    ResourceCover : {type: String },
     Related_link : {type:String},
     created_at : {type:Date ,default:Date.now }
 })

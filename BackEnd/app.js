@@ -4,6 +4,7 @@ const express = require('express');
 const authRouter = require('./routes/authRouter');
 const usersRouter = require('./routes/users');
 const passport = require('passport');
+const cors = require("cors")
 require("./passport-config")(passport)
 // Import the mongoose module
 const mongoose = require("mongoose");
@@ -27,6 +28,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+// Create a custom CORS middleware that checks the origin header
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      // If the origin is in the allowed list or it's not defined, allow the request
+      callback(null, true);
+    } else {
+      // Otherwise, reject the request
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200, // Set the success status to 200
+};
 
 const app = express();
 
@@ -34,6 +49,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(cors(corsOptions));
 app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());

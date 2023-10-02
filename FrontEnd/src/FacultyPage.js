@@ -4,6 +4,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
+import FileUpload from './FileUpload';
+import ResourcePage from './ResourcePage'; // Import ResourcePage
+
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -107,70 +110,39 @@ const FacultyPage = () => {
   };
 
   const handleUpload = () => {
-    if (uploadChoice === 'document' && title && author && documentPhoto) {
+    if (uploadChoice === 'document' && title && author  && documentPhoto) {
       const uploadedDocument = {
         title,
         author,
         photo: documentPhotoUrl,
-        file: URL.createObjectURL(documentFile),
-        isFavorite: false,
       };
-  
-      // Check if the document already exists in the uploadedDocuments array
-      const documentExists = uploadedDocuments.some(
-        (item) => item.title === uploadedDocument.title
-      );
-  
-      if (!documentExists) {
-        setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
-      }
-  
-      // Reset document-related state
+      setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
       setTitle('');
       setAuthor('');
       setDocumentFile(null);
       setDocumentPhoto(null);
       setDocumentPhotoUrl('');
-  
-      // Clear success message and close modal with a slight delay
       setSuccessMessage('Document uploaded successfully.');
-      setTimeout(() => {
-        setSuccessMessage(null);
-        setIsModalOpen(false);
-      }, 10); // Adjust the delay if needed
+      setIsModalOpen(false);
     } else if (uploadChoice === 'link' && link && linkPhoto && linkPhotoUrl) {
       const uploadedLink = {
         link,
         photo: linkPhotoUrl,
         description: linkDescription,
-        isFavorite: false,
       };
-  
-      // Check if the link already exists in the uploadedDocuments array
-      const linkExists = uploadedDocuments.some(
-        (item) => item.link === uploadedLink.link
-      );
-  
-      if (!linkExists) {
-        setUploadedDocuments([...uploadedDocuments, uploadedLink]);
-      }
-  
-      // Reset link-related state
+      setUploadedDocuments([...uploadedDocuments, uploadedLink]);
       setLink('');
       setLinkPhoto(null);
       setLinkDescription('');
       setLinkPhotoUrl('');
-  
-      // Clear success message and close modal with a slight delay
       setSuccessMessage('Link uploaded successfully.');
-      setTimeout(() => {
-        setSuccessMessage(null);
-        setIsModalOpen(false);
-      }, 10); // Adjust the delay if needed
+      setIsModalOpen(false);
     } else {
       setError('Please fill in all required fields.');
     }
   };
+  
+  
   
   
 
@@ -263,6 +235,8 @@ const FacultyPage = () => {
           Upload
         </button>
       </Modal>
+            <ResourcePage uploadedDocuments={uploadedDocuments} />
+
       <div>
         <ul className="card-container">
           {uploadedDocuments.map((item, index) => (

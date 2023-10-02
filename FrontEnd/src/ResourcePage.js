@@ -1,29 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import FacultyButtons from './FacultyButtons';
-import FileUpload from './FileUpload';
 import Header from './Header';
-import Footer from './Footer'; // Import Footer
-import { useParams } from 'react-router-dom'; // Import useParams
-import { useDarkMode } from './DarkModeContext'; // Import useDarkMode
+import Footer from './Footer';
+import { useParams } from 'react-router-dom';
+import axios from 'axios'; // Import Axios
 
-const ResourcePage = ({ resources }) => {
+const ResourcePage = ({ uploadedDocuments }) => {
+  const [resource, setResource] = useState(null);
   const { resourceId } = useParams();
-  const resource = resources[resourceId];
-  const { isDarkMode, toggleDarkMode } = useDarkMode(); // Define isDarkMode and toggleDarkMode
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchResource = async () => {
+      try {
+        const response = await axios.get(`/api/resources/${resourceId}`); // Replace with your actual endpoint
+        setResource(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching resource:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchResource();
+  }, [resourceId]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!resource) {
-    // Handle the case where the resource is not found.
-    return <div>Resource not found</div>;
+    return <div>Resource not found.</div>;
   }
 
   return (
-    <div>
+    <div className="resource-page">
       <Header />
-      <h2>{resource.title}</h2>
+      <h1>{resource.title}</h1>
       <p>Author: {resource.author}</p>
-      <p>Resource ID: {resource.id}</p>
-      {/* Add more details about the resource here */}
-      <Footer isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="resource-content">
+        <h2>{resource.title}</h2>
+        <p>Author: {resource.author}</p>
+        <div className="resource-description">
+          {/* Display the description here */}
+          {resource.description && (
+            <div>
+              <strong>Description:</strong> {resource.description}
+            </div>
+          )}
+        </div>
+        <div className="resource-image">
+          {/* Display the document photo here */}
+          {resource.photo && <img src={resource.photo} alt="Document" />}
+        </div>
+        <div className="resource-download">
+          {/* Display the download link if a file is available */}
+          {resource.file ? (
+            <a
+              href={resource.file}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={resource.title || 'document'}
+            >
+              Download Document
+            </a>
+          ) : null}
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 };

@@ -22,7 +22,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
       <div className="modalContent" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
         <div className="modalHeader">
           <h2>Upload Document or Link</h2>
-          <button className="closeButton" onClick={onClose}>
+          <button className="modalCloseButton" onClick={onClose}>
             Close
           </button>
         </div>

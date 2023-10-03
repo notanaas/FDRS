@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.1",
     "cors": "^2.8.5",
     "font-awesome": "^4.7.0",
+    "mongoose": "^X.X.X",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
@@ -17,9 +19,7 @@
     "react-share": "^4.4.1",
     "react-switch": "^7.0.0",
     "styled-components": "^6.0.5",
-    "web-vitals": "^2.1.4",
-    "mongoose": "^X.X.X"
-
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -54,4 +54,3 @@
   "author": "",
   "license": "ISC"
 }
-

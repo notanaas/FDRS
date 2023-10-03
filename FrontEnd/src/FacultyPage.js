@@ -4,9 +4,8 @@ import { useParams, Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
-import FileUpload from './FileUpload';
 import ResourcePage from './ResourcePage'; // Import ResourcePage
-
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -22,25 +21,23 @@ const FacultyPage = () => {
   const [mode] = useState('light');
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
-  const [link, setLink] = useState('');
+  const [description, setDescription] = useState(''); // New description state
   const [uploadChoice] = useState('document');
   const [documentFile, setDocumentFile] = useState(null);
   const [documentPhoto, setDocumentPhoto] = useState(null);
-  const [linkPhoto, setLinkPhoto] = useState(null);
-  const [linkDescription, setLinkDescription] = useState('');
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [documentPhotoUrl, setDocumentPhotoUrl] = useState('');
-  const [linkPhotoUrl, setLinkPhotoUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isStarActive, setIsStarActive] = useState(false);
+
   const CustomCopyLinkButton = ({ url }) => {
     const [isCopied, setIsCopied] = useState(false);
-  
+
     const handleCopyLink = () => {
       navigator.clipboard.writeText(url);
       setIsCopied(true);
@@ -48,14 +45,15 @@ const FacultyPage = () => {
     };
     return (
       <button
-    className={`custom-copy-button ${isCopied ? 'copied' : ''}`}
-    onClick={handleCopyLink}
-  >
-    {isCopied ? 'Copied!' : <img src="/link.png" alt="Copy Link" style={{ width: '20px', height: '20px' }} />}
-  </button>
-  );
+        className={`custom-copy-button ${isCopied ? 'copied' : ''}`}
+        onClick={handleCopyLink}
+      >
+        {isCopied ? 'Copied!' : <img src="/link.png" alt="Copy Link" style={{ width: '20px', height: '20px' }} />}
+      </button>
+    );
   };
-    useEffect(() => {
+
+  useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     setIsDarkMode(prefersDarkMode);
@@ -79,8 +77,6 @@ const FacultyPage = () => {
     };
   }, []);
 
-  
-
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -88,7 +84,6 @@ const FacultyPage = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setError(null);
-    setLinkDescription('');
   };
 
   const handleTitleChange = (e) => {
@@ -97,6 +92,10 @@ const FacultyPage = () => {
 
   const handleAuthorChange = (e) => {
     setAuthor(e.target.value);
+  };
+
+  const handleDescriptionChange = (e) => { // New handler for description input
+    setDescription(e.target.value);
   };
 
   const handleDocumentFileChange = (file) => {
@@ -110,41 +109,26 @@ const FacultyPage = () => {
   };
 
   const handleUpload = () => {
-    if (uploadChoice === 'document' && title && author  && documentPhoto) {
+    if (uploadChoice === 'document' && title && author && description && documentPhoto) { // Check description
       const uploadedDocument = {
         title,
         author,
-        photo: documentPhotoUrl,
+        description, // Include description in the uploaded document
+        photo: documentPhotoUrl
       };
       setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
       setTitle('');
       setAuthor('');
+      setDescription('');
       setDocumentFile(null);
       setDocumentPhoto(null);
       setDocumentPhotoUrl('');
       setSuccessMessage('Document uploaded successfully.');
       setIsModalOpen(false);
-    } else if (uploadChoice === 'link' && link && linkPhoto && linkPhotoUrl) {
-      const uploadedLink = {
-        link,
-        photo: linkPhotoUrl,
-        description: linkDescription,
-      };
-      setUploadedDocuments([...uploadedDocuments, uploadedLink]);
-      setLink('');
-      setLinkPhoto(null);
-      setLinkDescription('');
-      setLinkPhotoUrl('');
-      setSuccessMessage('Link uploaded successfully.');
-      setIsModalOpen(false);
     } else {
       setError('Please fill in all required fields.');
     }
   };
-  
-  
-  
-  
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
@@ -157,7 +141,7 @@ const FacultyPage = () => {
         <div className={`modalContainer-${mode}`}>
           <modalContainer>
             <modalContent>
-              <h2>Upload Document or Link</h2>
+              <h2>Upload Document</h2>
               <button onClick={closeModal}>Close</button>
             </modalContent>
           </modalContainer>
@@ -187,6 +171,8 @@ const FacultyPage = () => {
             <br />
             <label>Author:</label>
             <input type="text" value={author} onChange={handleAuthorChange} />
+            <label>Description:</label>
+            <input type="text" value={description} onChange={handleDescriptionChange} /> {/* Add description input */}
             <br />
             <label>Choose Document:</label>
             <input
@@ -212,6 +198,7 @@ const FacultyPage = () => {
                 <div className="card-body">
                   <h5 className="card-title">{title}</h5>
                   <p className="card-text">Author: {author}</p>
+                  <p className="card-description">Description: {description}</p> {/* Display description */}
                 </div>
               </div>
             )}
@@ -235,7 +222,7 @@ const FacultyPage = () => {
           Upload
         </button>
       </Modal>
-            <ResourcePage uploadedDocuments={uploadedDocuments} />
+      <ResourcePage uploadedDocuments={uploadedDocuments} />
 
       <div>
         <ul className="card-container">
@@ -244,7 +231,7 @@ const FacultyPage = () => {
               <Link to={`/resource/${index}`}>
                 <h3>{item.title}</h3>
                 <p>Author: {item.author}</p>
-                {/* Add more card content */}
+                <p>Description: {item.description}</p> {/* Display description */}
               </Link>
               {item.photo && (
                 <div>
@@ -253,11 +240,6 @@ const FacultyPage = () => {
                     src={item.photo}
                     alt="Document or Link"
                   />
-                </div>
-              )}
-              {item.description && (
-                <div className="card-description">
-                  <strong>Description:</strong> {item.description}
                 </div>
               )}
               {item.file ? (
@@ -272,7 +254,6 @@ const FacultyPage = () => {
                   </a>
                 </div>
               ) : null}
-         
               <div className="share-buttons">
                 <FacebookShareButton url={item.link || ''}>
                   <FacebookIcon size={32} round />
@@ -288,21 +269,14 @@ const FacultyPage = () => {
                 </EmailShareButton>
                 <CustomCopyLinkButton url={item.link || ''} imageSrc="%PUBLIC_URL%/link.ico"/>
               </div>
-              
-              <i className={`fa fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)} ></i>
-
+              <i className={`fas fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)}></i>
             </li>
           ))}
         </ul>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
 
 export default FacultyPage;
-
-
-
-
-

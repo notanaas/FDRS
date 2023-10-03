@@ -9,10 +9,9 @@ export const faculties = [
   },
   {
     id: 2,
-    name: 'Faculty Of Business',
+    name: 'Faculty Of Engineering',
     Facultys: [
-      { id: 3, name: 'Faculty 3' },
-      { id: 4, name: 'Faculty 4' },
+      
     ],
   },
   

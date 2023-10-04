@@ -6,6 +6,9 @@ import Header from './Header';
 import Footer from './Footer';
 import ResourcePage from './ResourcePage'; // Import ResourcePage
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid
+import axios from 'axios'; // Import Axios for API calls
+
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -34,6 +37,10 @@ const FacultyPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isStarActive, setIsStarActive] = useState(false);
+  const [documentFileUrl, setDocumentFileUrl] = useState(''); // Define documentFileUrl state
+
+  // Define an API endpoint to fetch uploaded documents
+  const apiEndpoint = '/api/documents'; // Replace with your actual API endpoint
 
   const CustomCopyLinkButton = ({ url }) => {
     const [isCopied, setIsCopied] = useState(false);
@@ -41,7 +48,6 @@ const FacultyPage = () => {
     const handleCopyLink = () => {
       navigator.clipboard.writeText(url);
       setIsCopied(true);
-      // You can add additional logic or UI updates here after copying the link
     };
     return (
       <button
@@ -99,7 +105,12 @@ const FacultyPage = () => {
   };
 
   const handleDocumentFileChange = (file) => {
-    setDocumentFile(file);
+    const uniqueId = uuidv4(); 
+
+    const documentFileName = `${uniqueId}_${file.name}`;
+    const uploadUrl = `/your_upload_endpoint/${documentFileName}`;
+
+    setDocumentFileUrl(uploadUrl);
   };
 
   const handleDocumentPhotoChange = (file) => {
@@ -108,27 +119,51 @@ const FacultyPage = () => {
     setDocumentPhotoUrl(photoUrl);
   };
 
-  const handleUpload = () => {
-    if (uploadChoice === 'document' && title && author && description && documentPhoto) { // Check description
-      const uploadedDocument = {
-        title,
-        author,
-        description, // Include description in the uploaded document
-        photo: documentPhotoUrl
-      };
-      setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
-      setTitle('');
-      setAuthor('');
-      setDescription('');
-      setDocumentFile(null);
-      setDocumentPhoto(null);
-      setDocumentPhotoUrl('');
-      setSuccessMessage('Document uploaded successfully.');
-      setIsModalOpen(false);
+  const handleUpload = async () => {
+    if (uploadChoice === 'document' && title && author && description && documentPhoto) {
+      try {
+        const response = await axios.post('/api/upload', {
+          title,
+          author,
+          description,
+          photo: documentPhotoUrl,
+          file: documentFileUrl
+        });
+  
+        const uploadedDocument = response.data;
+        setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
+        setTitle('');
+        setAuthor('');
+        setDescription('');
+        setDocumentFile(null);
+        setDocumentPhoto(null);
+        setDocumentPhotoUrl('');
+        setDocumentFileUrl('');
+        setSuccessMessage('Document uploaded successfully.');
+        setIsModalOpen(false);
+      } catch (error) {
+        setError('An error occurred while uploading the document. Please try again later.');
+        console.error('Error uploading document:', error);
+      }
     } else {
       setError('Please fill in all required fields.');
     }
   };
+  
+
+  // Fetch uploaded documents from your API endpoint
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const response = await axios.get(apiEndpoint);
+        setUploadedDocuments(response.data);
+      } catch (error) {
+        console.error('Error fetching uploaded documents:', error);
+      }
+    };
+
+    fetchDocuments();
+  }, []);
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
@@ -138,101 +173,85 @@ const FacultyPage = () => {
         Upload
       </button>
       {isModalOpen && (
-        <div className={`modalContainer-${mode}`}>
-          <modalContainer>
-            <modalContent>
-              <h2>Upload Document</h2>
-              <button onClick={closeModal}>Close</button>
-            </modalContent>
-          </modalContainer>
-        </div>
-      )}
-      <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
-        {error && (
-          <div
-            style={{
-              backgroundColor: '#ff6b6b',
-              color: 'white',
-              padding: '12px 20px',
-              margin: '10px 0',
-              borderRadius: '6px',
-              boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-              textAlign: 'center',
-            }}
-          >
-            {error}
-          </div>
-        )}
+        <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
+          {error && (
+            <div
+              style={{
+                backgroundColor: '#ff6b6b',
+                color: 'white',
+                padding: '12px 20px',
+                margin: '10px 0',
+                borderRadius: '6px',
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+                textAlign: 'center',
+              }}
+            >
+              {error}
+            </div>
+          )}
 
-        {uploadChoice === 'document' ? (
-          <div>
-            <label>Title:</label>
-            <input type="text" value={title} onChange={handleTitleChange} />
-            <br />
-            <label>Author:</label>
-            <input type="text" value={author} onChange={handleAuthorChange} />
-            <label>Description:</label>
-            <input type="text" value={description} onChange={handleDescriptionChange} /> {/* Add description input */}
-            <br />
-            <label>Choose Document:</label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx,.txt"
-              onChange={(e) => handleDocumentFileChange(e.target.files[0])}
-            />
-            <br />
-            <label>Choose Photo for Document:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleDocumentPhotoChange(e.target.files[0])}
-            />
-            <br />
-            {documentPhotoUrl && (
-              <div className="card">
-                <img
-                  className="uploaded-photo"
-                  src={documentPhotoUrl}
-                  alt="Document"
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{title}</h5>
-                  <p className="card-text">Author: {author}</p>
-                  <p className="card-description">Description: {description}</p> {/* Display description */}
+          {uploadChoice === 'document' ? (
+            <div>
+              <label>Title:</label>
+              <input type="text" value={title} onChange={handleTitleChange} /><br></br>
+              <label>Author:</label>
+              <input type="text" value={author} onChange={handleAuthorChange} /><br></br>
+              <label>Description:</label>
+              <textarea
+                value={description}
+                onChange={handleDescriptionChange}
+                placeholder="Description"
+                rows="5"
+                style={{ width: '100%', resize: 'none' }}
+              ></textarea>
+              <label>Choose Document:</label>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,.txt"
+                onChange={(e) => handleDocumentFileChange(e.target.files[0])}
+              />
+              <label>Choose Photo for Document:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleDocumentPhotoChange(e.target.files[0])}
+              />
+              {documentPhotoUrl && (
+                <div className="card">
+                  <img className="uploaded-photo" src={documentPhotoUrl} alt="Document" />
+                  <div className="card-body">
+                    <h5 className="card-title">{title}</h5>
+                    <p className="card-text">Author: {author}</p>
+                    <p className="card-description">Description: {description}</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          ) : (
+            <div></div>
+          )}
+          <div className="modal-footer">
+            <button onClick={closeModal} className="modal-close-button">
+              Close
+            </button>
+            <button onClick={handleUpload} className="upload-button">
+              Upload
+            </button>
           </div>
-        ) : (
-          <div></div>
-        )}
-        <button
-          onClick={handleUpload}
-          style={{
-            backgroundColor: '#8b0000',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            padding: '0.6rem 1.2rem',
-            fontSize: '1rem',
-            cursor: 'pointer',
-            marginTop: '10px',
-          }}
-        >
-          Upload
-        </button>
-      </Modal>
+        </Modal>
+      )}
       <ResourcePage uploadedDocuments={uploadedDocuments} />
 
       <div>
-        <ul className="card-container">
+        <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
           {uploadedDocuments.map((item, index) => (
             <li key={index} className="card">
-              <Link to={`/resource/${index}`}>
-                <h3>{item.title}</h3>
-                <p>Author: {item.author}</p>
-                <p>Description: {item.description}</p> {/* Display description */}
+              <Link to={`/resource/${item.id}`}>
+                <h3 className="card-title">{item.title}</h3>
+                <p className="card-text">Author: {item.author}</p>
+                <p className="card-description">Description: {item.description}</p>
               </Link>
+
               {item.photo && (
                 <div>
                   <img
@@ -242,18 +261,21 @@ const FacultyPage = () => {
                   />
                 </div>
               )}
-              {item.file ? (
-                <div>
+
+              <div className="download-button-container">
+                {item.file && (
                   <a
                     href={item.file}
                     target="_blank"
                     rel="noopener noreferrer"
                     download={item.title || 'document'}
+                    className="download-button"
                   >
                     Download Document
                   </a>
-                </div>
-              ) : null}
+                )}
+              </div>
+
               <div className="share-buttons">
                 <FacebookShareButton url={item.link || ''}>
                   <FacebookIcon size={32} round />
@@ -267,8 +289,9 @@ const FacultyPage = () => {
                 <EmailShareButton url={item.link || ''}>
                   <EmailIcon size={32} round />
                 </EmailShareButton>
-                <CustomCopyLinkButton url={item.link || ''} imageSrc="%PUBLIC_URL%/link.ico"/>
+                <CustomCopyLinkButton url={item.link || ''} />
               </div>
+
               <i className={`fas fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)}></i>
             </li>
           ))}

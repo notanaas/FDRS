@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import { useParams } from 'react-router-dom';
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 
-const ResourcePage = ({ uploadedDocuments }) => {
+const ResourcePage = () => {
   const [resource, setResource] = useState(null);
   const { resourceId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +12,7 @@ const ResourcePage = ({ uploadedDocuments }) => {
   useEffect(() => {
     const fetchResource = async () => {
       try {
-        const response = await axios.get(`/api/resources/${resourceId}`); // Replace with your actual endpoint
+        const response = await axios.get(`/api/resources/${resourceId}`);
         setResource(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -41,7 +41,6 @@ const ResourcePage = ({ uploadedDocuments }) => {
         <h2>{resource.title}</h2>
         <p>Author: {resource.author}</p>
         <div className="resource-description">
-          {/* Display the description here */}
           {resource.description && (
             <div>
               <strong>Description:</strong> {resource.description}
@@ -49,11 +48,9 @@ const ResourcePage = ({ uploadedDocuments }) => {
           )}
         </div>
         <div className="resource-image">
-          {/* Display the document photo here */}
           {resource.photo && <img src={resource.photo} alt="Document" />}
         </div>
         <div className="resource-download">
-          {/* Display the download link if a file is available */}
           {resource.file ? (
             <a
               href={resource.file}

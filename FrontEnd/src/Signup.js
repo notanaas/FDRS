@@ -1,68 +1,80 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Make sure Axios is imported
+import axios from 'axios';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   });
-
-  const { isDarkMode } = useTheme();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
 
-    // Send signup data to the backend
-    axios
-      .post('/api/signup', formData) // Use your backend signup endpoint
+    // Send a POST request to the signup endpoint on the backend
+    axios.post('/api/signup', formData)
       .then((response) => {
-        // Handle the response, e.g., display a success message
-        console.log('Signup successful:', response.data.message);
+        // Handle successful registration (e.g., show a success message, redirect)
+        console.log('Registration successful:', response.data.message);
         // You can also navigate the user to a different page or show a success message here
       })
       .catch((error) => {
-        // Handle signup errors, e.g., display validation errors or duplicate user errors
-        console.error('Signup failed:', error.response.data.errors);
+        // Handle registration errors (e.g., validation errors, duplicate user errors)
+        console.error('Registration failed:', error.response.data.errors);
         // You can also display error messages to the user on the form
       });
   };
 
   return (
-    <div className={`popup ${isDarkMode ? 'dark-mode' : ''}`}>
-      <div className="popup-content">
-        <h2>Sign Up</h2>
-        <form onSubmit={handleSubmit}>
+    <div>
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSignup}>
+        <div>
+          <label>Username:</label>
           <input
             type="text"
-            name="name"
-            placeholder="Name"
-            value={formData.name}
+            name="username"
+            value={formData.username}
             onChange={handleChange}
           />
+        </div>
+        <div>
+          <label>Email:</label>
           <input
             type="email"
             name="email"
-            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
           />
+        </div>
+        <div>
+          <label>Password:</label>
           <input
             type="password"
             name="password"
-            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
           />
+        </div>
+        <div>
+          <label>Confirm Password:</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
           <button type="submit">Sign Up</button>
-        </form>
-        <button className="close-button">Close</button>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };

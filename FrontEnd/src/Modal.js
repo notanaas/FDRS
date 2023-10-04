@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './App.css'; // Import the modern modal styles
 
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
@@ -18,15 +18,18 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   };
 
   return (
-    <div className="modalContainer" style={{ display: isOpen ? 'block' : 'none' }} onClick={onClose}>
-      <div className="modalContent" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-        <div className="modalHeader">
-          <h2>Upload Document or Link</h2>
-          <button className="modalCloseButton" onClick={onClose}>
-            Close
-          </button>
+    <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
+      <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}>
+          <h2 style={{ color: 'white' }}>Upload File</h2>
         </div>
-        <div className="modalBody">{children}</div>
+        <div className="modal-body">
+          {children}
+          
+        </div>
+        <div className="modal-footer">
+          
+        </div>
       </div>
     </div>
   );

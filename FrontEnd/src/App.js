@@ -3,6 +3,7 @@ import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage'; // Import FacultyPage
 import ResourcePage from './ResourcePage'; // Import ResourcePage
 import { FacultyProvider } from './FacultyContext';
+import React from 'react';
 
 function App() {
 

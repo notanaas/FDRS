@@ -18,7 +18,7 @@ const Signup = () => {
     e.preventDefault();
 
     // Send a POST request to the signup endpoint on the backend
-    axios.post('/api/signup', formData)
+    axios.post('http://localhost/api/register', formData)
       .then((response) => {
         // Handle successful registration (e.g., show a success message, redirect)
         console.log('Registration successful:', response.data.message);

@@ -15,16 +15,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 // Define the database URL to connect to.
-const mongoDB =  process.env.MONGODB_URI
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-  });
-
-// Wait for database to connect, logging an error if there is a problem
+const mongoDB =  process.env.MongoDB_URL
 main().catch((err) => console.log(err));
 async function main() {
   console.log("Debug: About to connect");

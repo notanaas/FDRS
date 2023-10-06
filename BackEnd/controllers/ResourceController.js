@@ -4,6 +4,7 @@ const Author = require("../models/Author")
 const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const multer = require("../multerconfig")
+const path  = require("path")
 
 // Get all resources
 exports.resource_list = asyncHandler(async (req, res, next) => {
@@ -11,7 +12,7 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
     const facultyName = req.params.facultyName;
   
     // Find the faculty based on the name (you may need to adjust this based on your data model)
-    const faculty = await Faculty.findOne({ FacultyName: facultyName });
+    const faculty = await Faculty.findOne({ FacultyName: facultyName , isAuthorized : true });
   
     if (!faculty) {
       return res.status(404).json({ error: 'Faculty not found' });
@@ -122,5 +123,39 @@ exports.Resource_create_post = [
     }
   }),
 ];
+
+
+
+exports.pdf_download(asyncHandler(async(req,res,next)=>
+{
+  const UPLOADS_DIR = path.join(__dirname, '../uploads');
+  const ResourceId = req.params.id
+
+    const resource  = await Resource.findById(ResourceId)
+    if(!resource)
+    {
+      return res.status(404).json({ message: 'PDF not found.' });
+    }
+    const filePath = path.join(UPLOADS_DIR, path.basename(resource.file_path));
+    res.download(filePath)
+}))
   
-  
+exports.search_resource(asyncHandler(async(req,res,next)=>
+{
+
+    const searchTerm = req.query.term;
+
+    // Implement your search query based on the searchTerm
+    // Search by both author and title using the $or operator
+    const searchResults = await Resource.find({
+      $or: [
+        { ResourceAuthor: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for author
+        { ResourceTitle: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for title
+      ],
+    });
+    if(!searchResults)
+    {
+      return res.status(404).json({ message: 'No matching resources found' });
+    }
+    res.json(searchResults);
+}))

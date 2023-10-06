@@ -16,7 +16,8 @@ const resourceSchema = new Schema({
     Related_link : {type:String},
     created_at : {type:Date ,default:Date.now }
 })
-
-
+// Add indexes for efficient searching
+resourceSchema.index({ ResourceAuthor: 1 });
+resourceSchema.index({ ResourceTitle: 'text' }); // Text index for searching titles
 
 module.exports = mongoose.model("Resource" , resourceSchema)

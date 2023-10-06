@@ -5,6 +5,8 @@ const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const multer = require("../multerconfig")
 const path  = require("path")
+const { upload } = require('../multerconfig');
+
 
 // Get all resources
 exports.resource_list = asyncHandler(async (req, res, next) => {
@@ -126,7 +128,7 @@ exports.Resource_create_post = [
 
 
 
-exports.pdf_download(asyncHandler(async(req,res,next)=>
+exports.pdf_download = asyncHandler(async(req,res,next)=>
 {
   const UPLOADS_DIR = path.join(__dirname, '../uploads');
   const ResourceId = req.params.id
@@ -138,24 +140,32 @@ exports.pdf_download(asyncHandler(async(req,res,next)=>
     }
     const filePath = path.join(UPLOADS_DIR, path.basename(resource.file_path));
     res.download(filePath)
-}))
+})
   
-exports.search_resource(asyncHandler(async(req,res,next)=>
-{
+exports.search_resource = asyncHandler(async (req, res, next) => {
+  const searchTerm = req.query.term;
 
-    const searchTerm = req.query.term;
-
-    // Implement your search query based on the searchTerm
-    // Search by both author and title using the $or operator
-    const searchResults = await Resource.find({
+  // Implement your search query based on the searchTerm
+  // Search by both author's name and title using a case-insensitive text search
+  const searchResults = await Resource.find({
+    $or: [
+      { ResourceTitle: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for title
+    ],
+  }).populate({
+    path: 'ResourceAuthor',
+    match: {
       $or: [
-        { ResourceAuthor: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for author
-        { ResourceTitle: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for title
+        { name: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for author's full name
       ],
-    });
-    if(!searchResults)
-    {
-      return res.status(404).json({ message: 'No matching resources found' });
-    }
-    res.json(searchResults);
-}))
+    },
+  });
+
+  // Filter out resources with null ResourceAuthor (unpopulated authors)
+  const filteredResults = searchResults.filter((resource) => resource.ResourceAuthor);
+
+  if (filteredResults.length === 0) {
+    return res.status(404).json({ message: 'No matching resources found' });
+  }
+
+  res.json(filteredResults);
+});

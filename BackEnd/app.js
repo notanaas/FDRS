@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const express = require('express');
 const authRouter = require('./routes/authRouter');
 const usersRouter = require('./routes/users');
+const resourceRouter = require('./routes/resourceRouter')
 const passport = require('passport');
 const cors = require("cors")
 require("./passport-config")(passport)
@@ -56,6 +57,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', authRouter);
+app.use('/api' ,resourceRouter )
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

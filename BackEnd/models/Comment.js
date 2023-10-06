@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const{DateTime} = require("luxon")
-const Schema = mongoose.schema
+const Schema = mongoose.Schema
 
 const commentSchema = new Schema({
     User : {type: Schema.Types.ObjectId  , ref:"User" , required : true},

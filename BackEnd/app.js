@@ -30,7 +30,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const allowedOrigins = ['http://localhost:3007', 'http://127.0.0.1:3007'];
 // Create a custom CORS middleware that checks the origin header
 const corsOptions = {
   origin: function (origin, callback) {

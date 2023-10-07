@@ -2,43 +2,29 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Modal from './Modal';
-import { useTheme } from './ThemeContext'; // Import the useTheme hook
+import { useTheme } from './ThemeContext';
+import axios from 'axios'; 
 
 const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignupOpen, setIsSignupOpen] = useState(false); // State to manage signup popup
   const { facultyName } = useFaculty();
+  const { isDarkMode } = useTheme();
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [signupData, setSignupData] = useState({
     username: '',
     email: '',
     password: '',
   });
+
   const openSignupModal = () => {
     setIsSignupOpen(true);
   };
 
-  // Function to close the signup modal
   const closeSignupModal = () => {
     setIsSignupOpen(false);
   };
-  const handleSignupInputChange = (e) => {
-    const { name, value } = e.target;
-    setSignupData({
-      ...signupData,
-      [name]: value,
-    });
-  };
 
-  // Function to handle signup form submission
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
-
-    // Perform your signup logic here with the data in signupData
-
-    // Close the signup modal
-    closeSignupModal();
-  };
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
@@ -49,27 +35,33 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // You can handle form submission here, e.g., send data to the server
     console.log('Email:', email);
     console.log('Password:', password);
-    console.log('Search:', selectedFacultyName); // You can replace this with your search value
-
-    // Reset the form fields
+    console.log('Search:', selectedFacultyName);
     setEmail('');
     setPassword('');
   };
 
-  const openSignup = () => {
-    setIsSignupOpen(true);
+  const handleSignupInputChange = (e) => {
+    const { name, value } = e.target;
+    setSignupData({
+      ...signupData,
+      [name]: value,
+    });
   };
 
-  const closeSignup = () => {
-    setIsSignupOpen(false);
+  const handleSignupSubmit = (e) => {
+    e.preventDefault();
+    axios.post('http://127.0.0.1:3007/api/register', signupData) // Use signupData instead of formData
+      .then((response) => {
+        console.log('Registration successful:', response.data.message);
+      })
+      .catch((error) => {
+        console.error('Registration failed:', error.response.data.errors);
+        closeSignupModal();
+      });
   };
 
-  // Use the useTheme hook to get the isDarkMode value
-  const { isDarkMode } = useTheme();
 
   return (
     <header className="headerContainer">
@@ -114,7 +106,6 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
           </button>
         </form>
         <div className="authButtons">
-          {/* Signup button */}
           <button className="authButton" onClick={openSignupModal}>
             Sign Up
           </button>
@@ -123,7 +114,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
 
       {/* Signup Modal */}
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
-        <h2>ign Up</h2>
+        <h2>Sign Up</h2>
         <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username:</label>

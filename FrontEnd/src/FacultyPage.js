@@ -4,10 +4,10 @@ import { useParams, Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
-import ResourcePage from './ResourcePage'; // Import ResourcePage
+import ResourcePage from './ResourcePage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { v4 as uuidv4 } from 'uuid'; // Import uuid
-import axios from 'axios'; // Import Axios for API calls
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 import {
   FacebookShareButton,
@@ -24,7 +24,7 @@ const FacultyPage = () => {
   const [mode] = useState('light');
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
-  const [description, setDescription] = useState(''); // New description state
+  const [description, setDescription] = useState('');
   const [uploadChoice] = useState('document');
   const [documentFile, setDocumentFile] = useState(null);
   const [documentPhoto, setDocumentPhoto] = useState(null);
@@ -37,10 +37,24 @@ const FacultyPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isStarActive, setIsStarActive] = useState(false);
-  const [documentFileUrl, setDocumentFileUrl] = useState(''); // Define documentFileUrl state
+  const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  // Define an API endpoint to fetch uploaded documents
-  const apiEndpoint = '/api/documents'; // Replace with your actual API endpoint
+  const frontendURL = 'http://localhost:3103'; // Replace with your frontend URL
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/api/someendpoint', {
+        headers: {
+          'Origin': frontendURL,
+        },
+      })
+      .then((response) => {
+        console.log('Response from backend:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }, []);
 
   const CustomCopyLinkButton = ({ url }) => {
     const [isCopied, setIsCopied] = useState(false);
@@ -49,6 +63,7 @@ const FacultyPage = () => {
       navigator.clipboard.writeText(url);
       setIsCopied(true);
     };
+
     return (
       <button
         className={`custom-copy-button ${isCopied ? 'copied' : ''}`}
@@ -100,13 +115,12 @@ const FacultyPage = () => {
     setAuthor(e.target.value);
   };
 
-  const handleDescriptionChange = (e) => { // New handler for description input
+  const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
 
   const handleDocumentFileChange = (file) => {
-    const uniqueId = uuidv4(); 
-
+    const uniqueId = uuidv4();
     const documentFileName = `${uniqueId}_${file.name}`;
     const uploadUrl = `/your_upload_endpoint/${documentFileName}`;
 
@@ -119,28 +133,34 @@ const FacultyPage = () => {
     setDocumentPhotoUrl(photoUrl);
   };
 
+  const apiEndpoint = 'http://localhost:3102/api/upload';
+
   const handleUpload = async () => {
     if (uploadChoice === 'document' && title && author && description && documentPhoto) {
       try {
-        const response = await axios.post('/api/upload', {
-          title,
-          author,
-          description,
-          photo: documentPhotoUrl,
-          file: documentFileUrl
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('author', author);
+        formData.append('description', description);
+        formData.append('photo', documentPhoto);
+        formData.append('file', documentFile);
+
+        const response = await axios.post(apiEndpoint, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
-  
-        const uploadedDocument = response.data;
-        setUploadedDocuments([...uploadedDocuments, uploadedDocument]);
-        setTitle('');
-        setAuthor('');
-        setDescription('');
-        setDocumentFile(null);
-        setDocumentPhoto(null);
-        setDocumentPhotoUrl('');
-        setDocumentFileUrl('');
-        setSuccessMessage('Document uploaded successfully.');
-        setIsModalOpen(false);
+
+        if (response.data.success) {
+          setSuccessMessage('Document uploaded successfully');
+          setTitle('');
+          setAuthor('');
+          setDescription('');
+          setDocumentPhoto(null);
+          setDocumentFile(null);
+        } else {
+          setError('Upload failed. Please try again later.');
+        }
       } catch (error) {
         setError('An error occurred while uploading the document. Please try again later.');
         console.error('Error uploading document:', error);
@@ -149,9 +169,7 @@ const FacultyPage = () => {
       setError('Please fill in all required fields.');
     }
   };
-  
 
-  // Fetch uploaded documents from your API endpoint
   useEffect(() => {
     const fetchDocuments = async () => {
       try {

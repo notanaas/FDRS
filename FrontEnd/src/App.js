@@ -7,7 +7,6 @@ import React from 'react';
 
 function App() {
 
-  // Sample resource data
   const resources = [
     {
       id: 1,

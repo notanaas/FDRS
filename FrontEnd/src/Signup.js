@@ -18,7 +18,7 @@ const Signup = () => {
     e.preventDefault();
 
     // Send a POST request to the signup endpoint on the backend
-    axios.post('http://localhost/api/register', formData)
+    axios.post('http://127.0.0.1:3007/api/register', formData)
       .then((response) => {
         // Handle successful registration (e.g., show a success message, redirect)
         console.log('Registration successful:', response.data.message);
@@ -33,7 +33,7 @@ const Signup = () => {
 
   return (
     <div>
-      <h2>Sign Up</h2>
+      <h2>sign Up</h2>
       <form onSubmit={handleSignup}>
         <div>
           <label>Username:</label>

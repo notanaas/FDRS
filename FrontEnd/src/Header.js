@@ -123,7 +123,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
 
       {/* Signup Modal */}
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
-        <h2>Sign Up</h2>
+        <h2>ign Up</h2>
         <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username:</label>

@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 //upload a resource
-router.post('/resources/create' ,passport.authenticate('jwt', { session: false }),Resource.Resource_create_post
+router.post('/resource/create' ,passport.authenticate('jwt', { session: false }),Resource.Resource_create_post
 )//Get all resource for resource page
 router.get('/resources/:facultyName', Resource.resource_list);
 //download a resource

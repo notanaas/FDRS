@@ -40,7 +40,7 @@ const FacultyPage = () => {
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
   const apiEndpoint = 'http://localhost:3007'; // Replace with your backend API URL
-  const frontendURL = 'http://localhost:3007'; // Replace with your frontend URL
+  const frontendURL = 'http://localhost:3000'; // Replace with your frontend URL
 
   useEffect(() => {
     axios
@@ -145,7 +145,7 @@ const FacultyPage = () => {
         formData.append('photo', documentPhoto);
         formData.append('file', documentFile);
 
-        const response = await axios.post(apiEndpoint, formData, {
+        const response = await axios.post(`${apiEndpoint}/api/resource/create`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

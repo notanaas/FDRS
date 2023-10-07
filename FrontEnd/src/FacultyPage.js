@@ -30,7 +30,7 @@ const FacultyPage = () => {
   const [documentPhoto, setDocumentPhoto] = useState(null);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [uploadedDocuments, setUploadedDocuments] = useState([]); // Store the uploaded documents
   const [documentPhotoUrl, setDocumentPhotoUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
@@ -39,12 +39,12 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  const apiEndpoint = 'http://localhost:3007';
+  const apiEndpoint = 'http://localhost:3007'; // Replace with your backend API URL
   const frontendURL = 'http://localhost:3007'; // Replace with your frontend URL
 
   useEffect(() => {
     axios
-      .get('http://localhost:3007/api/someendpoint', {
+      .get(`${apiEndpoint}/api/someendpoint`, {
         headers: {
           'Origin': frontendURL,
         },
@@ -134,8 +134,8 @@ const FacultyPage = () => {
     setDocumentPhotoUrl(photoUrl);
   };
 
-
   const handleUpload = async () => {
+    console.log('Attempting to upload...');
     if (uploadChoice === 'document' && title && author && description && documentPhoto) {
       try {
         const formData = new FormData();
@@ -158,6 +158,8 @@ const FacultyPage = () => {
           setDescription('');
           setDocumentPhoto(null);
           setDocumentFile(null);
+          // Show an alert here
+          alert('Resource has been uploaded successfully!');
         } else {
           setError('Upload failed. Please try again later.');
         }
@@ -173,8 +175,8 @@ const FacultyPage = () => {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await axios.get(apiEndpoint);
-        setUploadedDocuments(response.data);
+        const response = await axios.get(`${apiEndpoint}/api/resources`);
+        setUploadedDocuments(response.data); // Update state with the fetched data
       } catch (error) {
         console.error('Error fetching uploaded documents:', error);
       }
@@ -258,63 +260,60 @@ const FacultyPage = () => {
           </div>
         </Modal>
       )}
-      <ResourcePage uploadedDocuments={uploadedDocuments} />
-
-      <div>
-        <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
-          {uploadedDocuments.map((item, index) => (
-            <li key={index} className="card">
-              <Link to={`/resource/${item.id}`}>
-                <h3 className="card-title">{item.title}</h3>
-                <p className="card-text">Author: {item.author}</p>
-                <p className="card-description">Description: {item.description}</p>
-              </Link>
-
-              {item.photo && (
-                <div>
-                  <img
-                    className="uploaded-photo"
-                    src={item.photo}
-                    alt="Document or Link"
-                  />
-                </div>
-              )}
-
-              <div className="download-button-container">
-                {item.file && (
-                  <a
-                    href={item.file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download={item.title || 'document'}
-                    className="download-button"
-                  >
-                    Download Document
-                  </a>
+      {/* Render the uploaded documents */}
+      {uploadedDocuments.length > 0 && (
+        <div>
+          <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
+            {uploadedDocuments.map((item, index) => (
+              <li key={index} className="card">
+                <Link to={`/resource/${item.id}`}>
+                  <h3 className="card-title">{item.title}</h3>
+                  <p className="card-text">Author: {item.author}</p>
+                  <p className="card-description">Description: {item.description}</p>
+                </Link>
+                {item.photo && (
+                  <div>
+                    <img
+                      className="uploaded-photo"
+                      src={item.photo}
+                      alt="Document or Link"
+                    />
+                  </div>
                 )}
-              </div>
-
-              <div className="share-buttons">
-                <FacebookShareButton url={item.link || ''}>
-                  <FacebookIcon size={32} round />
-                </FacebookShareButton>
-                <TwitterShareButton url={item.link || ''}>
-                  <TwitterIcon size={32} round />
-                </TwitterShareButton>
-                <LinkedinShareButton url={item.link || ''}>
-                  <LinkedinIcon size={32} round />
-                </LinkedinShareButton>
-                <EmailShareButton url={item.link || ''}>
-                  <EmailIcon size={32} round />
-                </EmailShareButton>
-                <CustomCopyLinkButton url={item.link || ''} />
-              </div>
-
-              <i className={`fas fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)}></i>
-            </li>
-          ))}
-        </ul>
-      </div>
+                <div className="download-button-container">
+                  {item.file && (
+                    <a
+                      href={item.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={item.title || 'document'}
+                      className="download-button"
+                    >
+                      Download Document
+                    </a>
+                  )}
+                </div>
+                <div className="share-buttons">
+                  <FacebookShareButton url={item.link || ''}>
+                    <FacebookIcon size={32} round />
+                  </FacebookShareButton>
+                  <TwitterShareButton url={item.link || ''}>
+                    <TwitterIcon size={32} round />
+                  </TwitterShareButton>
+                  <LinkedinShareButton url={item.link || ''}>
+                    <LinkedinIcon size={32} round />
+                  </LinkedinShareButton>
+                  <EmailShareButton url={item.link || ''}>
+                    <EmailIcon size={32} round />
+                  </EmailShareButton>
+                  <CustomCopyLinkButton url={item.link || ''} />
+                </div>
+                <i className={`fas fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)}></i>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <Footer />
     </div>
   );

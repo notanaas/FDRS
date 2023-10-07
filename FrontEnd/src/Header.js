@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Modal from './Modal';
 import { useTheme } from './ThemeContext';
-import axios from 'axios'; 
+import axios from 'axios';
 
 const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   const [email, setEmail] = useState('');
@@ -50,18 +50,22 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     });
   };
 
+  const backendURL = 'http://localhost:3007';
+
   const handleSignupSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://127.0.0.1:3007/api/register', signupData) // Use signupData instead of formData
+    axios
+      .post(`${backendURL}/api/register`, signupData) // Use the backend URL here
       .then((response) => {
         console.log('Registration successful:', response.data.message);
+        // Close the signup modal or perform any other actions needed
+        closeSignupModal();
       })
       .catch((error) => {
         console.error('Registration failed:', error.response.data.errors);
-        closeSignupModal();
+        // Handle registration errors here
       });
   };
-
 
   return (
     <header className="headerContainer">

@@ -1,13 +1,12 @@
-require('dotenv').config()
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const authRouter = require('./routes/authRouter');
 const usersRouter = require('./routes/users');
-const resourceRouter = require('./routes/resourceRouter')
+const resourceRouter = require('./routes/resourceRouter');
 const passport = require('passport');
-const cors = require("cors")
-require("./passport-config")(passport)
-// Import the mongoose module
+const cors = require("cors");
+require("./passport-config")(passport);
 const mongoose = require("mongoose");
 
 // Set `strictQuery: false` to globally opt into filtering by properties that aren't in the schema
@@ -60,7 +59,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', authRouter);
-app.use('/api', resourceRouter); // Note: You had a typo here, it should be '/api' instead of '/api'
+app.use('/api', resourceRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

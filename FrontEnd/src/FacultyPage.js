@@ -44,7 +44,7 @@ const FacultyPage = () => {
 
   useEffect(() => {
     axios
-      .get(`${apiEndpoint}/api/someendpoint`, {
+      .get(`${apiEndpoint}/api/resource`, {
         headers: {
           'Origin': frontendURL,
         },

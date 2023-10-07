@@ -16,13 +16,16 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 // Define the database URL to connect to.
-const mongoDB =  process.env.MongoDB_URL
+const mongoDB = process.env.MongoDB_URL;
+
+// Connect to MongoDB
 main().catch((err) => console.log(err));
 async function main() {
   console.log("Debug: About to connect");
-  await mongoose.connect(mongoDB);
+  await mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
   console.log("Debug: Should be connected?");
 }
+
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -57,7 +60,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', authRouter);
-app.use('/api' ,resourceRouter )
+app.use('/api', resourceRouter); // Note: You had a typo here, it should be '/api' instead of '/api'
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -77,6 +80,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-
-
-//node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"

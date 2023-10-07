@@ -39,11 +39,12 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  const frontendURL = 'http://localhost:3103'; // Replace with your frontend URL
+  const apiEndpoint = 'http://localhost:3007';
+  const frontendURL = 'http://localhost:3007'; // Replace with your frontend URL
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/api/someendpoint', {
+      .get('http://localhost:3007/api/someendpoint', {
         headers: {
           'Origin': frontendURL,
         },
@@ -133,7 +134,6 @@ const FacultyPage = () => {
     setDocumentPhotoUrl(photoUrl);
   };
 
-  const apiEndpoint = 'http://localhost:3102/api/upload';
 
   const handleUpload = async () => {
     if (uploadChoice === 'document' && title && author && description && documentPhoto) {

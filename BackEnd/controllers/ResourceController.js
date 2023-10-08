@@ -11,17 +11,17 @@ const { upload } = require('../multerconfig');
 // Get all resources
 exports.resource_list = asyncHandler(async (req, res, next) => {
     // Extract the faculty name from the URL parameter
-    const facultyName = req.params.facultyName;
+    const facultyName = req.params.FacultyName;
   
     // Find the faculty based on the name (you may need to adjust this based on your data model)
-    const faculty = await Faculty.findOne({ FacultyName: facultyName , isAuthorized : true });
+    const faculty = await Faculty.findOne({ FacultyName: facultyName});
   
     if (!faculty) {
       return res.status(404).json({ error: 'Faculty not found' });
     }
   
     // Use the faculty's unique ID to query resources
-    const allResources = await Resource.find({ Faculty: faculty._id }, "ResourceTitle ResourceAuthor Description ResourceCover")
+    const allResources = await Resource.find({ Faculty: faculty._id  , isAuthorized : true  }, "ResourceTitle ResourceAuthor Description ResourceCover")
       .sort({ title: 1 })
       .populate("Author")
       .populate("Faculty")
@@ -97,7 +97,6 @@ exports.Resource_create_post = [
 
       // Save the author.
       await author.save();
-
       // Create a Resource object with escaped and trimmed data.
       const resource = new Resource({
         User: req.user._id, // Assuming you have a user object with _id

@@ -172,17 +172,19 @@ const FacultyPage = () => {
     }
   };
 
+  const fetchDocuments = async (facultyName) => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/api/resources/${facultyName}`);
+      setUploadedDocuments(response.data.Resource_list); // Update state with the fetched data
+    } catch (error) {
+      console.error('Error fetching uploaded documents:', error);
+    }
+  };
+  
+  // Call fetchDocuments with the selected facultyName
   useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const response = await axios.get(`${apiEndpoint}/api/resources`);
-        setUploadedDocuments(response.data); // Update state with the fetched data
-      } catch (error) {
-        console.error('Error fetching uploaded documents:', error);
-      }
-    };
-
-    fetchDocuments();
+    const selectedFacultyName = "Information Technology"; // Replace with the selected faculty name
+    fetchDocuments(selectedFacultyName);
   }, []);
 
   return (

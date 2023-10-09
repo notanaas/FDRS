@@ -1,6 +1,7 @@
 const Resource = require("../models/Resource")
 const Faculty = require("../models/Faculty")
 const Author = require("../models/Author")
+const comments = require("../models/Comment")
 const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const multer = require("../multerconfig")
@@ -19,7 +20,7 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
     if (!faculty) {
       return res.status(404).json({ error: 'Faculty not found' });
     }
-  
+
     // Use the faculty's unique ID to query resources
     const allResources = await Resource.find({ Faculty: faculty._id  , isAuthorized : true  }, "ResourceTitle ResourceAuthor Description ResourceCover")
       .sort({ title: 1 })
@@ -30,7 +31,20 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
   
     res.status(200).json({ Resource_list: allResources });
   });
-  
+// Display detail page for a specific Resource.
+exports.Resource_detail = asyncHandler(async (req, res, next) => {
+  // Get details of books, book instances for specific Resource
+  const [resource,comments] = await Promise.all([
+    Resource.findById(req.params.id).populate("Author").populate("Faculty").populate("User").exec(),
+    comments.find({Resource : req.params.id}).populate("User").exec()
+  ])
+  if(resource == null)
+  {
+    // no Results
+    return res.status(404).json({ error: 'Resource not found' });
+  }
+  res.status(200).json({Resource_details : resource , comments : comments})
+});
 
 
   

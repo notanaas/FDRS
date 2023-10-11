@@ -25,7 +25,8 @@ exports.register = [
     body("email" , "Email must be required")
     .trim()
     .isLength({min:1})
-    .escape(async (Email)=>
+    .escape()
+    .custom(async (Email)=>
     {
         try {
             const emailExists = await Users.findOne({Email : Email})
@@ -38,15 +39,6 @@ exports.register = [
         }
     }),
     body("password" , "password must be 8 characters long").trim().isLength({min:8}),
-    body("confirmationPassword")
-    .custom(async (value , {req})=>
-    {
-        if(value !== req.body.password)
-        {
-            throw new Error("Password confirmation does not match password")
-        }
-        return true
-    }),
     asyncHandler (async(req,res,next)=>
 {
     const errors = validationResult(req)

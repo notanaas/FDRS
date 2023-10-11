@@ -90,7 +90,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     });
   };
 
-  const backendURL = 'http://localhost:3008';
+  const backendURL = 'http://localhost:3007';
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
@@ -104,11 +104,12 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
       .post(`${backendURL}/api/register`, signupData)
       .then((response) => {
         setSuccessMessage('Registration successful: ' + response.data.message);
+        alert(response.data.message) // do something cool with an alert anas :)
         closeSignupModal();
       })
       .catch((error) => {
         setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-        console.error('Registration failed:', error.response.data.errors[0].msg);
+        console.error('Registration failed:', error.response.data.errors);
       });
   };
 

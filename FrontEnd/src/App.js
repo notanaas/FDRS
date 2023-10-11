@@ -1,9 +1,10 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
-import FacultyPage from './FacultyPage'; // Import FacultyPage
-import ResourcePage from './ResourcePage'; // Import ResourcePage
+import FacultyPage from './FacultyPage';
+import ResourcePage from './ResourcePage';
 import { FacultyProvider } from './FacultyContext';
-import React from 'react';
+
 
 function App() {
 

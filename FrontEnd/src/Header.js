@@ -2,27 +2,33 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Modal from './Modal';
-import { useTheme } from './ThemeContext';
+import { useTheme } from './ThemeContext'; // Import useTheme from your ThemeContext
 import axios from 'axios';
+import './App.css';
 
 const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { facultyName } = useFaculty();
-  const { isDarkMode } = useTheme();
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [signupData, setSignupData] = useState({
     username: '',
     email: '',
     password: '',
   });
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const openSignupModal = () => {
     setIsSignupOpen(true);
+    setModalTitle('Sign Up');
   };
 
   const closeSignupModal = () => {
     setIsSignupOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
   };
 
   const handleEmailChange = (e) => {
@@ -31,6 +37,10 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+  };
+
+  const handlePasswordConfirmChange = (e) => {
+    setPasswordConfirm(e.target.value);
   };
 
   const handleSubmit = (e) => {
@@ -54,17 +64,26 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
+
+    if (signupData.password !== passwordConfirm) {
+      setErrorMessage('Password and password confirmation do not match');
+      return;
+    }
+
     axios
-      .post(`${backendURL}/api/register`, signupData) // Use the backend URL here
+      .post(`${backendURL}/api/register`, signupData)
       .then((response) => {
-        console.log('Registration successful:', response.data.message);
-        // Close the signup modal or perform any other actions needed
+        setSuccessMessage('Registration successful: ' + response.data.message);
         closeSignupModal();
       })
       .catch((error) => {
-        console.error('Registration failed:', error.response.data.errors[0]);
-        // Handle registration errors here
+        setErrorMessage('Registration failed: ' + error.response.data.errors);
+        console.error('Registration failed:', error.response.data.errors);
       });
+  };
+
+  const modalTitleStyle = {
+    color: 'white',
   };
 
   return (
@@ -73,7 +92,6 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
         <Link to="/">
           <img src="/logo.png" alt="Logo" className="logo" />
         </Link>
-        {facultyName && <h2 style={{ margin: '0', padding: '0' }}>{facultyName}</h2>}
       </div>
 
       <div>
@@ -82,7 +100,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
             <input
               type="text"
               className="searchBar"
-              placeholder={`Search in ${selectedFacultyName}`}
+              placeholder={`Search in `}
               onChange={onSearchChange}
             />
             <button className="searchButton">Search</button>
@@ -117,8 +135,13 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
       </div>
 
       {/* Signup Modal */}
-      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
-        <h2>Sign Up</h2>
+      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} >
+        <h2 style={modalTitleStyle}>{modalTitle}</h2>
+
+        {/* Display success and error messages in the modal */}
+        {successMessage && <div className="success-message">{successMessage}</div>}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+
         <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username:</label>
@@ -150,6 +173,17 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
               name="password"
               value={signupData.password}
               onChange={handleSignupInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="passwordConfirm">Confirm Password:</label>
+            <input
+              type="password"
+              id="passwordConfirm"
+              name="passwordConfirm"
+              value={passwordConfirm}
+              onChange={handlePasswordConfirmChange}
               required
             />
           </div>

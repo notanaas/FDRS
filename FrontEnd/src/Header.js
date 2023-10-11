@@ -90,16 +90,16 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     });
   };
 
-  const backendURL = 'http://localhost:3008';
+  const backendURL = 'http://localhost:3009';
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
-
+  
     if (signupData.password !== passwordConfirm) {
       setErrorMessage('Password and password confirmation do not match');
       return;
     }
-
+  
     axios
       .post(`${backendURL}/api/register`, signupData)
       .then((response) => {
@@ -107,10 +107,16 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
         closeSignupModal();
       })
       .catch((error) => {
-        setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-        console.error('Registration failed:', error.response.data.errors[0].msg);
+        if (error.response && error.response.data && error.response.data.errors) {
+          setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
+          console.error('Registration failed:', error.response.data.errors[0].msg);
+        } else {
+          console.error('Unexpected error:', error);
+          setErrorMessage('Registration failed: Unexpected error');
+        }
       });
   };
+  
 
   const modalTitleStyle = {
     color: 'white',

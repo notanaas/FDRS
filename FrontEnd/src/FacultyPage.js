@@ -40,7 +40,7 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  const apiEndpoint = 'http://localhost:3007'; // Replace with your backend API URL
+  const apiEndpoint = 'http://localhost:3009'; // Replace with your backend API URL
   const frontendURL = 'http://localhost:3000'; // Replace with your frontend URL
 
   useEffect(() => {

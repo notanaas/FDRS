@@ -683,28 +683,20 @@ body {
   background-color: #6a0000; /* Color on hover */
 }
 
-.adminButton {
-  position: fixed; /* This ensures the button is positioned independently */
-  bottom: 10px; /* Adjust the distance from the bottom as needed */
-  right: 10px; /* Adjust the distance from the right as needed */
-  background-color: #8b0000;
+.error-message {
+  background-color: #ff6b6b;
   color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.3s;
-  z-index: 1; /* Ensure it's above other elements */
-  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 100% 100%, 0% 100%); /* Create a diagonal cut */
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
 
-.adminButton:hover {
-  background-color: #6a0000;
+.error-text {
+  font-weight: bold;
+  font-size: 16px;
 }
-
-
-
 
 
 /* For screens between 768px and 1200px wide (tablets and smaller laptops) */

@@ -683,7 +683,28 @@ body {
   background-color: #6a0000; /* Color on hover */
 }
 
-/* You can adjust these styles to match your desired modern design */
+.adminButton {
+  position: fixed; /* This ensures the button is positioned independently */
+  bottom: 10px; /* Adjust the distance from the bottom as needed */
+  right: 10px; /* Adjust the distance from the right as needed */
+  background-color: #8b0000;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  z-index: 1; /* Ensure it's above other elements */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 100% 100%, 0% 100%); /* Create a diagonal cut */
+}
+
+.adminButton:hover {
+  background-color: #6a0000;
+}
+
+
+
 
 
 /* For screens between 768px and 1200px wide (tablets and smaller laptops) */

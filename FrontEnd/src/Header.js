@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useFaculty } from './FacultyContext';
 import Modal from './Modal';
-import { useTheme } from './ThemeContext'; // Import useTheme from your ThemeContext
 import axios from 'axios';
 import './App.css';
 
+
 const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -19,6 +19,32 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  
+
+  useEffect(() => {
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    setIsDarkMode(prefersDarkMode);
+
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const darkModeChangeListener = (e) => {
+      setIsDarkMode(e.matches);
+
+      if (e.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+    return () => {
+      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+    };
+  }, []);
+
 
   const openSignupModal = () => {
     setIsSignupOpen(true);
@@ -51,7 +77,11 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     setEmail('');
     setPassword('');
   };
-
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+    console.log('Dark mode is toggled');
+  };
+  
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
     setSignupData({
@@ -60,7 +90,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     });
   };
 
-  const backendURL = 'http://localhost:3007';
+  const backendURL = 'http://localhost:3008';
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
@@ -87,13 +117,14 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   };
 
   return (
-    <header className="headerContainer">
+    <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
+
       <div className="logoContainer">
         <Link to="/">
           <img src="/logo.png" alt="Logo" className="logo" />
         </Link>
       </div>
-
+  
       <div>
         {isFacultyPage && (
           <div>
@@ -107,6 +138,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
           </div>
         )}
       </div>
+      
       <div className="authButtons">
         <form onSubmit={handleSubmit}>
           <input
@@ -133,15 +165,13 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
           </button>
         </div>
       </div>
+      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
 
-      {/* Signup Modal */}
-      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} >
         <h2 style={modalTitleStyle}>{modalTitle}</h2>
-
-        {/* Display success and error messages in the modal */}
+  
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
-
+  
         <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username:</label>

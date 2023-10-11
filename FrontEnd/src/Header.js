@@ -77,10 +77,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     setEmail('');
     setPassword('');
   };
-  const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev);
-    console.log('Dark mode is toggled');
-  };
+  
   
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
@@ -95,8 +92,12 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   const handleSignupSubmit = (e) => {
     e.preventDefault();
   
-    if (signupData.password !== passwordConfirm) {
-      setErrorMessage('Password and password confirmation do not match');
+    // Trim leading/trailing white spaces from passwords
+    const trimmedPassword = signupData.password.trim();
+    const trimmedPasswordConfirm = passwordConfirm.trim();
+  
+    if (trimmedPassword !== trimmedPasswordConfirm) {
+      setErrorMessage('Passwords do not match');
       return;
     }
   
@@ -107,15 +108,12 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
         closeSignupModal();
       })
       .catch((error) => {
-        if (error.response && error.response.data && error.response.data.errors) {
-          setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-          console.error('Registration failed:', error.response.data.errors[0].msg);
-        } else {
-          console.error('Unexpected error:', error);
-          setErrorMessage('Registration failed: Unexpected error');
-        }
+        setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
+        console.error('Registration failed:', error.response.data.errors[0].msg);
       });
   };
+  
+  
   
 
   const modalTitleStyle = {

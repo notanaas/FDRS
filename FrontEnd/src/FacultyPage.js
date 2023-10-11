@@ -4,12 +4,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
-import ResourcePage from './ResourcePage';
+import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { v4 as uuidv4 } from 'uuid';
-
-import axios from 'axios';
-
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -22,16 +19,14 @@ import {
 } from 'react-share';
 
 const FacultyPage = () => {
-  const [mode] = useState('light');
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
-  const [uploadChoice] = useState('document');
   const [documentFile, setDocumentFile] = useState(null);
   const [documentPhoto, setDocumentPhoto] = useState(null);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [uploadedDocuments, setUploadedDocuments] = useState([]); // Store the uploaded documents
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [documentPhotoUrl, setDocumentPhotoUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
@@ -40,40 +35,16 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  const apiEndpoint = 'http://localhost:3009'; // Replace with your backend API URL
-  const frontendURL = 'http://localhost:3000'; // Replace with your frontend URL
+  const apiEndpoint = 'http://localhost:3009'; 
+  const frontendURL = 'http://localhost:3000'; 
 
-  useEffect(() => {
-    axios
-      .get(`${apiEndpoint}/api/resource`, {
-        headers: {
-          'Origin': frontendURL,
-        },
-      })
-      .then((response) => {
-        console.log('Response from backend:', response.data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }, []);
-
-  const CustomCopyLinkButton = ({ url }) => {
-    const [isCopied, setIsCopied] = useState(false);
-
-    const handleCopyLink = () => {
-      navigator.clipboard.writeText(url);
-      setIsCopied(true);
-    };
-
-    return (
-      <button
-        className={`custom-copy-button ${isCopied ? 'copied' : ''}`}
-        onClick={handleCopyLink}
-      >
-        {isCopied ? 'Copied!' : <img src="/link.png" alt="Copy Link" style={{ width: '20px', height: '20px' }} />}
-      </button>
-    );
+  const fetchDocuments = async (facultyName) => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/api/resources/${facultyName}`);
+      setUploadedDocuments(response.data.Resource_list);
+    } catch (error) {
+      console.error('Error fetching uploaded documents:', error);
+    }
   };
 
   useEffect(() => {
@@ -99,7 +70,6 @@ const FacultyPage = () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
   }, []);
-
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -109,6 +79,7 @@ const FacultyPage = () => {
     setError(null);
   };
 
+  // Handle changes for form fields
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
@@ -125,7 +96,6 @@ const FacultyPage = () => {
     const uniqueId = uuidv4();
     const documentFileName = `${uniqueId}_${file.name}`;
     const uploadUrl = `/your_upload_endpoint/${documentFileName}`;
-
     setDocumentFileUrl(uploadUrl);
   };
 
@@ -136,8 +106,7 @@ const FacultyPage = () => {
   };
 
   const handleUpload = async () => {
-    console.log('Attempting to upload...');
-    if (uploadChoice === 'document' && title && author && description && documentPhoto) {
+    if (title && author && description && documentPhoto) {
       try {
         const formData = new FormData();
         formData.append('title', title);
@@ -161,6 +130,7 @@ const FacultyPage = () => {
           setDocumentFile(null);
           // Show an alert here
           alert('Resource has been uploaded successfully!');
+          closeModal(); // Close the modal after successful upload
         } else {
           setError('Upload failed. Please try again later.');
         }
@@ -173,21 +143,6 @@ const FacultyPage = () => {
     }
   };
 
-  const fetchDocuments = async (facultyName) => {
-    try {
-      const response = await axios.get(`${apiEndpoint}/api/resources/${facultyName}`);
-      setUploadedDocuments(response.data.Resource_list); // Update state with the fetched data
-    } catch (error) {
-      console.error('Error fetching uploaded documents:', error);
-    }
-  };
-  
-  // Call fetchDocuments with the selected facultyName
-  useEffect(() => {
-    const selectedFacultyName = "Information Technology"; // Replace with the selected faculty name
-    fetchDocuments(selectedFacultyName);
-  }, []);
-
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
       <Header selectedFacultyName={facultyName} isFacultyPage={true} />
@@ -196,63 +151,49 @@ const FacultyPage = () => {
         Upload
       </button>
       {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
-          {error && (
-            <div
-              style={{
-                backgroundColor: '#ff6b6b',
-                color: 'white',
-                padding: '12px 20px',
-                margin: '10px 0',
-                borderRadius: '6px',
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-                textAlign: 'center',
-              }}
-            >
-              {error}
-            </div>
-          )}
+              <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
 
-          {uploadChoice === 'document' ? (
-            <div>
-              <label>Title:</label>
-              <input type="text" value={title} onChange={handleTitleChange} /><br></br>
-              <label>Author:</label>
-              <input type="text" value={author} onChange={handleAuthorChange} /><br></br>
-              <label>Description:</label>
-              <textarea
-                value={description}
-                onChange={handleDescriptionChange}
-                placeholder="Description"
-                rows="5"
-                style={{ width: '100%', resize: 'none' }}
-              ></textarea>
-              <label>Choose Document:</label>
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx,.txt"
-                onChange={(e) => handleDocumentFileChange(e.target.files[0])}
-              />
-              <label>Choose Photo for Document:</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleDocumentPhotoChange(e.target.files[0])}
-              />
-              {documentPhotoUrl && (
-                <div className="card">
-                  <img className="uploaded-photo" src={documentPhotoUrl} alt="Document" />
-                  <div className="card-body">
-                    <h5 className="card-title">{title}</h5>
-                    <p className="card-text">Author: {author}</p>
-                    <p className="card-description">Description: {description}</p>
-                  </div>
+{error && (
+  <div className="error-message">
+    <p className="error-text">{error}</p>
+  </div>
+)}
+          <div>
+            <label>Title:</label>
+            <input type="text" value={title} onChange={handleTitleChange} /><br></br>
+            <label>Author:</label>
+            <input type="text" value={author} onChange={handleAuthorChange} /><br></br>
+            <label>Description:</label>
+            <textarea
+              value={description}
+              onChange={handleDescriptionChange}
+              placeholder="Description"
+              rows="5"
+              style={{ width: '100%', resize: 'none' }}
+            ></textarea>
+            <label>Choose Document:</label>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              onChange={(e) => handleDocumentFileChange(e.target.files[0])}
+            />
+            <label>Choose Photo for Document:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleDocumentPhotoChange(e.target.files[0])}
+            />
+            {documentPhotoUrl && (
+              <div className="card">
+                <img className="uploaded-photo" src={documentPhotoUrl} alt="Document" />
+                <div className="card-body">
+                  <h5 className="card-title">{title}</h5>
+                  <p className="card-text">Author: {author}</p>
+                  <p className="card-description">Description: {description}</p>
                 </div>
-              )}
-            </div>
-          ) : (
-            <div></div>
-          )}
+              </div>
+            )}
+          </div>
           <div className="modal-footer">
             <button onClick={closeModal} className="modal-close-button">
               Close
@@ -309,7 +250,6 @@ const FacultyPage = () => {
                   <EmailShareButton url={item.link || ''}>
                     <EmailIcon size={32} round />
                   </EmailShareButton>
-                  <CustomCopyLinkButton url={item.link || ''} />
                 </div>
                 <i className={`fas fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)}></i>
               </li>

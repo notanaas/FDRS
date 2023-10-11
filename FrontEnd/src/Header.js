@@ -77,8 +77,8 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
         closeSignupModal();
       })
       .catch((error) => {
-        setErrorMessage('Registration failed: ' + error.response.data.errors);
-        console.error('Registration failed:', error.response.data.errors);
+        setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
+        console.error('Registration failed:', error.response.data.errors[0].msg);
       });
   };
 

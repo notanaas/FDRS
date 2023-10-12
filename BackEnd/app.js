@@ -3,8 +3,9 @@ const createError = require('http-errors');
 const express = require('express');
 const authRouter = require('./routes/authRouter');
 const facultyRouter = require('./routes/FacultyRouter')
-const usersRouter = require('./routes/users');
 const resourceRouter = require('./routes/resourceRouter');
+const commentRouter = require('./routes/commentRouter')
+const favoriteRouter = require('./routes/FavoriteRouter')
 const passport = require('passport');
 const cors = require("cors");
 require("./passport-config")(passport);
@@ -62,8 +63,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api_auth', authRouter);
 app.use('/api_resource', resourceRouter);
 app.use('/api_faculty' ,facultyRouter )
-app.use('/users', usersRouter);
-
+app.use('/api_comment' , commentRouter)
+app.use('/api_favorite' ,favoriteRouter )
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

@@ -38,12 +38,13 @@ exports.Resource_detail = asyncHandler(async (req, res, next) => {
     Resource.findById(req.params.id).populate("Author").populate("Faculty").populate("User").exec(),
     comments.find({Resource : req.params.id}).populate("User").exec()
   ])
+  const numComments = await Comment.countDocuments({ Resource: req.params.id });
   if(resource == null)
   {
     // no Results
     return res.status(404).json({ error: 'Resource not found' });
   }
-  res.status(200).json({Resource_details : resource , comments : comments})
+  res.status(200).json({Resource_details : resource , comments : comments , numcomment : numComments})
 });
 
 

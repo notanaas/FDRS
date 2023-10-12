@@ -2,6 +2,7 @@ require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const authRouter = require('./routes/authRouter');
+const facultyRouter = require('./routes/FacultyRouter')
 const usersRouter = require('./routes/users');
 const resourceRouter = require('./routes/resourceRouter');
 const passport = require('passport');
@@ -58,8 +59,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', authRouter);
-app.use('/api', resourceRouter);
+app.use('/api_auth', authRouter);
+app.use('/api_resource', resourceRouter);
+app.use('/api_faculty' ,facultyRouter )
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

@@ -103,7 +103,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     }
   
     axios
-      .post(`${backendURL}/api/register`, signupData)
+      .post(`${backendURL}/api_auth/register`, signupData)
       .then((response) => {
         setSuccessMessage('Registration successful: ' + response.data.message);
         alert(response.data.message) // do something cool with an alert anas :)

@@ -35,12 +35,12 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  const apiEndpoint = 'http://localhost:3009'; 
+  const apiEndpoint = 'http://localhost:3007'; 
   const frontendURL = 'http://localhost:3000'; 
 
   const fetchDocuments = async (facultyName) => {
     try {
-      const response = await axios.get(`${apiEndpoint}/api/resources/${facultyName}`);
+      const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`);
       setUploadedDocuments(response.data.Resource_list);
     } catch (error) {
       console.error('Error fetching uploaded documents:', error);
@@ -115,7 +115,7 @@ const FacultyPage = () => {
         formData.append('photo', documentPhoto);
         formData.append('file', documentFile);
 
-        const response = await axios.post(`${apiEndpoint}/api/resource/create`, formData, {
+        const response = await axios.post(`${apiEndpoint}/api_resource/resource/create`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

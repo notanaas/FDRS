@@ -4,7 +4,6 @@ import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
 
-
 const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
@@ -19,7 +18,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  
+  const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -45,7 +44,6 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     };
   }, []);
 
-
   const openSignupModal = () => {
     setIsSignupOpen(true);
     setModalTitle('Sign Up');
@@ -69,16 +67,30 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     setPasswordConfirm(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSignupSubmit = (e) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Search:', selectedFacultyName);
-    setEmail('');
-    setPassword('');
+
+    const trimmedPassword = signupData.password.trim();
+    const trimmedPasswordConfirm = passwordConfirm.trim();
+
+    if (trimmedPassword !== trimmedPasswordConfirm) {
+      setErrorMessage('Passwords do not match');
+      return;
+    }
+
+    axios
+      .post(`${backendURL}/api_auth/register`, signupData)
+      .then((response) => {
+        setSuccessMessage('Registration successful: ' + response.data.message);
+        alert(response.data.message);
+        closeSignupModal();
+      })
+      .catch((error) => {
+        setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
+        console.error('Registration failed:', error.response.data.errors);
+      });
   };
-  
-  
+
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
     setSignupData({
@@ -87,36 +99,21 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
     });
   };
 
-
-  const backendURL = 'http://localhost:3007';
-  
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
-  
-    // Trim leading/trailing white spaces from passwords
-    const trimmedPassword = signupData.password.trim();
-    const trimmedPasswordConfirm = passwordConfirm.trim();
-  
-    if (trimmedPassword !== trimmedPasswordConfirm) {
-      setErrorMessage('Passwords do not match');
-      return;
-    }
-  
+  const checkLogin = (email, password) => {
     axios
-      .post(`${backendURL}/api_auth/register`, signupData)
+      .post(`${backendURL}/api_auth/login`, { email, password })
       .then((response) => {
-        setSuccessMessage('Registration successful: ' + response.data.message);
-        alert(response.data.message) // do something cool with an alert anas :)
-        closeSignupModal();
+        setSuccessMessage('Login successful');
+        console.log('Login successful:', response.data);
+        setLoginError('');
       })
       .catch((error) => {
-        setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-        console.error('Registration failed:', error.response.data.errors);
+        setLoginError('Email or password is incorrect');
+        console.error('Login failed:', error.response.data);
       });
   };
-  
-  
-  
+
+  const backendURL = 'http://localhost:3001';
 
   const modalTitleStyle = {
     color: 'white',
@@ -124,13 +121,12 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
 
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
-
       <div className="logoContainer">
         <Link to="/">
           <img src="/logo.png" alt="Logo" className="logo" />
         </Link>
       </div>
-  
+
       <div>
         {isFacultyPage && (
           <div>
@@ -144,9 +140,9 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
           </div>
         )}
       </div>
-      
+
       <div className="authButtons">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => checkLogin(email, password)}>
           <input
             type="email"
             className="authInput"
@@ -171,13 +167,16 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
           </button>
         </div>
       </div>
-      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
 
+      {loginError && <div className="error-message">{loginError}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
+
+      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <h2 style={modalTitleStyle}>{modalTitle}</h2>
-  
+
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
-  
+
         <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username:</label>

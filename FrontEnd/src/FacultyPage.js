@@ -35,7 +35,7 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
 
-  const apiEndpoint = 'http://localhost:3007'; 
+  const apiEndpoint = 'http://localhost:3000'; 
   const frontendURL = 'http://localhost:3000'; 
 
   const fetchDocuments = async (facultyName) => {

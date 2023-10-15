@@ -5,7 +5,6 @@ import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
 import axios from 'axios';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import { v4 as uuidv4 } from 'uuid';
 import {
   FacebookShareButton,
@@ -34,9 +33,10 @@ const FacultyPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
+  const [favoriteResources, setFavoriteResources] = useState([]);
 
-  const apiEndpoint = 'http://localhost:3000'; 
-  const frontendURL = 'http://localhost:3000'; 
+  const apiEndpoint = 'http://localhost:3000';
+  const userToken = 'http://localhost:3000'; 
 
   const fetchDocuments = async (facultyName) => {
     try {
@@ -44,6 +44,20 @@ const FacultyPage = () => {
       setUploadedDocuments(response.data.Resource_list);
     } catch (error) {
       console.error('Error fetching uploaded documents:', error);
+    }
+  };
+
+  const fetchFavoriteResources = async () => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      setFavoriteResources(response.data);
+    } catch (error) {
+      console.error('Error fetching favorite resources:', error);
     }
   };
 
@@ -70,6 +84,7 @@ const FacultyPage = () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
   }, []);
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -79,7 +94,32 @@ const FacultyPage = () => {
     setError(null);
   };
 
-  // Handle changes for form fields
+  const handleAddFavorite = async (resourceId) => {
+    try {
+      await axios.post(`${apiEndpoint}/favorite/resources/${resourceId}/favorite`, null, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      fetchFavoriteResources();
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+    }
+  };
+
+  const handleRemoveFavorite = async (resourceId) => {
+    try {
+      await axios.delete(`${apiEndpoint}/favorite/resources/${resourceId}/unfavorite`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      fetchFavoriteResources();
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+    }
+  };
+
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
@@ -128,9 +168,8 @@ const FacultyPage = () => {
           setDescription('');
           setDocumentPhoto(null);
           setDocumentFile(null);
-          // Show an alert here
           alert('Resource has been uploaded successfully!');
-          closeModal(); // Close the modal after successful upload
+          closeModal();
         } else {
           setError('Upload failed. Please try again later.');
         }
@@ -151,13 +190,13 @@ const FacultyPage = () => {
         Upload
       </button>
       {isModalOpen && (
-              <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
+        <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
 
-{error && (
-  <div className="error-message">
-    <p className="error-text">{error}</p>
-  </div>
-)}
+          {error && (
+            <div className="error-message">
+              <p className="error-text">{error}</p>
+            </div>
+          )}
           <div>
             <label>Title:</label>
             <input type="text" value={title} onChange={handleTitleChange} /><br></br>
@@ -204,7 +243,6 @@ const FacultyPage = () => {
           </div>
         </Modal>
       )}
-      {/* Render the uploaded documents */}
       {uploadedDocuments.length > 0 && (
         <div>
           <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
@@ -251,7 +289,67 @@ const FacultyPage = () => {
                     <EmailIcon size={32} round />
                   </EmailShareButton>
                 </div>
-                <i className={`fas fa-star${isStarActive ? ' active' : ''}`} onClick={() => setIsStarActive(!isStarActive)}></i>
+                <i
+                  className={`fas fa-star${isStarActive ? ' active' : ''}`}
+                  onClick={() => isStarActive ? handleRemoveFavorite(item.id) : handleAddFavorite(item.id)}
+                ></i>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {favoriteResources.length > 0 && (
+        <div>
+          <h2>Your Favorite Resources</h2>
+          <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
+            {favoriteResources.map((item , index) => (
+              <li key={index} className="card">
+                <Link to={`/resource/${item.id}`}>
+                  <h3 className="card-title">{item.title}</h3>
+                  <p className="card-text">Author: {item.author}</p>
+                  <p className="card-description">Description: {item.description}</p>
+                </Link>
+                {item.photo && (
+                  <div>
+                    <img
+                      className="uploaded-photo"
+                      src={item.photo}
+                      alt="Document or Link"
+                    />
+                  </div>
+                )}
+
+                <div className="download-button-container">
+                  {item.file && (
+                    <a
+                      href={item.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={item.title || 'document'}
+                      className="download-button"
+                    >
+                      Download Document
+                    </a>
+                  )}
+                </div>
+                <div className="share-buttons">
+                  <FacebookShareButton url={item.link || ''}>
+                    <FacebookIcon size={32} round />
+                  </FacebookShareButton>
+                  <TwitterShareButton url={item.link || ''}>
+                    <TwitterIcon size={32} round />
+                  </TwitterShareButton>
+                  <LinkedinShareButton url={item.link || ''}>
+                    <LinkedinIcon size={32} round />
+                  </LinkedinShareButton>
+                  <EmailShareButton url={item.link || ''}>
+                    <EmailIcon size={32} round />
+                  </EmailShareButton>
+                </div>
+                <i
+                  className="fas fa-star active"
+                  onClick={() => handleRemoveFavorite(item.id)}
+                ></i>
               </li>
             ))}
           </ul>

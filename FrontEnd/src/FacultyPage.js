@@ -347,8 +347,7 @@ const FacultyPage = () => {
                   </EmailShareButton>
                 </div>
                 <i
-                  className="fas fa-star active"
-                  onClick={() => handleRemoveFavorite(item.id)}
+                  className="fas fa-star active" onClick={() => handleRemoveFavorite(item.id)}
                 ></i>
               </li>
             ))}

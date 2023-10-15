@@ -4,7 +4,7 @@ import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
 
-const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage }) => {
+const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

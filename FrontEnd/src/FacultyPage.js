@@ -5,6 +5,7 @@ import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
 import axios from 'axios';
+import './App.css'; 
 import { v4 as uuidv4 } from 'uuid';
 import {
   FacebookShareButton,

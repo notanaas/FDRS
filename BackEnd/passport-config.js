@@ -4,7 +4,7 @@ const User = require("./models/Users"); // Import your Mongoose User model
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "56d6e88e3c4306cbc49905b291f4d7f765cd439f8271c7cc13a2bfe86c226482",
+  secretOrKey: process.env.JWT_SECRET,
 };
 
 module.exports = (passport) => {

@@ -17,7 +17,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 // Define the database URL to connect to.
-const mongoDB = "mongodb+srv://anasalsayed01:Mfwiclove1@fdrs.ywdg7y9.mongodb.net/";
+const mongoDB = process.env.MongoDB_URL;
 
 // Connect to MongoDB
 main().catch((err) => console.log(err));

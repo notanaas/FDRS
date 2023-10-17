@@ -36,7 +36,7 @@ const FacultyPage = () => {
   const [documentFileUrl, setDocumentFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
 
-  const apiEndpoint = 'http://localhost:3000';
+  const apiEndpoint = 'http://localhost:3001';
   const userToken = 'http://localhost:3000'; 
 
   const fetchDocuments = async (facultyName) => {

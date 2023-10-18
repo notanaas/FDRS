@@ -113,7 +113,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
       });
   };
 
-  const backendURL = 'http://localhost:3001';
+  const backendURL = 'http://localhost:3000';
 
   const modalTitleStyle = {
     color: 'white',

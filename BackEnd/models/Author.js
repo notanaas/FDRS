@@ -14,3 +14,4 @@ authorSchema.virtual("name").get(function(){
     }
     return fullname
   })
+  module.exports = mongoose.model("Author" , authorSchema)

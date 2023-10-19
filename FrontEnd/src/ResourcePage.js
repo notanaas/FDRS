@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Comments from './Comments'; 
 
 const ResourcePage = () => {
   const [resource, setResource] = useState(null);
@@ -37,6 +38,7 @@ const ResourcePage = () => {
       <Header />
       <h1>{resource.title}</h1>
       <p>Author: {resource.author}</p>
+      <Comments resourceId={resourceId} /> {/* Add the Comments component here */}
       <div className="resource-content">
         <h2>{resource.title}</h2>
         <p>Author: {resource.author}</p>

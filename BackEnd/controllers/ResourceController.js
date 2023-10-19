@@ -4,7 +4,6 @@ const Author = require("../models/Author")
 const comments = require("../models/Comment")
 const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
-const multer = require("../multerconfig")
 const path  = require("path")
 const { upload } = require('../multerconfig');
 
@@ -38,12 +37,13 @@ exports.Resource_detail = asyncHandler(async (req, res, next) => {
     Resource.findById(req.params.id).populate("Author").populate("Faculty").populate("User").exec(),
     comments.find({Resource : req.params.id}).populate("User").exec()
   ])
+  const numComments = await Comment.countDocuments({ Resource: req.params.id });
   if(resource == null)
   {
     // no Results
     return res.status(404).json({ error: 'Resource not found' });
   }
-  res.status(200).json({Resource_details : resource , comments : comments})
+  res.status(200).json({Resource_details : resource , comments : comments , numcomment : numComments})
 });
 
 
@@ -59,11 +59,11 @@ exports.Resource_create_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("authorLastName", "Author lastname must not be empty!") // Corrected error message
+  body("authorLastName", "Author lastname must not be empty") // Corrected error message
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("description", "Description must not be empty!")
+  body("description", "Description must not be empty")
     .isLength({ min: 1 })
     .escape(),
   body("related_link")
@@ -75,22 +75,6 @@ exports.Resource_create_post = [
     { name: 'file', maxCount: 1 }, // PDF file
     { name: 'img', maxCount: 1 },  // Image file
   ]),
-
-  // Detect and set the resource type automatically.
-  (req, res, next) => {
-    if (req.files && req.files.file) {
-      const pdfType = fileType(req.files.file[0].buffer);
-      if (pdfType && pdfType.mime === 'application/pdf') {
-        req.body.ResourceType = 'PDF';
-      }
-    } else if (req.files && req.files.img) {
-      const imgType = fileType(req.files.img[0].buffer);
-      if (imgType && ['image/jpeg', 'image/jpg', 'image/png'].includes(imgType.mime)) {
-        req.body.ResourceType = 'Image';
-      }
-    }
-    next();
-  },
 
   // Process request after validation, sanitization, and file uploads.
   asyncHandler(async (req, res, next) => {
@@ -114,11 +98,10 @@ exports.Resource_create_post = [
       // Create a Resource object with escaped and trimmed data.
       const resource = new Resource({
         User: req.user._id, // Assuming you have a user object with _id
-        Faculty: "you must give me the faculty id  which you must have ", // Change to match your request body or logic
+        Faculty: "6522b2eb6f293d94d943256a",
         ResourceAuthor: author._id,
         ResourceTitle: req.body.title,
         isAuthorized: false, // Default value is set to false
-        ResourceType: req.body.ResourceType, // Set this based on your logic or request
         Description: req.body.description,
         file_path: req.files.file[0].path, // Store the file path
         file_size: req.files.file[0].size, // Store the file size
@@ -138,6 +121,7 @@ exports.Resource_create_post = [
     }
   }),
 ];
+
 
 
 

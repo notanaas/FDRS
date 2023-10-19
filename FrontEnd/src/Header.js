@@ -103,6 +103,9 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
     axios
       .post(`${backendURL}/api_auth/login`, { email, password })
       .then((response) => {
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        
         setSuccessMessage('Login successful');
         console.log('Login successful:', response.data);
         setLoginError('');
@@ -112,6 +115,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
         console.error('Login failed:', error.response.data);
       });
   };
+  
 
   const backendURL = 'http://localhost:3000';
 

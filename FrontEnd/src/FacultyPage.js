@@ -32,11 +32,11 @@ const FacultyPage = () => {
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isStarActive, setIsStarActive] = useState(false);
   const [documentFileUrl, setDocumentFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
+  const [isStarActive, setIsStarActive] = useState(false);
 
-  const apiEndpoint = 'http://localhost:3001';
+  const apiEndpoint = 'http://localhost:3002/api_resource/resource/create';
   const userToken = 'http://localhost:3000'; 
 
   const fetchDocuments = async (facultyName) => {
@@ -136,8 +136,8 @@ const FacultyPage = () => {
   const handleDocumentFileChange = (file) => {
     const uniqueId = uuidv4();
     const documentFileName = `${uniqueId}_${file.name}`;
-    const uploadUrl = `/your_upload_endpoint/${documentFileName}`;
-    setDocumentFileUrl(uploadUrl);
+    const uploadUrl = `${apiEndpoint}/${documentFileName}`;
+    //setDocumentFileUrl(uploadUrl);
   };
 
   const handleDocumentPhotoChange = (file) => {
@@ -156,7 +156,7 @@ const FacultyPage = () => {
         formData.append('photo', documentPhoto);
         formData.append('file', documentFile);
 
-        const response = await axios.post(`${apiEndpoint}/api_resource/resource/create`, formData, {
+        const response = await axios.post(apiEndpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -164,13 +164,18 @@ const FacultyPage = () => {
 
         if (response.data.success) {
           setSuccessMessage('Document uploaded successfully');
+
+          // Clear the success message after 3 seconds
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
+
           setTitle('');
           setAuthor('');
           setDescription('');
           setDocumentPhoto(null);
           setDocumentFile(null);
-          alert('Resource has been uploaded successfully!');
-          closeModal();
+          setError(null);
         } else {
           setError('Upload failed. Please try again later.');
         }
@@ -192,12 +197,18 @@ const FacultyPage = () => {
       </button>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
-
           {error && (
             <div className="error-message">
               <p className="error-text">{error}</p>
             </div>
           )}
+
+          {successMessage && (
+            <div className="success-message">
+              <p className="success-text">{successMessage}</p>
+            </div>
+          )}
+
           <div>
             <label>Title:</label>
             <input type="text" value={title} onChange={handleTitleChange} /><br></br>
@@ -311,14 +322,15 @@ const FacultyPage = () => {
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
                 {item.photo && (
-                  <div>
-                    <img
-                      className="uploaded-photo"
-                      src={item.photo}
-                      alt="Document or Link"
-                    />
-                  </div>
-                )}
+  <div>
+    <img
+      className="uploaded-photo"
+      src={item.photo}
+      alt="Document or Link"
+    />
+  </div>
+)}
+
 
                 <div className="download-button-container">
                   {item.file && (

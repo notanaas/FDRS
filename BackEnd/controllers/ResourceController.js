@@ -70,6 +70,11 @@ exports.Resource_create_post = [
     .trim()
     .escape(),
 
+  // Handle file uploads using multer.
+  upload.fields([
+    { name: 'file', maxCount: 1 }, // PDF file
+    { name: 'img', maxCount: 1 },  // Image file
+  ]),
 
   // Process request after validation, sanitization, and file uploads.
   asyncHandler(async (req, res, next) => {
@@ -87,9 +92,13 @@ exports.Resource_create_post = [
     try {
       // Create a new author.
       const author = new Author({
-        first_Name: req.body.authorFirstName,
-        last_Name: req.body.authorLastName,
+        firstName: req.body.authorFirstName,
+        lastName: req.body.authorLastName,
       });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4213880e18c8f6596b75f0d1e6e4f7b1b7f0670f
       // Save the author.
       await author.save();
       // Create a Resource object with escaped and trimmed data.
@@ -105,11 +114,12 @@ exports.Resource_create_post = [
         ResourceCover: req.files.img[0].path, // Store the image path as ResourceCover
         Related_link: req.body.related_link, // Change to match your request body
       });
+
       // Save the resource.
       await resource.save();
 
       // Return a JSON response with the created resource.
-      res.status(201).json({ resource:resource });
+      res.status(201).json({ resource });
     } catch (err) {
       // Handle any errors that occur during author or resource creation.
       console.error(err);

@@ -19,48 +19,26 @@ import {
 } from 'react-share';
 
 const FacultyPage = () => {
+  const userToken = localStorage.getItem('token');
   const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
+  const [authorFirstName, setAuthorFirstName] = useState('');
+  const [authorLastName, setAuthorLastName] = useState('');
   const [description, setDescription] = useState('');
-  const [documentFile, setDocumentFile] = useState(null);
-  const [documentPhoto, setDocumentPhoto] = useState(null);
+  const [file, setfile] = useState(null);
+  const [img, setimg] = useState(null);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
-  const [documentPhotoUrl, setDocumentPhotoUrl] = useState('');
+  const [imgUrl, setimgUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [documentFileUrl, setDocumentFileUrl] = useState('');
+  const [fileUrl, setfileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
-
   const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
-  const userToken = 'http://localhost:3000'; 
 
-  const fetchDocuments = async (facultyName) => {
-    try {
-      const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`);
-      setUploadedDocuments(response.data.Resource_list);
-    } catch (error) {
-      console.error('Error fetching uploaded documents:', error);
-    }
-  };
-
-  const fetchFavoriteResources = async () => {
-    try {
-      const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-
-      setFavoriteResources(response.data);
-    } catch (error) {
-      console.error('Error fetching favorite resources:', error);
-    }
-  };
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -122,59 +100,65 @@ const FacultyPage = () => {
   };
 
   const handleTitleChange = (e) => {
+    console.log('Before title update:', title);
     setTitle(e.target.value);
+    console.log('After title update:', e.target.value);
+
   };
 
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value);
+  const handleAuthorFirstNameChange = (e) => {
+    setAuthorFirstName(e.target.value);
+  };
+  const handleAuthorLastNameChange = (e) => {
+    setAuthorLastName(e.target.value);
   };
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
 
-  const handleDocumentFileChange = (file) => {
+  const handlefileChange = (file) => {
     const uniqueId = uuidv4();
-    const documentFileName = `${uniqueId}_${file.name}`;
-    const uploadUrl = `${apiEndpoint}/${documentFileName}`;
-    //setDocumentFileUrl(uploadUrl);
+    const fileName = `${uniqueId}_${file.name}`;
+    const uploadUrl = `${apiEndpoint}/${fileName}`;
+    setfileUrl(uploadUrl);
   };
 
-  const handleDocumentPhotoChange = (file) => {
-    setDocumentPhoto(file);
+  const handleimgChange = (file) => {
+    setimg(file);
     const photoUrl = URL.createObjectURL(file);
-    setDocumentPhotoUrl(photoUrl);
+    setimgUrl(photoUrl);
   };
 
   const handleUpload = async () => {
-    if (title && author && description && documentPhoto) {
+    if (title && authorFirstName && authorLastName && description && img) {
       try {
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('author', author);
+        formData.append('authorFirstName', authorFirstName);
+        formData.append('authorLastName', authorLastName);
         formData.append('description', description);
-        formData.append('photo', documentPhoto);
-        formData.append('file', documentFile);
+        formData.append('photo', img);
+        formData.append('file', file);
 
         const response = await axios.post(apiEndpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${userToken}`, 
           },
         });
 
         if (response.data.success) {
           setSuccessMessage('Document uploaded successfully');
-
-          // Clear the success message after 3 seconds
           setTimeout(() => {
             setSuccessMessage(null);
           }, 3000);
-
           setTitle('');
-          setAuthor('');
+          setAuthorFirstName('');
+          setAuthorLastName('');
           setDescription('');
-          setDocumentPhoto(null);
-          setDocumentFile(null);
+          setimg(null);
+          setfile(null);
           setError(null);
         } else {
           setError('Upload failed. Please try again later.');
@@ -187,6 +171,34 @@ const FacultyPage = () => {
       setError('Please fill in all required fields.');
     }
   };
+  
+const fetchDocuments = async (facultyName) => {
+  try {
+    const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    setUploadedDocuments(response.data.Resource_list);
+  } catch (error) {
+    console.error('Error fetching uploaded documents:', error);
+  }
+};
+
+const fetchFavoriteResources = async () => {
+  try {
+    const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    setFavoriteResources(response.data);
+  } catch (error) {
+    console.error('Error fetching favorite resources:', error);
+  }
+};
+
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
@@ -211,35 +223,24 @@ const FacultyPage = () => {
 
           <div>
             <label>Title:</label>
-            <input type="text" value={title} onChange={handleTitleChange} /><br></br>
-            <label>Author:</label>
-            <input type="text" value={author} onChange={handleAuthorChange} /><br></br>
+            <input type="text" name="title" value={title} onChange={handleTitleChange} />
+            <label>Author first name:</label>
+            <input type="text" name="authorFirstName" value={authorFirstName} onChange={handleAuthorFirstNameChange} />
+            <label>Author last name:</label>
+            <input type="text" name="authorLastName" value={authorLastName} onChange={handleAuthorLastNameChange} />
             <label>Description:</label>
-            <textarea
-              value={description}
-              onChange={handleDescriptionChange}
-              placeholder="Description"
-              rows="5"
-              style={{ width: '100%', resize: 'none' }}
-            ></textarea>
+            <textarea name="description" value={description} onChange={handleDescriptionChange}></textarea>
             <label>Choose Document:</label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx,.txt"
-              onChange={(e) => handleDocumentFileChange(e.target.files[0])}
-            />
+            <input type="file" accept="pdf" onChange={(e) => handlefileChange(e.target.files[0])}/>
             <label>Choose Photo for Document:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleDocumentPhotoChange(e.target.files[0])}
-            />
-            {documentPhotoUrl && (
+            <input type="file" accept="jpeg,jpg,png" onChange={(e) => handleimgChange(e.target.files[0])}/>
+            {imgUrl && (
               <div className="card">
-                <img className="uploaded-photo" src={documentPhotoUrl} alt="Document" />
+                <img className="uploaded-photo" src={imgUrl} alt="Document" />
                 <div className="card-body">
                   <h5 className="card-title">{title}</h5>
-                  <p className="card-text">Author: {author}</p>
+                  <p className="card-text">Author First Name: {authorFirstName}</p>
+                  <p className="card-text">Author Last Name: {authorLastName}</p>
                   <p className="card-description">Description: {description}</p>
                 </div>
               </div>
@@ -265,7 +266,7 @@ const FacultyPage = () => {
                   <p className="card-text">Author: {item.author}</p>
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
-                {item.photo && (
+                {item.img && (
                   <div>
                     <img
                       className="uploaded-photo"
@@ -321,30 +322,10 @@ const FacultyPage = () => {
                   <p className="card-text">Author: {item.author}</p>
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
-                {item.photo && (
-  <div>
-    <img
-      className="uploaded-photo"
-      src={item.photo}
-      alt="Document or Link"
-    />
-  </div>
-)}
-
-
+                {item.photo && ( <div> <img className="uploaded-photo" src={item.photo} alt="Document or Link"/></div>)}
                 <div className="download-button-container">
-                  {item.file && (
-                    <a
-                      href={item.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={item.title || 'document'}
-                      className="download-button"
-                    >
-                      Download Document
-                    </a>
-                  )}
-                </div>
+          {item.file && ( <a href={item.file} target="_blank" rel="noopener noreferrer" download={item.title || 'document'} className="download-button"> Download Document </a> )}</div>
+
                 <div className="share-buttons">
                   <FacebookShareButton url={item.link || ''}>
                     <FacebookIcon size={32} round />
@@ -360,8 +341,7 @@ const FacultyPage = () => {
                   </EmailShareButton>
                 </div>
                 <i
-                  className="fas fa-star active" onClick={() => handleRemoveFavorite(item.id)}
-                ></i>
+                  className="fas fa-star active" onClick={() => handleRemoveFavorite(item.id)}></i>
               </li>
             ))}
           </ul>
@@ -371,5 +351,4 @@ const FacultyPage = () => {
     </div>
   );
 };
-
 export default FacultyPage;

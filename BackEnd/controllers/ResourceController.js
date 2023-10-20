@@ -98,7 +98,7 @@ exports.Resource_create_post = [
       // Create a Resource object with escaped and trimmed data.
       const resource = new Resource({
         User: req.user._id, // Assuming you have a user object with _id
-        Faculty: "6522b2eb6f293d94d943256a",
+        Faculty: req.params.id,
         ResourceAuthor: author._id,
         ResourceTitle: req.body.title,
         isAuthorized: false, // Default value is set to false

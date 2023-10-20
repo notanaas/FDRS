@@ -123,7 +123,10 @@ const FacultyPage = () => {
   };
 
   const handleTitleChange = (e) => {
+    console.log('Before title update:', title);
     setTitle(e.target.value);
+    console.log('After title update:', e.target.value);
+
   };
 
   const handleAuthorFirstNameChange = (e) => {
@@ -141,7 +144,7 @@ const FacultyPage = () => {
     const uniqueId = uuidv4();
     const fileName = `${uniqueId}_${file.name}`;
     const uploadUrl = `${apiEndpoint}/${fileName}`;
-    //setfileUrl(uploadUrl);
+    setfileUrl(uploadUrl);
   };
 
   const handleimgChange = (file) => {
@@ -150,50 +153,50 @@ const FacultyPage = () => {
     setimgUrl(photoUrl);
   };
 
-  const handleUpload = async () => {
-    if (title && authorFirstName && authorLastName&& description && img) {
-      try {
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('authorFirstName', authorFirstName);
-        formData.append('authorLastName', authorLastName);
-        formData.append('description', description);
-        formData.append('photo', img);
-        formData.append('file', file);
+const handleUpload = async () => {
+  if (title && authorFirstName && authorLastName && description && img) {
+    try {
+      const formData = new FormData();
+formData.append('title', title);
+formData.append('authorFirstName', authorFirstName);
+formData.append('authorLastName', authorLastName);
+formData.append('description', description);
+formData.append('photo', img);
+formData.append('file', file);
 
-        const response = await axios.post(apiEndpoint, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization' :`Bearer ${userToken}` 
-          },
-        });
 
-        if (response.data.success) {
-          setSuccessMessage('Document uploaded successfully');
+      const response = await axios.post(apiEndpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${userToken}`,
+        },
+      });
 
-          // Clear the success message after 3 seconds
-          setTimeout(() => {
-            setSuccessMessage(null);
-          }, 3000);
-
-          setTitle('');
-          setAuthorFirstName('');
-          setAuthorLastName('');
-          setDescription('');
-          setimg(null);
-          setfile(null);
-          setError(null);
-        } else {
-          setError('Upload failed. Please try again later.');
-        }
-      } catch (error) {
-        setError('An error occurred while uploading the document. Please try again later.');
-        console.error('Error uploading document:', error);
+      if (response.data.success) {
+        setSuccessMessage('Document uploaded successfully');
+        // Clear the success message after 3 seconds
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
+        setTitle(handleTitleChange);
+        setAuthorFirstName(handleAuthorFirstNameChange);
+        setAuthorLastName(handleAuthorLastNameChange);
+        setDescription(handleDescriptionChange);
+        setimg(null);
+        setfile(null);
+        setError(null);
+      } else {
+        setError('Upload failed. Please try again later.');
       }
-    } else {
-      setError('Please fill in all required fields.');
+    } catch (error) {
+      setError('An error occurred while uploading the document. Please try again later.');
+      console.error('Error uploading document:', error);
     }
-  };
+  } else {
+    setError('Please fill in all required fields.');
+  }
+};
+
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
@@ -218,19 +221,13 @@ const FacultyPage = () => {
 
           <div>
             <label>Title:</label>
-            <input type="text" value={title} onChange={handleTitleChange} /><br></br>
+            <input type="text" name="title" value={title} onChange={handleTitleChange} />
             <label>Author first name:</label>
-            <input type="text" value={authorFirstName} onChange={handleAuthorFirstNameChange} /><br></br>
+            <input type="text" name="authorFirstName" value={authorFirstName} onChange={handleAuthorFirstNameChange} />
             <label>Author last name:</label>
-            <input type="text" value={authorLastName} onChange={handleAuthorLastNameChange} /><br></br>
+            <input type="text" name="authorLastName" value={authorLastName} onChange={handleAuthorLastNameChange} />
             <label>Description:</label>
-            <textarea
-              value={description}
-              onChange={handleDescriptionChange}
-              placeholder="Description"
-              rows="5"
-              style={{ width: '100%', resize: 'none' }}
-            ></textarea>
+            <textarea name="description" value={description} onChange={handleDescriptionChange}></textarea>
             <label>Choose Document:</label>
             <input
               type="file"
@@ -275,7 +272,7 @@ const FacultyPage = () => {
                   <p className="card-text">Author: {item.author}</p>
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
-                {item.photo && (
+                {item.img && (
                   <div>
                     <img
                       className="uploaded-photo"

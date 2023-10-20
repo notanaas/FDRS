@@ -4,7 +4,8 @@ import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
 
-const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin }) => {
+const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin, userToken, setUserToken }) => {
+  const backendURL = 'http://localhost:3002';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,9 +20,6 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loginError, setLoginError] = useState('');
-
-
-  const backendURL = 'http://localhost:3002';
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -107,7 +105,8 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
       .post(`${backendURL}/api_auth/login`, { email, password })
       .then((response) => {
         const token = response.data.token;
-        localStorage.setItem('token', token); // Store the token in local storage
+        localStorage.setItem('token', token);
+        setUserToken(token); // Update the user's token in state
         setSuccessMessage('Login successful');
         console.log('Login successful:', response.data);
         setLoginError('');
@@ -117,8 +116,13 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
         console.error('Login failed:', error.response.data);
       });
   };
-  
-  
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUserToken(null); // Clear the user's token in state
+    // Add any additional logout logic you need
+  };
+
   const modalTitleStyle = {
     color: 'white',
   };
@@ -146,25 +150,39 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
       </div>
 
       <div className="authButtons">
-        <form onSubmit={(e) => checkLogin(email, password)}>
-          <input
-            type="email"
-            className="authInput"
-            placeholder="Email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-          <input
-            type="password"
-            className="authInput"
-            placeholder="Password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-          <button type="submit" className="authButton">
-            Login
+      {userToken ? (
+        <div>
+  <button className="authButton logoutButton" onClick={handleLogout}>
+          Logout
           </button>
-        </form>
+          {isAdmin && ( // Render admin button if user is an admin
+      <Link to="/admin" className="admin-button">
+        Admin Page
+      </Link>
+    )}
+      </div>
+        ) : (
+          <form onSubmit={() => checkLogin(email, password)}>
+            <input
+              type="email"
+              className="authInput"
+              placeholder="Email"
+              value={email}
+              onChange={handleEmailChange}
+            />
+            <input
+              type="password"
+              className="authInput"
+              placeholder="Password"
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            <button type="submit" className="authButton">
+              Login
+            </button>
+          </form>
+        )}
+
         <div className="authButtons">
           <button className="authButton" onClick={openSignupModal}>
             Sign Up
@@ -226,7 +244,9 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
               required
             />
           </div>
-          <button type="submit">Sign Up</button>
+          <button type="submit" className="authButton">
+            Sign Up
+          </button>
         </form>
       </Modal>
     </header>

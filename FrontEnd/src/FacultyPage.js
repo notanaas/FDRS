@@ -39,6 +39,7 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
 
+  const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -100,10 +101,7 @@ const FacultyPage = () => {
   };
 
   const handleTitleChange = (e) => {
-    console.log('Before title update:', title);
     setTitle(e.target.value);
-    console.log('After title update:', e.target.value);
-
   };
 
   const handleAuthorFirstNameChange = (e) => {
@@ -131,6 +129,11 @@ const FacultyPage = () => {
   };
 
   const handleUpload = async () => {
+    if (!userToken) {
+      setAlertMessage({ message: 'You need to be logged in to upload documents.', type: 'error' });
+      return;
+    }
+
     if (title && authorFirstName && authorLastName && description && img) {
       try {
         const formData = new FormData();
@@ -144,15 +147,12 @@ const FacultyPage = () => {
         const response = await axios.post(apiEndpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${userToken}`, 
+            'Authorization': `Bearer ${userToken}`,
           },
         });
 
         if (response.data.success) {
           setSuccessMessage('Document uploaded successfully');
-          setTimeout(() => {
-            setSuccessMessage(null);
-          }, 3000);
           setTitle('');
           setAuthorFirstName('');
           setAuthorLastName('');
@@ -171,34 +171,33 @@ const FacultyPage = () => {
       setError('Please fill in all required fields.');
     }
   };
-  
-const fetchDocuments = async (facultyName) => {
-  try {
-    const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`, {
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    });
-    setUploadedDocuments(response.data.Resource_list);
-  } catch (error) {
-    console.error('Error fetching uploaded documents:', error);
-  }
-};
 
-const fetchFavoriteResources = async () => {
-  try {
-    const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    });
+  const fetchDocuments = async (facultyName) => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      setUploadedDocuments(response.data.Resource_list);
+    } catch (error) {
+      console.error('Error fetching uploaded documents:', error);
+    }
+  };
 
-    setFavoriteResources(response.data);
-  } catch (error) {
-    console.error('Error fetching favorite resources:', error);
-  }
-};
+  const fetchFavoriteResources = async () => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
 
+      setFavoriteResources(response.data);
+    } catch (error) {
+      console.error('Error fetching favorite resources:', error);
+    }
+  };
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
@@ -207,20 +206,20 @@ const fetchFavoriteResources = async () => {
       <button onClick={openModal} className="upload-button">
         Upload
       </button>
-      {isModalOpen && (
+       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
           {error && (
             <div className="error-message">
               <p className="error-text">{error}</p>
             </div>
           )}
-
+      
           {successMessage && (
             <div className="success-message">
               <p className="success-text">{successMessage}</p>
             </div>
           )}
-
+      
           <div>
             <label>Title:</label>
             <input type="text" name="title" value={title} onChange={handleTitleChange} />
@@ -254,8 +253,14 @@ const fetchFavoriteResources = async () => {
               Upload
             </button>
           </div>
+          {alertMessage.message && (
+            <div className={`alert-message ${alertMessage.type}`}>
+              {alertMessage.message}
+            </div>
+          )}
         </Modal>
       )}
+
       {uploadedDocuments.length > 0 && (
         <div>
           <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>

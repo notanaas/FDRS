@@ -75,10 +75,13 @@ exports.Resource_create_post = [
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
-
+    upload.fields([
+      { name: 'file', maxCount: 1 }, // PDF file
+      { name: 'img', maxCount: 1 },  // Image file
+    ])
     if (!errors.isEmpty()) {
       // There are errors. Return JSON response with error messages.
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() , body : req.body });
     }
 
     try {
@@ -87,10 +90,6 @@ exports.Resource_create_post = [
         first_Name: req.body.authorFirstName,
         last_Name: req.body.authorLastName,
       });
-      upload.fields([
-        { name: 'file', maxCount: 1 }, // PDF file
-        { name: 'img', maxCount: 1 },  // Image file
-      ]),
       // Save the author.
       await author.save();
       // Create a Resource object with escaped and trimmed data.

@@ -19,6 +19,7 @@ import {
 } from 'react-share';
 
 const FacultyPage = () => {
+  const userToken = localStorage.getItem('token');
   const [title, setTitle] = useState('');
   const [authorFirstName, setAuthorFirstName] = useState('');
   const [authorLastName, setAuthorLastName] = useState('');
@@ -36,32 +37,8 @@ const FacultyPage = () => {
   const [fileUrl, setfileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
-
   const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
-  const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzIyNWNjM2NiMzc4ZmRmZTAwYmQ4NyIsInVzZXJuYW1lIjoiYW5hczIiLCJlbWFpbCI6ImFuYXMyQGdtYWlsLmNvbSJ9LCJpYXQiOjE2OTc3ODYzODIsImV4cCI6MTY5Nzg3Mjc4Mn0.4SPCW_xL3IkKasiMLZhJxjrHpN1kTci6ofgsBRX8hR0'; 
 
-  const fetchDocuments = async (facultyName) => {
-    try {
-      const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`);
-      setUploadedDocuments(response.data.Resource_list);
-    } catch (error) {
-      console.error('Error fetching uploaded documents:', error);
-    }
-  };
-
-  const fetchFavoriteResources = async () => {
-    try {
-      const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-
-      setFavoriteResources(response.data);
-    } catch (error) {
-      console.error('Error fetching favorite resources:', error);
-    }
-  };
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -153,47 +130,72 @@ const FacultyPage = () => {
     setimgUrl(photoUrl);
   };
 
-const handleUpload = async () => {
-  if (title && authorFirstName && authorLastName && description && img) {
-    try {
-      const formData = new FormData();
-formData.append('title', title);
-formData.append('authorFirstName', authorFirstName);
-formData.append('authorLastName', authorLastName);
-formData.append('description', description);
-formData.append('photo', img);
-formData.append('file', file);
+  const handleUpload = async () => {
+    if (title && authorFirstName && authorLastName && description && img) {
+      try {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('authorFirstName', authorFirstName);
+        formData.append('authorLastName', authorLastName);
+        formData.append('description', description);
+        formData.append('photo', img);
+        formData.append('file', file);
 
+        const response = await axios.post(apiEndpoint, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${userToken}`, 
+          },
+        });
 
-      const response = await axios.post(apiEndpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${userToken}`,
-        },
-      });
-
-      if (response.data.success) {
-        setSuccessMessage('Document uploaded successfully');
-        // Clear the success message after 3 seconds
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 3000);
-        setTitle(handleTitleChange);
-        setAuthorFirstName(handleAuthorFirstNameChange);
-        setAuthorLastName(handleAuthorLastNameChange);
-        setDescription(handleDescriptionChange);
-        setimg(null);
-        setfile(null);
-        setError(null);
-      } else {
-        setError('Upload failed. Please try again later.');
+        if (response.data.success) {
+          setSuccessMessage('Document uploaded successfully');
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
+          setTitle('');
+          setAuthorFirstName('');
+          setAuthorLastName('');
+          setDescription('');
+          setimg(null);
+          setfile(null);
+          setError(null);
+        } else {
+          setError('Upload failed. Please try again later.');
+        }
+      } catch (error) {
+        setError('An error occurred while uploading the document. Please try again later.');
+        console.error('Error uploading document:', error);
       }
-    } catch (error) {
-      setError('An error occurred while uploading the document. Please try again later.');
-      console.error('Error uploading document:', error);
+    } else {
+      setError('Please fill in all required fields.');
     }
-  } else {
-    setError('Please fill in all required fields.');
+  };
+  
+const fetchDocuments = async (facultyName) => {
+  try {
+    const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    setUploadedDocuments(response.data.Resource_list);
+  } catch (error) {
+    console.error('Error fetching uploaded documents:', error);
+  }
+};
+
+const fetchFavoriteResources = async () => {
+  try {
+    const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    setFavoriteResources(response.data);
+  } catch (error) {
+    console.error('Error fetching favorite resources:', error);
   }
 };
 
@@ -229,17 +231,9 @@ formData.append('file', file);
             <label>Description:</label>
             <textarea name="description" value={description} onChange={handleDescriptionChange}></textarea>
             <label>Choose Document:</label>
-            <input
-              type="file"
-              accept="pdf"
-              onChange={(e) => handlefileChange(e.target.files[0])}
-            />
+            <input type="file" accept="pdf" onChange={(e) => handlefileChange(e.target.files[0])}/>
             <label>Choose Photo for Document:</label>
-            <input
-              type="file"
-              accept="jpeg,jpg,png"
-              onChange={(e) => handleimgChange(e.target.files[0])}
-            />
+            <input type="file" accept="jpeg,jpg,png" onChange={(e) => handleimgChange(e.target.files[0])}/>
             {imgUrl && (
               <div className="card">
                 <img className="uploaded-photo" src={imgUrl} alt="Document" />
@@ -328,30 +322,10 @@ formData.append('file', file);
                   <p className="card-text">Author: {item.author}</p>
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
-                {item.photo && (
-  <div>
-    <img
-      className="uploaded-photo"
-      src={item.photo}
-      alt="Document or Link"
-    />
-  </div>
-)}
-
-
+                {item.photo && ( <div> <img className="uploaded-photo" src={item.photo} alt="Document or Link"/></div>)}
                 <div className="download-button-container">
-                  {item.file && (
-                    <a
-                      href={item.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={item.title || 'document'}
-                      className="download-button"
-                    >
-                      Download Document
-                    </a>
-                  )}
-                </div>
+          {item.file && ( <a href={item.file} target="_blank" rel="noopener noreferrer" download={item.title || 'document'} className="download-button"> Download Document </a> )}</div>
+
                 <div className="share-buttons">
                   <FacebookShareButton url={item.link || ''}>
                     <FacebookIcon size={32} round />
@@ -367,8 +341,7 @@ formData.append('file', file);
                   </EmailShareButton>
                 </div>
                 <i
-                  className="fas fa-star active" onClick={() => handleRemoveFavorite(item.id)}
-                ></i>
+                  className="fas fa-star active" onClick={() => handleRemoveFavorite(item.id)}></i>
               </li>
             ))}
           </ul>
@@ -378,5 +351,4 @@ formData.append('file', file);
     </div>
   );
 };
-
 export default FacultyPage;

@@ -20,6 +20,9 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
   const [errorMessage, setErrorMessage] = useState('');
   const [loginError, setLoginError] = useState('');
 
+
+  const backendURL = 'http://localhost:3002';
+
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -104,8 +107,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
       .post(`${backendURL}/api_auth/login`, { email, password })
       .then((response) => {
         const token = response.data.token;
-        localStorage.setItem('token', token);
-        
+        localStorage.setItem('token', token); // Store the token in local storage
         setSuccessMessage('Login successful');
         console.log('Login successful:', response.data);
         setLoginError('');
@@ -116,9 +118,7 @@ const Header = ({ selectedFacultyName, onSearchChange, isFacultyPage, isAdmin })
       });
   };
   
-
-  const backendURL = 'http://localhost:3002';
-
+  
   const modalTitleStyle = {
     color: 'white',
   };

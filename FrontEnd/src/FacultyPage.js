@@ -20,25 +20,24 @@ import {
 
 const FacultyPage = () => {
   const [title, setTitle] = useState('');
-  const [authorFirstName, setAuthorFirstName] = useState('');
-  const [authorLastName, setAuthorLastName] = useState('');
+  const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
-  const [file, setfile] = useState(null);
-  const [img, setimg] = useState(null);
+  const [documentFile, setDocumentFile] = useState(null);
+  const [documentPhoto, setDocumentPhoto] = useState(null);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
-  const [imgUrl, setimgUrl] = useState('');
+  const [documentPhotoUrl, setDocumentPhotoUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [fileUrl, setfileUrl] = useState('');
+  const [documentFileUrl, setDocumentFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
 
   const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
-  const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzIyNWNjM2NiMzc4ZmRmZTAwYmQ4NyIsInVzZXJuYW1lIjoiYW5hczIiLCJlbWFpbCI6ImFuYXMyQGdtYWlsLmNvbSJ9LCJpYXQiOjE2OTc3ODYzODIsImV4cCI6MTY5Nzg3Mjc4Mn0.4SPCW_xL3IkKasiMLZhJxjrHpN1kTci6ofgsBRX8hR0'; 
+  const userToken = 'http://localhost:3000'; 
 
   const fetchDocuments = async (facultyName) => {
     try {
@@ -126,45 +125,40 @@ const FacultyPage = () => {
     setTitle(e.target.value);
   };
 
-  const handleAuthorFirstNameChange = (e) => {
-    setAuthorFirstName(e.target.value);
-  };
-  const handleAuthorLastNameChange = (e) => {
-    setAuthorLastName(e.target.value);
+  const handleAuthorChange = (e) => {
+    setAuthor(e.target.value);
   };
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
 
-  const handlefileChange = (file) => {
+  const handleDocumentFileChange = (file) => {
     const uniqueId = uuidv4();
-    const fileName = `${uniqueId}_${file.name}`;
-    const uploadUrl = `${apiEndpoint}/${fileName}`;
-    //setfileUrl(uploadUrl);
+    const documentFileName = `${uniqueId}_${file.name}`;
+    const uploadUrl = `${apiEndpoint}/${documentFileName}`;
+    //setDocumentFileUrl(uploadUrl);
   };
 
-  const handleimgChange = (file) => {
-    setimg(file);
+  const handleDocumentPhotoChange = (file) => {
+    setDocumentPhoto(file);
     const photoUrl = URL.createObjectURL(file);
-    setimgUrl(photoUrl);
+    setDocumentPhotoUrl(photoUrl);
   };
 
   const handleUpload = async () => {
-    if (title && authorFirstName && authorLastName&& description && img) {
+    if (title && author && description && documentPhoto) {
       try {
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('authorFirstName', authorFirstName);
-        formData.append('authorLastName', authorLastName);
+        formData.append('author', author);
         formData.append('description', description);
-        formData.append('photo', img);
-        formData.append('file', file);
+        formData.append('photo', documentPhoto);
+        formData.append('file', documentFile);
 
         const response = await axios.post(apiEndpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization' :`Bearer ${userToken}` 
           },
         });
 
@@ -177,11 +171,10 @@ const FacultyPage = () => {
           }, 3000);
 
           setTitle('');
-          setAuthorFirstName('');
-          setAuthorLastName('');
+          setAuthor('');
           setDescription('');
-          setimg(null);
-          setfile(null);
+          setDocumentPhoto(null);
+          setDocumentFile(null);
           setError(null);
         } else {
           setError('Upload failed. Please try again later.');
@@ -219,10 +212,8 @@ const FacultyPage = () => {
           <div>
             <label>Title:</label>
             <input type="text" value={title} onChange={handleTitleChange} /><br></br>
-            <label>Author first name:</label>
-            <input type="text" value={authorFirstName} onChange={handleAuthorFirstNameChange} /><br></br>
-            <label>Author last name:</label>
-            <input type="text" value={authorLastName} onChange={handleAuthorLastNameChange} /><br></br>
+            <label>Author:</label>
+            <input type="text" value={author} onChange={handleAuthorChange} /><br></br>
             <label>Description:</label>
             <textarea
               value={description}
@@ -234,22 +225,21 @@ const FacultyPage = () => {
             <label>Choose Document:</label>
             <input
               type="file"
-              accept="pdf"
-              onChange={(e) => handlefileChange(e.target.files[0])}
+              accept=".pdf,.doc,.docx,.txt"
+              onChange={(e) => handleDocumentFileChange(e.target.files[0])}
             />
             <label>Choose Photo for Document:</label>
             <input
               type="file"
-              accept="jpeg,jpg,png"
-              onChange={(e) => handleimgChange(e.target.files[0])}
+              accept="image/*"
+              onChange={(e) => handleDocumentPhotoChange(e.target.files[0])}
             />
-            {imgUrl && (
+            {documentPhotoUrl && (
               <div className="card">
-                <img className="uploaded-photo" src={imgUrl} alt="Document" />
+                <img className="uploaded-photo" src={documentPhotoUrl} alt="Document" />
                 <div className="card-body">
                   <h5 className="card-title">{title}</h5>
-                  <p className="card-text">Author First Name: {authorFirstName}</p>
-                  <p className="card-text">Author Last Name: {authorLastName}</p>
+                  <p className="card-text">Author: {author}</p>
                   <p className="card-description">Description: {description}</p>
                 </div>
               </div>

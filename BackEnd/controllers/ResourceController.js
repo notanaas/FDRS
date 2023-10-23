@@ -113,7 +113,7 @@ exports.Resource_create_post = [
       await resource.save();
 
       // Return a JSON response with the created resource.
-      res.status(201).json({ resource });
+      res.status(201).json({message : "resource created successfuly"});
     } catch (err) {
       // Handle any errors that occur during author or resource creation.
       console.error(err);

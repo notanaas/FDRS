@@ -70,20 +70,16 @@ exports.Resource_create_post = [
     .trim()
     .escape(),
 
-  // Handle file uploads using multer.
-  upload.fields([
-    { name: 'file', maxCount: 1 }, // PDF file
-    { name: 'img', maxCount: 1 },  // Image file
-  ]),
-
   // Process request after validation, sanitization, and file uploads.
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
+    //uploading file
     upload.fields([
       { name: 'file', maxCount: 1 }, // PDF file
       { name: 'img', maxCount: 1 },  // Image file
     ])
+    //check errors
     if (!errors.isEmpty()) {
       // There are errors. Return JSON response with error messages.
       return res.status(400).json({ errors: errors.array() , body : req.body });
@@ -92,13 +88,10 @@ exports.Resource_create_post = [
     try {
       // Create a new author.
       const author = new Author({
-        firstName: req.body.authorFirstName,
-        lastName: req.body.authorLastName,
+        first_Name: req.body.authorFirstName,
+        last_Name: req.body.authorLastName,
       });
-<<<<<<< HEAD
-=======
 
->>>>>>> 4213880e18c8f6596b75f0d1e6e4f7b1b7f0670f
       // Save the author.
       await author.save();
       // Create a Resource object with escaped and trimmed data.
@@ -114,12 +107,11 @@ exports.Resource_create_post = [
         ResourceCover: req.files.img[0].path, // Store the image path as ResourceCover
         Related_link: req.body.related_link, // Change to match your request body
       });
-
       // Save the resource.
       await resource.save();
 
       // Return a JSON response with the created resource.
-      res.status(201).json({ resource });
+      return res.status(201).json({ message : "Resource created successfuly" });
     } catch (err) {
       // Handle any errors that occur during author or resource creation.
       console.error(err);
@@ -127,8 +119,6 @@ exports.Resource_create_post = [
     }
   }),
 ];
-
-
 
 
 exports.pdf_download = asyncHandler(async(req,res,next)=>

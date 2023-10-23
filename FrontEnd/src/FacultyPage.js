@@ -5,7 +5,7 @@ import { useFaculty } from './FacultyContext';
 import Header from './Header';
 import Footer from './Footer';
 import axios from 'axios';
-import './App.css'; 
+import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 import {
   FacebookShareButton,
@@ -19,25 +19,28 @@ import {
 } from 'react-share';
 
 const FacultyPage = () => {
+  const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [title, setTitle] = useState('');
   const [authorFirstName, setAuthorFirstName] = useState('');
   const [authorLastName, setAuthorLastName] = useState('');
   const [description, setDescription] = useState('');
-  const [file, setfile] = useState(null);
-  const [img, setimg] = useState(null);
+  const [file, setFile] = useState(null);
+  const [img, setImg] = useState(null);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
-  const [imgUrl, setimgUrl] = useState('');
+  const [imgUrl, setImgUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [fileUrl, setfileUrl] = useState('');
+  const [fileUrl, setFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
-  const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
 
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
@@ -115,21 +118,21 @@ const FacultyPage = () => {
     setDescription(e.target.value);
   };
 
-  const handlefileChange = (file) => {
+  const handleFileChange = (file) => {
     const uniqueId = uuidv4();
     const fileName = `${uniqueId}_${file.name}`;
     const uploadUrl = `${apiEndpoint}/${fileName}`;
-    setfileUrl(uploadUrl);
+    setFileUrl(uploadUrl);
   };
 
-  const handleimgChange = (file) => {
-    setimg(file);
+  const handleImgChange = (file) => {
+    setImg(file);
     const photoUrl = URL.createObjectURL(file);
-    setimgUrl(photoUrl);
+    setImgUrl(photoUrl);
   };
 
   const handleUpload = async () => {
-    if (!userToken) {
+    if (!isLoggedIn) {
       setAlertMessage({ message: 'You need to be logged in to upload documents.', type: 'error' });
       return;
     }
@@ -147,7 +150,7 @@ const FacultyPage = () => {
         const response = await axios.post(apiEndpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${userToken}`,
+            Authorization: `Bearer ${userToken}`,
           },
         });
 
@@ -157,8 +160,8 @@ const FacultyPage = () => {
           setAuthorFirstName('');
           setAuthorLastName('');
           setDescription('');
-          setimg(null);
-          setfile(null);
+          setImg(null);
+          setFile(null);
           setError(null);
         } else {
           setError('Upload failed. Please try again later.');
@@ -202,24 +205,24 @@ const FacultyPage = () => {
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
       <Header selectedFacultyName={facultyName} isFacultyPage={true} />
-      <h1>{FacultyName}</h1>
+      <h1 style={{ marginTop: '120px' }}>{FacultyName}</h1>
       <button onClick={openModal} className="upload-button">
         Upload
       </button>
-       {isModalOpen && (
+      {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
           {error && (
             <div className="error-message">
               <p className="error-text">{error}</p>
             </div>
           )}
-      
+
           {successMessage && (
             <div className="success-message">
               <p className="success-text">{successMessage}</p>
             </div>
           )}
-      
+
           <div>
             <label>Title:</label>
             <input type="text" name="title" value={title} onChange={handleTitleChange} />
@@ -230,9 +233,9 @@ const FacultyPage = () => {
             <label>Description:</label>
             <textarea name="description" value={description} onChange={handleDescriptionChange}></textarea>
             <label>Choose Document:</label>
-            <input type="file" accept="pdf" onChange={(e) => handlefileChange(e.target.files[0])}/>
+            <input type="file" accept="pdf" onChange={(e) => handleFileChange(e.target.files[0])} />
             <label>Choose Photo for Document:</label>
-            <input type="file" accept="jpeg,jpg,png" onChange={(e) => handleimgChange(e.target.files[0])}/>
+            <input type="file" accept="jpeg,jpg,png" onChange={(e) => handleImgChange(e.target.files[0])} />
             {imgUrl && (
               <div className="card">
                 <img className="uploaded-photo" src={imgUrl} alt="Document" />
@@ -320,17 +323,23 @@ const FacultyPage = () => {
         <div>
           <h2>Your Favorite Resources</h2>
           <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
-            {favoriteResources.map((item , index) => (
+            {favoriteResources.map((item, index) => (
               <li key={index} className="card">
                 <Link to={`/resource/${item.id}`}>
                   <h3 className="card-title">{item.title}</h3>
                   <p className="card-text">Author: {item.author}</p>
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
-                {item.photo && ( <div> <img className="uploaded-photo" src={item.photo} alt="Document or Link"/></div>)}
+                {item.photo && (
+                  <div> <img className="uploaded-photo" src={item.photo} alt="Document or Link" /></div>
+                )}
                 <div className="download-button-container">
-          {item.file && ( <a href={item.file} target="_blank" rel="noopener noreferrer" download={item.title || 'document'} className="download-button"> Download Document </a> )}</div>
-
+                  {item.file && (
+                    <a href={item.file} target="_blank" rel="noopener noreferrer" download={item.title || 'document'} className="download-button">
+                      Download Document
+                    </a>
+                  )}
+                </div>
                 <div className="share-buttons">
                   <FacebookShareButton url={item.link || ''}>
                     <FacebookIcon size={32} round />
@@ -346,7 +355,9 @@ const FacultyPage = () => {
                   </EmailShareButton>
                 </div>
                 <i
-                  className="fas fa-star active" onClick={() => handleRemoveFavorite(item.id)}></i>
+                  className="fas fa-star active"
+                  onClick={() => handleRemoveFavorite(item.id)}
+                ></i>
               </li>
             ))}
           </ul>

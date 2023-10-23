@@ -74,15 +74,18 @@ exports.Resource_create_post = [
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
+
     //uploading file
     upload.fields([
       { name: 'file', maxCount: 1 }, // PDF file
       { name: 'img', maxCount: 1 },  // Image file
     ])
     //check errors
+
+
     if (!errors.isEmpty()) {
       // There are errors. Return JSON response with error messages.
-      return res.status(400).json({ errors: errors.array() , body : req.body });
+      return res.status(400).json({ errors: errors.array() });
     }
 
     try {
@@ -112,6 +115,7 @@ exports.Resource_create_post = [
 
       // Return a JSON response with the created resource.
       return res.status(201).json({ message : "Resource created successfuly" });
+
     } catch (err) {
       // Handle any errors that occur during author or resource creation.
       console.error(err);

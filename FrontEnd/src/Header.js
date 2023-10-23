@@ -29,9 +29,12 @@ const Header = ({
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '',
   });
+  const [verificationCode, setVerificationCode] = useState(''); // New state for verification code
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -76,24 +79,56 @@ const Header = ({
     setPassword(e.target.value);
   };
 
-  const handlePasswordConfirmChange = (e) => {
-    setPasswordConfirm(e.target.value);
+  const handleForgotPassword = () => {
+    // When "Forgot Password" is clicked, set the password reset email state and hide the password field
+    setPasswordResetEmail(email);
+    setPassword('');
+    setIsLoginModalOpen(false);
+    setIsForgotPasswordOpen(true);
+    setModalTitle('Forgot Password');
   };
 
-  const handleForgotPassword = () => {
-    history.push('/forgot-password');
+  const handleVerificationCodeChange = (e) => {
+    setVerificationCode(e.target.value);
+  };
+
+  const handleBackToLogin = () => {
+    // When the user clicks "Back to Login" from the password reset screen
+    setPasswordResetEmail(false); // Clear the password reset email state
+    setPassword(''); // Clear the password field
+    setVerificationCode(''); // Clear the verification code field
+    setIsForgotPasswordOpen(false);
+    setIsLoginModalOpen(true);
+    setModalTitle('Login');
+  };
+
+  const handleForgotPasswordSubmit = (e) => {
+    e.preventDefault();
+    // Implement the backend logic to verify the email and send a reset code
+    axios
+      .post(`${backendURL}/api_auth/forgot-password`, { email: passwordResetEmail, verificationCode })
+      .then((response) => {
+        setSuccessMessage('An email with a password reset link has been sent.');
+        closeForgotPasswordModal();
+      })
+      .catch((error) => {
+        setErrorMessage('Password reset failed: ' + error.response.data.errors[0].msg);
+        console.error('Password reset failed:', error.response.data.errors);
+      });
+  };
+
+  const handleForgotPasswordInputChange = (e) => {
+    const { name, value } = e.target;
+    setForgotPasswordData({
+      ...forgotPasswordData,
+      [name]: value,
+    });
   };
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
 
     const trimmedPassword = signupData.password.trim();
-    const trimmedPasswordConfirm = passwordConfirm.trim();
-
-    if (trimmedPassword !== trimmedPasswordConfirm) {
-      setErrorMessage('Passwords do not match');
-      return;
-    }
 
     axios
       .post(`${backendURL}/api_auth/register`, signupData)
@@ -142,7 +177,7 @@ const Header = ({
   const modalTitleStyle = {
     color: 'white',
   };
-  
+
   const openForgotPasswordModal = () => {
     setIsForgotPasswordOpen(true);
     setModalTitle('Forgot Password');
@@ -152,39 +187,29 @@ const Header = ({
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
+    setVerificationCode(''); // Clear verification code
   };
 
-  
-  const handleForgotPasswordInputChange = (e) => {
-    const { name, value } = e.target;
-    setForgotPasswordData({
-      ...forgotPasswordData,
-      [name]: value,
-    });
+  const handlePasswordConfirmChange = (e) => {
+    setPasswordConfirm(e.target.value);
   };
 
-  const handleForgotPasswordSubmit = (e) => {
-    e.preventDefault();
-
-    axios
-      .post(`${backendURL}/api_auth/forgot-password`, forgotPasswordData)
-      .then((response) => {
-        setSuccessMessage('An email with a password reset link has been sent.');
-        closeForgotPasswordModal();
-      })
-      .catch((error) => {
-        setErrorMessage('Password reset failed: ' + error.response.data.errors[0].msg);
-        console.error('Password reset failed:', error.response.data.errors);
-      });
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setModalTitle('Login');
   };
 
-  
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
+  };
+
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     checkLogin(email, password);
   };
 
-  
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
       <div className="logoContainer">
@@ -198,11 +223,11 @@ const Header = ({
           <div>
             <input
               type="text"
-              className="searchBar"
+              className="inputBar"
               placeholder={`Search in `}
               onChange={onSearchChange}
             />
-            <button className="searchButton">Search</button>
+            <button className="authButton">Search</button>
           </div>
         )}
       </div>
@@ -221,36 +246,14 @@ const Header = ({
           </div>
         ) : (
           <div>
-            <form onSubmit={handleLoginSubmit}>
-              <input
-                type="email"
-                className="authInput"
-                placeholder="Email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-              <input
-                type="password"
-                className="authInput"
-                placeholder="Password"
-                value={password}
-                onChange={handlePasswordChange}
-              />
-              <button type="submit" className="authButton">
-                Login
-              </button>
-            </form>
-            <button className="authButton" onClick={handleForgotPassword}>
-              Forgot Password
+            <button className="authButton" onClick={openLoginModal}>
+              Login
+            </button>
+            <button className="authButton" onClick={openSignupModal}>
+              Sign Up
             </button>
           </div>
         )}
-      </div>
-
-      <div className="authButtons" >
-        <button className="authButton" onClick={openSignupModal}>
-          Sign Up
-        </button>
       </div>
 
       {loginError && <div className="error-message">{loginError}</div>}
@@ -264,44 +267,52 @@ const Header = ({
 
         <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username:</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
               id="username"
               name="username"
+              className="inputBar"
+              placeholder="Username"
               value={signupData.username}
               onChange={handleSignupInputChange}
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               name="email"
+              className="inputBar"
+              placeholder="Email"
               value={signupData.email}
               onChange={handleSignupInputChange}
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password:</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
               name="password"
+              className="inputBar"
+              placeholder="Password"
               value={signupData.password}
               onChange={handleSignupInputChange}
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="passwordConfirm">Confirm Password:</label>
+            <label htmlFor="passwordConfirm">Confirm Password</label>
             <input
               type="password"
               id="passwordConfirm"
               name="passwordConfirm"
+              className="inputBar"
+              placeholder="Confirm Password"
               value={passwordConfirm}
               onChange={handlePasswordConfirmChange}
               required
@@ -320,19 +331,82 @@ const Header = ({
         {errorMessage && <div className="error-message">{errorMessage}</div>}
 
         <form onSubmit={handleForgotPasswordSubmit}>
+          {passwordResetEmail ? (
+            <div className="form-group">
+              <label htmlFor="verificationCode">Verification Code:</label>
+              <input
+                type="text"
+                id="verificationCode"
+                name="verificationCode"
+                className="inputBar"
+                placeholder="Verification Code"
+                value={verificationCode}
+                onChange={handleVerificationCodeChange}
+                required
+              />
+            </div>
+          ) : (
+            <div className="form-group">
+              <label htmlFor="email">Email:</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="inputBar"
+                placeholder="Email"
+                value={forgotPasswordData.email}
+                onChange={handleForgotPasswordInputChange}
+                required
+              />
+            </div>
+          )}
+          <button type="submit" className="authButton">
+            {passwordResetEmail ? 'Reset Password' : 'Send Verification Code'}
+          </button>
+          {passwordResetEmail && (
+            <button className="authButton" onClick={handleBackToLogin}>
+              Back to Login
+            </button>
+          )}
+        </form>
+      </Modal>
+
+      <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
+        <h2 style={modalTitleStyle}>{modalTitle}</h2>
+        {successMessage && <div className="success-message">{successMessage}</div>}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+        <form onSubmit={handleLoginSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
             <input
               type="email"
               id="email"
               name="email"
-              value={forgotPasswordData.email}
-              onChange={handleForgotPasswordInputChange}
+              className="inputBar"
+              placeholder="Email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="inputBar"
+              placeholder="Password"
+              value={password}
+              onChange={handlePasswordChange}
               required
             />
           </div>
           <button type="submit" className="authButton">
-            Reset Password
+            Login
+          </button>
+          <button className="authButton" onClick={handleForgotPassword}>
+            Forgot Password
           </button>
         </form>
       </Modal>

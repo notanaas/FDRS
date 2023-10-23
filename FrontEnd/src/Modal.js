@@ -21,7 +21,6 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
     <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
       <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header" style={{ backgroundColor: '#8b0000' }}>
-          <h2 style={{ color: 'white' }}>Upload File</h2>
         </div>
         <div className="modal-body">
           {children}

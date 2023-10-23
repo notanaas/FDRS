@@ -206,11 +206,12 @@ const FacultyPage = () => {
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
       <Header selectedFacultyName={facultyName} isFacultyPage={true} />
       <h1 style={{ marginTop: '120px' }}>{FacultyName}</h1>
-      <button onClick={openModal} className="upload-button">
+      <button onClick={openModal} className="authButton">
         Upload
       </button>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
+            <div className="custom-upload-modal">
           {error && (
             <div className="error-message">
               <p className="error-text">{error}</p>
@@ -223,31 +224,80 @@ const FacultyPage = () => {
             </div>
           )}
 
-          <div>
-            <label>Title:</label>
-            <input type="text" name="title" value={title} onChange={handleTitleChange} />
-            <label>Author first name:</label>
-            <input type="text" name="authorFirstName" value={authorFirstName} onChange={handleAuthorFirstNameChange} />
-            <label>Author last name:</label>
-            <input type="text" name="authorLastName" value={authorLastName} onChange={handleAuthorLastNameChange} />
-            <label>Description:</label>
-            <textarea name="description" value={description} onChange={handleDescriptionChange}></textarea>
-            <label>Choose Document:</label>
-            <input type="file" accept="pdf" onChange={(e) => handleFileChange(e.target.files[0])} />
-            <label>Choose Photo for Document:</label>
-            <input type="file" accept="jpeg,jpg,png" onChange={(e) => handleImgChange(e.target.files[0])} />
-            {imgUrl && (
-              <div className="card">
-                <img className="uploaded-photo" src={imgUrl} alt="Document" />
-                <div className="card-body">
-                  <h5 className="card-title">{title}</h5>
-                  <p className="card-text">Author First Name: {authorFirstName}</p>
-                  <p className="card-text">Author Last Name: {authorLastName}</p>
-                  <p className="card-description">Description: {description}</p>
-                </div>
-              </div>
-            )}
-          </div>
+          <div className="form-container">
+          <h2 style={{ color: 'white' }}>Upload File</h2>
+
+  <div className="form-group">
+    <label>Title:</label>
+    <input
+      type="text"
+      name="title"
+      value={title}
+      onChange={handleTitleChange}
+      className="inputBar"
+    />
+  </div>
+  <div className="form-group">
+    <label>Author First Name:</label>
+    <input
+      type="text"
+      name="authorFirstName"
+      value={authorFirstName}
+      onChange={handleAuthorFirstNameChange}
+      className="inputBar"
+    />
+  </div>
+  <div className="form-group">
+    <label>Author Last Name:</label>
+    <input
+      type="text"
+      name="authorLastName"
+      value={authorLastName}
+      onChange={handleAuthorLastNameChange}
+      className="inputBar"
+    />
+  </div>
+  <div className="form-group">
+    <label>Description:</label>
+    <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      className="inputBar"
+    ></textarea>
+  </div>
+  <div className="form-group">
+    <label>Choose Document (PDF):</label>
+    <input
+      type="file"
+      accept="application/pdf"
+      onChange={(e) => handleFileChange(e.target.files[0])}
+      className="inputBar"
+    />
+  </div>
+  <div className="form-group">
+    <label>Choose Photo for Document (JPEG, JPG, PNG):</label>
+    <input
+      type="file"
+      accept="image/jpeg, image/jpg, image/png"
+      onChange={(e) => handleImgChange(e.target.files[0])}
+      className="inputBar"
+    />
+  </div>
+  </div>
+
+  {imgUrl && (
+    <div className="card">
+      <img className="uploaded-photo" src={imgUrl} alt="Document" />
+      <div className="card-body">
+        <h5 className="card-title">{title}</h5>
+        <p className="card-text">Author First Name: {authorFirstName}</p>
+        <p className="card-text">Author Last Name: {authorLastName}</p>
+        <p className="card-description">Description: {description}</p>
+      </div>
+    </div>
+  )}
+
           <div className="modal-footer">
             <button onClick={closeModal} className="modal-close-button">
               Close
@@ -261,6 +311,8 @@ const FacultyPage = () => {
               {alertMessage.message}
             </div>
           )}
+          </div>
+
         </Modal>
       )}
 

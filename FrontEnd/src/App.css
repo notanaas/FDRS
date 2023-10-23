@@ -15,19 +15,6 @@ body {
     color: #333;
   }
 }
-.forgotPasswordButton {
-  background-color: #ff0000; 
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.forgotPasswordButton:hover {
-  background-color: #e64a19; 
-}
 
 .custom-copy-button {
   color: white;
@@ -80,6 +67,11 @@ body {
   color: #fff;
   padding: 1rem;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 
@@ -89,18 +81,6 @@ body {
   margin-bottom: 10px;
 }
 
-.searchBar {
-  flex: 1;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #6a0000;
-  color: #fff;
-  ::placeholder {
-    color: #fff;
-  }
-}
 
 .searchButton {
   padding: 0.6rem 1.2rem;
@@ -147,7 +127,7 @@ body {
 
 
 .copy-link-button {
-  background-color: #007bff; /* Example color */
+  background-color: #8b0000; /* Example color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -269,10 +249,10 @@ body {
   border-radius: 8px;
   padding: 10px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  width: 300px;
   transition: transform 0.2s;
-  width: calc(31% - 25px); /* Set the width to 33.33% with a gap of 20px */
-
+  width: 100px; /* Adjust the width as needed */
+  padding: 5px; /* Adjust the padding as needed */
+  font-size: 14px; /* Adjust the font size as needed */
 }
 
 .card:hover {
@@ -309,13 +289,7 @@ body {
   color: #61dafb;
 }
 
-.errorContainer {
-  background-color: #ff0000;
-  color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
-}
+
 
 .facultyButtonsContainer {
   display: flex;
@@ -420,16 +394,6 @@ body {
   margin-right: 1rem;
 }
 
-.headerContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #8b0000;
-  color: #fff;
-  padding: 1rem;
-  margin-bottom: 20px;
-  text-align: center;
-}
 
 .logoContainer {
   display: flex;
@@ -437,18 +401,25 @@ body {
   margin-bottom: 10px;
 }
 
-.searchBar {
-  flex: 1;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.inputBar {
   padding: 0.5rem;
   font-size: 1rem;
   border: none;
   border-radius: 5px;
   background-color: #6a0000;
   color: #fff;
+  margin-bottom: 1rem;
 }
 
-.searchBar::placeholder {
-  color: #fff;
+
+.inputBar::placeholder {
+  color: #7e7e7e;
 }
 
 .searchButton {
@@ -467,25 +438,6 @@ body {
   background-color: #6a0000;
 }
 
-.authButtons {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.authInput {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #6a0000;
-  color: #fff;
-  margin-left: 0.5rem;
-}
-
-.authInput::placeholder {
-  color: #fff;
-}
 
 .authButton {
   padding: 0.6rem 1.2rem;
@@ -528,16 +480,6 @@ body {
   flex-direction: column;
   align-items: center;
   margin-top: 2rem;
-}
-
-
-.inputField {
-  padding: 0.5rem;
-  margin-top: 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 200px;
 }
 
 .faculties {
@@ -612,21 +554,7 @@ body {
 .cacultyUploadButton {
   margin-top: 20px;
 }
-.popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-}
 
-.popup-content {
-  text-align: center;
-}
 
 .close-button {
   margin-top: 10px;
@@ -643,11 +571,7 @@ body {
   padding: 20px;
 }
 
-.header {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-}
+
 
 /* Media queries for different screen sizes */
 
@@ -719,13 +643,15 @@ body {
 }
 
 .error-message {
-  background-color: #ff6b6b;
-  color: white;
   padding: 12px 20px;
   margin: 10px 0;
   border-radius: 6px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   text-align: center;
+  background-color: #ff0000;
+  color: #fff;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
 .error-text {

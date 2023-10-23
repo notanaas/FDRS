@@ -15,6 +15,20 @@ body {
     color: #333;
   }
 }
+.forgotPasswordButton {
+  background-color: #ff0000; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.forgotPasswordButton:hover {
+  background-color: #e64a19; 
+}
+
 .custom-copy-button {
   color: white;
   border: none;
@@ -57,11 +71,17 @@ body {
 }
 
 .headerContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100; /* Adjust the z-index as needed */
   background-color: #8b0000;
   color: #fff;
   padding: 1rem;
   text-align: center;
 }
+
 
 .logoContainer {
   display: flex;
@@ -171,16 +191,7 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+
 
 .uploaded-photo {
   width: 200px;
@@ -196,6 +207,10 @@ body {
   font-size: 1rem;
   cursor: pointer;
   margin-top: 10px;
+  margin-bottom: 40px; 
+  margin-top: 50px; 
+
+
 }
 
 .upload-button:hover {
@@ -320,7 +335,10 @@ body {
   margin: 5px;
   transition: background-color 0.2s;
   text-transform: capitalize;
-}
+    margin-top: 50px; 
+  }
+  
+
 
 .facultyButton:hover {
   background-color: #ff0000;
@@ -451,6 +469,7 @@ body {
 
 .authButtons {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -491,7 +510,11 @@ body {
 
 .facultyName {
   margin: 0;
-  padding: 0;
+  padding: 0;    
+  margin-top: 50px; 
+  margin-bottom: 50px; 
+
+
 }
 
 .homeContainer {

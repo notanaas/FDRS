@@ -19,6 +19,7 @@ import {
 } from 'react-share';
 
 const FacultyPage = () => {
+  const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
   const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
   const [email, setEmail] = useState('');
@@ -40,7 +41,6 @@ const FacultyPage = () => {
   const [fileUrl, setFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
-  const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
 
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
@@ -205,7 +205,7 @@ const FacultyPage = () => {
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
       <Header selectedFacultyName={facultyName} isFacultyPage={true} />
-      <h1>{FacultyName}</h1>
+      <h1 style={{ marginTop: '120px' }}>{FacultyName}</h1>
       <button onClick={openModal} className="upload-button">
         Upload
       </button>

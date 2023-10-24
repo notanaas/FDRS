@@ -32,7 +32,7 @@ const Header = ({
   const [verificationCode, setVerificationCode] = useState(''); // New state for verification code
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [loginError, setLoginError] = useState(''); // New state for login error message
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
@@ -45,7 +45,6 @@ const Header = ({
     backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
     color: localIsDarkMode ? 'white' : 'black', // Text color
   };
-
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -213,6 +212,7 @@ const Header = ({
     setIsLoginModalOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
+    setLoginError(''); // Clear the login error
   };
 
   const handleLoginSubmit = (e) => {
@@ -265,9 +265,6 @@ const Header = ({
           </div>
         )}
       </div>
-
-      {loginError && <div className="error-message">{loginError}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <h2 style={modalTitleStyle}>{modalTitle}</h2>
@@ -384,7 +381,8 @@ const Header = ({
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
         <h2 style={modalTitleStyle}>{modalTitle}</h2>
         {successMessage && <div className="success-message">{successMessage}</div>}
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
+        {loginError && <div className="error-message">{loginError}</div>}
+
         <form onSubmit={handleLoginSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email:</label>

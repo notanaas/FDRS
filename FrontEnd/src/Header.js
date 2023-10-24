@@ -35,6 +35,16 @@ const Header = ({
   const [loginError, setLoginError] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
+  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setLocalIsDarkMode(!localIsDarkMode);
+  };
+
+  const modalContentStyle = {
+    backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
+    color: localIsDarkMode ? 'white' : 'black', // Text color
+  };
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;

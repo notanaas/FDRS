@@ -438,7 +438,16 @@ body {
   background-color: #6a0000;
 }
 
-
+.alert-message {
+  background-color: #FFCDD2; /* Light red background */
+  color: #D32F2F; /* Dark red text color */
+  padding: 10px;
+  border: 1px solid #D32F2F; /* Dark red border */
+  border-radius: 5px;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: bold;
+}
 .authButton {
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
@@ -448,6 +457,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
   margin-left: 0.5rem;
+  margin-right: 2rem;
   transition: background-color 0.2s;
 }
 
@@ -643,16 +653,15 @@ body {
 }
 
 .error-message {
-  padding: 12px 20px;
-  margin: 10px 0;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  background-color: #ff0000;
-  color: #fff;
-  border-radius: 5px;
-  margin-top: 10px;
+  color: #ff0000; /* Red text color for errors */
+  font-weight: bold; /* Bold text for emphasis */
+  background-color: #ffe6e6; /* Light red background color for the error message */
+  padding: 10px; /* Add padding to the error message */
+  border: 1px solid #ff0000; /* Red border */
+  border-radius: 4px; /* Rounded corners */
+  margin: 10px 0; /* Add some margin to separate the message from other elements */
 }
+
 
 .error-text {
   font-weight: bold;

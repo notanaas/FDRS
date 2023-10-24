@@ -133,9 +133,13 @@ const FacultyPage = () => {
 
   const handleUpload = async () => {
     if (!isLoggedIn) {
-      setAlertMessage({ message: 'You need to be logged in to upload documents.', type: 'error' });
+      setAlertMessage({
+        message: 'You need to be logged in to upload documents.',
+        type: 'error',
+      });
       return;
     }
+    
 
     if (title && authorFirstName && authorLastName && description && img) {
       try {
@@ -298,21 +302,20 @@ const FacultyPage = () => {
     </div>
   )}
 
-          <div className="modal-footer">
-            <button onClick={closeModal} className="modal-close-button">
-              Close
-            </button>
-            <button onClick={handleUpload} className="upload-button">
-              Upload
-            </button>
-          </div>
-          {alertMessage.message && (
-            <div className={`alert-message ${alertMessage.type}`}>
-              {alertMessage.message}
+        <div className="modal-footer">
+                <button onClick={closeModal} className="modal-close-button">
+                  Close
+                </button>
+                <button onClick={handleUpload} className="upload-button">
+                  Upload
+                </button>
+              </div>
+              {alertMessage.message && (
+                <div className={`alert-message ${alertMessage.type}`}>
+                  {alertMessage.message}
+                </div>
+              )}
             </div>
-          )}
-          </div>
-
         </Modal>
       )}
 

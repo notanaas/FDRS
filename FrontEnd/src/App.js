@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
 import ResourcePage from './ResourcePage';
+import AdminPage from './AdminPage';
+
 import { FacultyProvider } from './FacultyContext';
 
 

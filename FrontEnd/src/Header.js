@@ -45,6 +45,7 @@ const Header = ({
     backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
     color: localIsDarkMode ? 'white' : 'black', // Text color
   };
+
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -160,9 +161,16 @@ const Header = ({
     });
   };
 
-  const checkLogin = (email, password) => {
+  const checkLogin = (usernameOrEmail, password) => {
+    // Determine if the input is an email or username
+    const isEmail = usernameOrEmail.includes('@');
+    
+    const loginData = isEmail
+      ? { email: usernameOrEmail, password }
+      : { username: usernameOrEmail, password };
+  
     axios
-      .post(`${backendURL}/api_auth/login`, { email, password })
+      .post(`${backendURL}/api_auth/login`, loginData)
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem('token', token);
@@ -172,10 +180,11 @@ const Header = ({
         setLoginError('');
       })
       .catch((error) => {
-        setLoginError('Email or password is incorrect');
+        setLoginError('Username or email and password are incorrect');
         console.error('Login failed:', error.response.data);
       });
   };
+  
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -384,39 +393,40 @@ const Header = ({
         {loginError && <div className="error-message">{loginError}</div>}
 
         <form onSubmit={handleLoginSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="inputBar"
-              placeholder="Email"
-              value={email}
-              onChange={handleEmailChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="inputBar"
-              placeholder="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-          </div>
-          <button type="submit" className="authButton">
-            Login
-          </button>
-          <button className="authButton" onClick={handleForgotPassword}>
-            Forgot Password
-          </button>
-        </form>
+  <div className="form-group">
+    <label htmlFor="usernameOrEmail">Username or Email:</label>
+    <input
+      type="text"
+      id="usernameOrEmail"
+      name="usernameOrEmail"
+      className="inputBar"
+      placeholder="Username or Email"
+      value={email}
+      onChange={handleEmailChange}
+      required
+    />
+  </div>
+  <div className="form-group">
+    <label htmlFor="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      className="inputBar"
+      placeholder="Password"
+      value={password}
+      onChange={handlePasswordChange}
+      required
+    />
+  </div>
+  <button type="submit" className="authButton">
+    Login
+  </button>
+  <button className="authButton" onClick={handleForgotPassword}>
+    Forgot Password
+  </button>
+</form>
+
       </Modal>
     </header>
   );

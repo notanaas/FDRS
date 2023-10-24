@@ -1,53 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 
-const Comments = ({ resourceId }) => {
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
+const Comments = ({ comments, addComment, userAuthenticated }) => {
+  const [newComment, setNewComment] = useState({ author: '', text: '' });
+  const [sortingAsc, setSortingAsc] = useState(true);
 
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(`/api/resources/${resourceId}/comments`);
-      setComments(response.data);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
+  const handleAuthorChange = (e) => {
+    setNewComment({ ...newComment, author: e.target.value });
   };
 
-  useEffect(() => {
-    fetchComments();
-  }, [resourceId]);
+  const handleTextChange = (e) => {
+    setNewComment({ ...newComment, text: e.target.value });
+  };
 
-  const submitComment = async () => {
-    if (newComment.trim() === '') {
-      return;
-    }
+  const addNewComment = () => {
+    addComment(newComment);
+    setNewComment({ author: '', text: '' });
+  };
 
-    try {
-      await axios.post(`/api/resources/${resourceId}/comments`, { comment: newComment });
-      setNewComment('');
-      fetchComments();
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-    }
+  const sortComments = () => {
+    const sortedComments = [...comments].sort((a, b) => {
+      if (sortingAsc) {
+        return a.timestamp - b.timestamp;
+      } else {
+        return b.timestamp - a.timestamp;
+      }
+    });
+    setSortingAsc(!sortingAsc);
+    addComment(sortedComments);
   };
 
   return (
-    <div>
+    <div className="comments">
       <h2>Comments</h2>
-      <div>
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Add a comment..."
-        />
-        <button onClick={submitComment}>Submit</button>
+      <div className="sort-comments">
+        <button className="authButton" onClick={sortComments}>
+          Sort by Date ({sortingAsc ? 'Newer to Older' : 'Older to Newer'})
+        </button>
       </div>
-      <ul>
-        {comments.map((comment) => (
-          <li key={comment._id}>{comment.Comment}</li>
-        ))}
-      </ul>
+      {comments.map((comment) => (
+        <div key={comment.id} className="comment">
+          <strong>{comment.author}:</strong> {comment.text}
+        </div>
+      ))}
+      <div className="add-comment">
+        <h3>Add a Comment</h3>
+        <div className="comment-form">
+          {userAuthenticated ? (
+            <>
+              <input
+                className="inputBar"
+                type="text"
+                placeholder="Name"
+                value={newComment.author}
+                onChange={handleAuthorChange}
+              />
+              <textarea
+                className="inputBar"
+                placeholder="Write your comment..."
+                value={newComment.text}
+                onChange={handleTextChange}
+              />
+              <button className="authButton" onClick={addNewComment}>
+                Add Comment
+              </button>
+            </>
+          ) : (
+            <p>Please log in to add a comment.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

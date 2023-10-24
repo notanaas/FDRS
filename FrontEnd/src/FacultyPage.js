@@ -294,10 +294,9 @@ const FacultyPage = () => {
     <div className="card">
       <img className="uploaded-photo" src={imgUrl} alt="Document" />
       <div className="card-body">
-        <h5 className="card-title">{title}</h5>
+        <p className="card-title">{title}</p>
         <p className="card-text">Author First Name: {authorFirstName}</p>
         <p className="card-text">Author Last Name: {authorLastName}</p>
-        <p className="card-description">Description: {description}</p>
       </div>
     </div>
   )}

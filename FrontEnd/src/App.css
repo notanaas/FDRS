@@ -613,6 +613,8 @@ body {
   z-index: 1000;
   justify-content: center;
   align-items: center;
+
+  
 }
 
 .upload-modal.show {

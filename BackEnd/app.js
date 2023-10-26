@@ -65,6 +65,7 @@ app.use('/api_resource', resourceRouter);
 app.use('/api_faculty' ,facultyRouter )
 app.use('/api_comment' , commentRouter)
 app.use('/api_favorite' ,favoriteRouter )
+app.use('/api_user',UsersRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

@@ -3,7 +3,7 @@ const Faculty = require("../models/Faculty")
 const Author = require("../models/Author")
 const comments = require("../models/Comment")
 const asyncHandler = require("express-async-handler")
-const { body, validationResult } = require("express-validator"); // validator and sanitizer
+const {body,validationResult} = require("express-validator")
 const path  = require("path")
 const { upload } = require('../multerconfig');
 

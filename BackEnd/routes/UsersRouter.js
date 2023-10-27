@@ -4,6 +4,6 @@ const passport = require('passport');
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/profile', Profile.profile);
+router.get('/profile',passport.authenticate('jwt', { session: false }), Profile.profile);
 
 module.exports = router;

@@ -6,6 +6,8 @@ const facultyRouter = require('./routes/FacultyRouter')
 const resourceRouter = require('./routes/resourceRouter');
 const commentRouter = require('./routes/commentRouter')
 const favoriteRouter = require('./routes/FavoriteRouter')
+const UserRouter = require('./routes/UsersRouter')
+const FeedBackRouter = require('./routes/FeedBackRouter')
 const passport = require('passport');
 const cors = require("cors");
 require("./passport-config")(passport);
@@ -65,7 +67,8 @@ app.use('/api_resource', resourceRouter);
 app.use('/api_faculty' ,facultyRouter )
 app.use('/api_comment' , commentRouter)
 app.use('/api_favorite' ,favoriteRouter )
-app.use('/api_user',UsersRouter)
+app.use('/api_user',UserRouter)
+app.use('/api_feedback' ,FeedBackRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

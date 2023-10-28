@@ -1,4 +1,3 @@
-const Users = require("../models/Users")
 const asyncHandler = require("express-async-handler");
 const FeedBack = require("../models/FeedBack");
 

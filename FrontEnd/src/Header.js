@@ -41,14 +41,11 @@ const Header = ({
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const handleStateChange = () => {
-      setIsOpen(true);
+    setIsSidebarOpen(!isSidebarOpen);
   };
-  const handleCloseChange = () => {
-    setIsOpen(false);
-    
-  };
+  
   const handleFacultySelection = (FacultyName) => {
     setSelectedFaculty(FacultyName);
   };
@@ -247,20 +244,26 @@ const Header = ({
   return (
     
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
-      <button className="authButton" isOpen={isOpen} onClose={handleCloseChange} onClick={handleStateChange}>
-      ☰
+       <button 
+        className="authButton" 
+        onClick={handleStateChange}
+      >
+        ☰
       </button>
-      <Menu >
-      <div>
-        <FacultyButtons onFacultySelect={handleFacultySelection} />
-        {selectedFaculty && (
+      
+      {isSidebarOpen && (
+        <Menu>
           <div>
-            <h2>{selectedFaculty}</h2>
-            <FileUpload />
+            <FacultyButtons onFacultySelect={handleFacultySelection} />
+            {selectedFaculty && (
+              <div>
+                <h2>{selectedFaculty}</h2>
+                <FileUpload />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </Menu>
+        </Menu>
+      )}
     
       <div className="logoContainer">
         <Link to="/">

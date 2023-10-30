@@ -12,6 +12,7 @@
     "font-awesome": "^4.7.0",
     "mongoose": "^X.X.X",
     "react": "^18.2.0",
+    "react-burger-menu": "^3.0.9",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.3.4",

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Modal from './Modal';
+import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
+import FileUpload from './FileUpload';
+import { slide as Menu } from 'react-burger-menu'; // Importing the slide effect, but you can use others.
 
 const Header = ({
   selectedFacultyName,
@@ -36,7 +39,20 @@ const Header = ({
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
+  const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
+  const handleStateChange = () => {
+      setIsOpen(true);
+  };
+  const handleCloseChange = () => {
+    setIsOpen(false);
+    
+  };
+  const handleFacultySelection = (FacultyName) => {
+    setSelectedFaculty(FacultyName);
+  };
+  
   const toggleDarkMode = () => {
     setLocalIsDarkMode(!localIsDarkMode);
   };
@@ -160,9 +176,8 @@ const Header = ({
       [name]: value,
     });
   };
-
+  
   const checkLogin = (usernameOrEmail, password) => {
-    // Determine if the input is an email or username
     const isEmail = usernameOrEmail.includes('@');
     
     const loginData = isEmail
@@ -205,7 +220,7 @@ const Header = ({
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
-    setVerificationCode(''); // Clear verification code
+    setVerificationCode(''); 
   };
 
   const handlePasswordConfirmChange = (e) => {
@@ -230,7 +245,23 @@ const Header = ({
   };
 
   return (
-    <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
+    
+    <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
+      <button className="authButton" isOpen={isOpen} onClose={handleCloseChange} onClick={handleStateChange}>
+      ☰
+      </button>
+      <Menu >
+      <div>
+        <FacultyButtons onFacultySelect={handleFacultySelection} />
+        {selectedFaculty && (
+          <div>
+            <h2>{selectedFaculty}</h2>
+            <FileUpload />
+          </div>
+        )}
+      </div>
+    </Menu>
+    
       <div className="logoContainer">
         <Link to="/">
           <img src="/logo.png" alt="Logo" className="logo" />
@@ -425,10 +456,12 @@ const Header = ({
   <button className="authButton" onClick={handleForgotPassword}>
     Forgot Password
   </button>
+  
 </form>
-
       </Modal>
+      
     </header>
+    
   );
 };
 

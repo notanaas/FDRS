@@ -4,7 +4,7 @@ import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
 import ResourcePage from './ResourcePage';
 import AdminPage from './AdminPage';
-
+import Header from './Header';
 import { FacultyProvider } from './FacultyContext';
 
 
@@ -32,6 +32,7 @@ function App() {
       <FacultyProvider>
         <div className="App">
           <Router>
+          <Header />
             <div className="contentContainer">
               <Switch>
                 <Route path="/" exact component={WelcomingPage} />

@@ -1,16 +1,82 @@
 // ResourcePage.js
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import Header from './Header';
-import Footer from './Footer';
-import Comments from './Comments';
 import axios from 'axios';
 import './App.css';
+const Comments = ({ comments, addComment, userAuthenticated }) => {
+  const [newComment, setNewComment] = useState({ author: '', text: '' });
+  const [sortingAsc, setSortingAsc] = useState(true);
 
+  const handleAuthorChange = (e) => {
+    setNewComment({ ...newComment, author: e.target.value });
+  };
+
+  const handleTextChange = (e) => {
+    setNewComment({ ...newComment, text: e.target.value });
+  };
+
+  const addNewComment = () => {
+    addComment(newComment);
+    setNewComment({ author: '', text: '' });
+  };
+
+  const sortComments = () => {
+    const sortedComments = [...comments].sort((a, b) => {
+      if (sortingAsc) {
+        return a.timestamp - b.timestamp;
+      } else {
+        return b.timestamp - a.timestamp;
+      }
+    });
+    setSortingAsc(!sortingAsc);
+    addComment(sortedComments);
+  };
+  return (
+    <div className="comments">
+      <h2>Comments</h2>
+      <div className="sort-comments">
+        <button className="authButton" onClick={sortComments}>
+          Sort by Date ({sortingAsc ? 'Newer to Older' : 'Older to Newer'})
+        </button>
+      </div>
+      {comments.map((comment) => (
+        <div key={comment.id} className="comment">
+          <strong>{comment.author}:</strong> {comment.text}
+        </div>
+      ))}
+      <div className="add-comment">
+        <h3>Add a Comment</h3>
+        <div className="comment-form">
+          {userAuthenticated ? (
+            <>
+              <input
+                className="inputBar"
+                type="text"
+                placeholder="Name"
+                value={newComment.author}
+                onChange={handleAuthorChange}
+              />
+              <textarea
+                className="inputBar"
+                placeholder="Write your comment..."
+                value={newComment.text}
+                onChange={handleTextChange}
+              />
+              <button className="authButton" onClick={addNewComment}>
+                Add Comment
+              </button>
+            </>
+          ) : (
+            <p>Please log in to add a comment.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 const ResourcePage = () => {
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
-  const { resourceId } = useParams();
 
   // Sample resource data
   const resource = {
@@ -31,7 +97,7 @@ const ResourcePage = () => {
     // Add more comments here
   ]);
 
-  const [commentsContainerHeight, setCommentsContainerHeight] = useState('auto');
+  const [commentsContainerHeight] = useState('auto');
 
   useEffect(() => {
     // Check the user's authentication status and fetch user name
@@ -45,10 +111,7 @@ const ResourcePage = () => {
       });
   }, []);
 
-  const adjustCommentsContainerHeight = () => {
-    const maxHeight = '400px'; // Adjust this as needed
-    setCommentsContainerHeight(maxHeight);
-  };
+  
 
   const addComment = (newComment) => {
     if (userAuthenticated) {
@@ -106,7 +169,6 @@ const ResourcePage = () => {
       <div className="comments-container" style={{ maxHeight: commentsContainerHeight, overflowY: 'auto' }}>
         <Comments comments={comments} addComment={addComment} userAuthenticated={userAuthenticated} />
       </div>
-      <Footer />
     </div>
   );
 };

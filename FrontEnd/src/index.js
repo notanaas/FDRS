@@ -1,12 +1,12 @@
 import React, {  } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import AppContent from './App';
-import { FacultyProvider } from './FacultyContext';
-import { ThemeProvider } from './ThemeContext'; // Import ThemeProvider
-import './App.css';
+import AppContent from './components/App';
+import { FacultyProvider } from './components/context/FacultyContext';
+import { ThemeProvider } from './components/context/ThemeContext'; // Import ThemeProvider
+import './components/App.css';
 import ReactDOM from 'react-dom';
-import { DarkModeProvider } from './DarkModeContext'; // Import the context
+import { DarkModeProvider } from './components/context/DarkModeContext'; // Import the context
 import 'font-awesome/css/font-awesome.min.css';
 
 function MainApp() {

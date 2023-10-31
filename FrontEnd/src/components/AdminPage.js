@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useTheme } from './ThemeContext'; // Import useTheme from your ThemeContext
+import React, { useState, } from 'react';
+import { useTheme } from './context/ThemeContext'; // Import useTheme from your ThemeContext
 
 const AdminPage = () => {
   const { isDarkMode } = useTheme();

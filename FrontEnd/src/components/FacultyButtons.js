@@ -1,7 +1,25 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { faculties } from './data';
 import './App.css'; // Import your CSS file here
+
+export const faculties = [
+  {
+    id: 1,
+    name: 'Faculty Of IT',
+    Facultys: [
+    
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  
+
+];
 
 const FacultyButtons = () => {
   const [selectedFaculty, setSelectedFaculty] = useState(null);

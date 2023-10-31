@@ -1,12 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import Modal from './Modal';
+import { Link } from 'react-router-dom';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
-import FileUpload from './FileUpload';
-import { slide as Menu } from 'react-burger-menu'; // Importing the slide effect, but you can use others.
+import { slide as Menu } from 'react-burger-menu'; 
+const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
+  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
 
+  
+  useEffect(() => {
+    setLocalIsDarkMode(isDarkMode);
+  }, [isDarkMode]);
+
+  const modalContentStyle = {
+    backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
+    color: localIsDarkMode ? 'white' : 'black', // Text color
+  };
+
+  return (
+    <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
+      <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}>
+        </div>
+        <div className="modal-body">
+          {children}
+          
+        </div>
+        <div className="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+  );
+};
 const Header = ({
   selectedFacultyName,
   onSearchChange,
@@ -16,7 +42,6 @@ const Header = ({
   setUserToken,
 }) => {
   const backendURL = 'http://localhost:3000';
-  const history = useHistory();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,10 +63,9 @@ const Header = ({
   const [loginError, setLoginError] = useState(''); // New state for login error message
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
-  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const handleStateChange = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -50,14 +74,9 @@ const Header = ({
     setSelectedFaculty(FacultyName);
   };
   
-  const toggleDarkMode = () => {
-    setLocalIsDarkMode(!localIsDarkMode);
-  };
+  
 
-  const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
-    color: localIsDarkMode ? 'white' : 'black', // Text color
-  };
+  
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -151,7 +170,6 @@ const Header = ({
   const handleSignupSubmit = (e) => {
     e.preventDefault();
 
-    const trimmedPassword = signupData.password.trim();
 
     axios
       .post(`${backendURL}/api_auth/register`, signupData)
@@ -208,10 +226,7 @@ const Header = ({
     color: 'white',
   };
 
-  const openForgotPasswordModal = () => {
-    setIsForgotPasswordOpen(true);
-    setModalTitle('Forgot Password');
-  };
+  
 
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -244,13 +259,9 @@ const Header = ({
   return (
     
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
-       <button 
-        className="authButton" 
-        onClick={handleStateChange}
-      >
-        ☰
-      </button>
-      
+      <div>
+        <button className="authButton" onClick={handleStateChange}> ☰ </button>
+      </div>
       {isSidebarOpen && (
         <Menu>
           <div>
@@ -258,7 +269,13 @@ const Header = ({
             {selectedFaculty && (
               <div>
                 <h2>{selectedFaculty}</h2>
-                <FileUpload />
+              </div>
+            )}
+            {isAdmin && (
+              <div className="adminButtonContainer">
+                <Link to="/admin" className="adminButton">
+                  Admin
+                </Link>
               </div>
             )}
           </div>

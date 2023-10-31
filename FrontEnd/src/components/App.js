@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
 import ResourcePage from './ResourcePage';
-import AdminPage from './AdminPage';
 import Header from './Header';
-import { FacultyProvider } from './FacultyContext';
 
 
 function App() {
@@ -29,7 +27,6 @@ function App() {
 
   return (
     <div>
-      <FacultyProvider>
         <div className="App">
           <Router>
           <Header />
@@ -53,7 +50,6 @@ function App() {
             </div>
           </Router>
         </div>
-      </FacultyProvider>
     </div>
   );
 }

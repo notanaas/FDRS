@@ -15,53 +15,7 @@ body {
     color: #333;
   }
 }
-.header {
-  display: 'flex';
-  alignItems: 'center';
-  justifyContent: 'space-between';
-  padding: '0 20px';
-  background: '#333';
-  color: 'white';
-  height: '60px';
-}
-.title {
-  margin: 0;
-}
-.menuItem{
-  display: 'block';
-  padding: '10px 20px';
-  color: '#333';
-  textDecoration: 'none';
-}
-.bmBurgerButton {
-  position: 'relative';
-  width: '36px';
-  height: '30px';
-  left: '36px';
-  top: '15px';
-}
-.bmCrossButton {
-  height: '24px';
-  width: '24px';
-}
-.bmMenuWrap {
-  position: 'fixed';
-  height: '100%';
-}
-.bmMenu {
-  background: '#eee';
-  padding: '2.5em 1.5em 0';
-  fontSize: '1.15em';
-}
-.bmItem {
-  display: 'inline-block';
-  textDecoration: 'none';
-  margin: '7px 15px';
-  color: '#373a47';
-}
-.bmOverlay {
-  background: 'rgba(0, 0, 0, 0.3)';
-}
+
 
 .custom-copy-button {
   color: white;
@@ -790,8 +744,6 @@ body {
 .comment p {
   margin: 0;
 }
-/* Comments.css */
-/* Comments.css */
 .comment-form {
   display: flex;
   flex-direction: column;

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Modal from './Modal';
+import { useFaculty } from './context/FacultyContext';
 import { useParams, Link } from 'react-router-dom';
-import { useFaculty } from './FacultyContext';
 import Header from './Header';
-import Footer from './Footer';
 import axios from 'axios';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,13 +15,38 @@ import {
   LinkedinIcon,
   EmailIcon,
 } from 'react-share';
+const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
+  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
 
+  useEffect(() => {
+    setLocalIsDarkMode(isDarkMode);
+  }, [isDarkMode]);
+
+  const modalContentStyle = {
+    backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
+    color: localIsDarkMode ? 'white' : 'black', // Text color
+  };
+
+  return (
+    <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
+      <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}>
+        </div>
+        <div className="modal-body">
+          {children}
+          
+        </div>
+        <div className="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+  );
+};
 const FacultyPage = () => {
   const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
-  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isLoggedIn] = useState(!!userToken);
   const [title, setTitle] = useState('');
   const [authorFirstName, setAuthorFirstName] = useState('');
   const [authorLastName, setAuthorLastName] = useState('');
@@ -32,15 +55,15 @@ const FacultyPage = () => {
   const [img, setImg] = useState(null);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [uploadedDocuments] = useState([]);
   const [imgUrl, setImgUrl] = useState('');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [fileUrl, setFileUrl] = useState('');
+  const [setFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
-  const [isStarActive, setIsStarActive] = useState(false);
+  const [isStarActive] = useState(false);
 
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
@@ -179,18 +202,7 @@ const FacultyPage = () => {
     }
   };
 
-  const fetchDocuments = async (facultyName) => {
-    try {
-      const response = await axios.get(`${apiEndpoint}/api_resource/resources/${facultyName}`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      setUploadedDocuments(response.data.Resource_list);
-    } catch (error) {
-      console.error('Error fetching uploaded documents:', error);
-    }
-  };
+  
 
   const fetchFavoriteResources = async () => {
     try {
@@ -417,7 +429,6 @@ const FacultyPage = () => {
           </ul>
         </div>
       )}
-      <Footer />
     </div>
   );
 };

@@ -314,10 +314,10 @@ const FacultyPage = () => {
   )}
 
         <div className="modal-footer">
-                <button onClick={closeModal} className="modal-close-button">
+                <button onClick={closeModal} className="authButton">
                   Close
                 </button>
-                <button onClick={handleUpload} className="upload-button">
+                <button onClick={handleUpload} className="authButton">
                   Upload
                 </button>
               </div>
@@ -349,14 +349,14 @@ const FacultyPage = () => {
                     />
                   </div>
                 )}
-                <div className="download-button-container">
+                <div className="authButton">
                   {item.file && (
                     <a
                       href={item.file}
                       target="_blank"
                       rel="noopener noreferrer"
                       download={item.title || 'document'}
-                      className="download-button"
+                      className="authButton"
                     >
                       Download Document
                     </a>

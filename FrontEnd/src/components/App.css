@@ -1,7 +1,4 @@
-body {
-  background-color: #ffffff; 
-  color: #333; 
-}
+
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #333;
@@ -14,48 +11,6 @@ body {
     background-color: #fff;
     color: #333;
   }
-}
-
-
-.custom-copy-button {
-  color: white;
-  border: none;
-  border-radius: 30%; /* Make it round */
-  padding: 5px 5px;
-  margin-right: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-}
-
-.custom-copy-button.copied {
-  background-color: #8b0000;
-}
-.logoutButton {
-  background-color: #ff0000; /* Red background */
-  color: #ffffff; /* White text */
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.logoutButton:hover {
-  background-color: #cc0000; /* Darker red on hover */
-}
-
-.dark body {
-  background-color: #333;
-  color: #f0f0f0;
-}
-.page-light .facultyPage {
-  background-color: #ffffff;
-  color: #333;
-}
-
-.page-dark .facultyPage {
-  background-color: #000000;
-  color: #333;
 }
 
 .headerContainer {
@@ -71,50 +26,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
   text-align: center;
 }
 
 
-.logoContainer {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-
-.searchButton {
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-left: 0.5rem;
-  transition: background-color 0.2s;
-}
-
-.searchButton:hover {
-  background-color: #6a0000;
-}
-
-.themeToggle {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: 1rem;
-  margin-left: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.themeToggle:hover {
-  color: #8b0000;
-}
 .fa-star {
   font-size: 24px; 
   color: #8b0000; 
@@ -127,50 +42,8 @@ body {
 }
 
 
-.copy-link-button {
-  background-color: #8b0000; /* Example color */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  margin-right: 10px; /* Adjust the margin to match your design */
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.copy-link-button:hover {
-  background-color: #8b0000; /* Color on hover */
-}
 
 
-.footerContainer {
-  background-color: #8b0000;
-  color: #fff;
-  padding: 1rem;
-  text-align: center;
-  margin-top: auto;
-}
-
-.footerText {
-  margin: 0;
-}
-
-.footerLink {
-  color: #fff;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: color 0.2s;
-}
-
-.footerLink:hover {
-  color: #6a0000;
-}
-
-
-.App {
-  text-align: center;
-  transition: background-color 0.3s, color 0.3s;
-}
 
 
 
@@ -179,50 +52,13 @@ body {
   height: 150px;
 }
 
-.upload-button {
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-bottom: 40px; 
-  margin-top: 50px; 
-
-
-}
-
-.upload-button:hover {
-  background-color: #6a0000;
-}
-
 .uploaded-items-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 20px;
 }
-/* Style for the "Download Resource" button */
-.download-button {
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  margin-top: 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
 
-.download-button:hover {
-  background-color: #6a0000;
-}
 
 /* Default text color styles */
 .card-title,
@@ -290,102 +126,10 @@ body {
   color: #61dafb;
 }
 
-
-
-.facultyButtonsContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.facultyButton {
-  padding: 0.8rem 1.5rem;
-  font-size: 1.2rem;
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 5px;
-  transition: background-color 0.2s;
-  text-transform: capitalize;
-    margin-top: 50px; 
-  }
-  
-
-
-.facultyButton:hover {
-  background-color: #6a0000;
-}
-
-.facultyContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.styledButton {
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s;
-}
-
-.styledButton:hover {
-  background-color: #6a0000;
-}
-
 .fileInput {
   display: none;
 }
 
-.chooseFileLabel {
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s;
-}
-
-.chooseFileLabel:hover {
-  background-color: #6a0000;
-}
-
-.footerContainer {
-  background-color: #8b0000;
-  color: #fff;
-  padding: 1rem;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  font-size: 0.9rem;
-}
-
-.footerText {
-  margin: 0;
-}
-
-.footerLink {
-  color: #fff;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: color 0.2s;
-}
-
-.footerLink:hover {
-  color: #6a0000;
-}
 
 .logo {
   height: 40px;
@@ -423,21 +167,7 @@ body {
   color: #7e7e7e;
 }
 
-.searchButton {
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-left: 0.5rem;
-  transition: background-color 0.2s;
-}
 
-.searchButton:hover {
-  background-color: #6a0000;
-}
 
 .alert-message {
   background-color: #FFCDD2; /* Light red background */
@@ -460,6 +190,8 @@ body {
   margin-left: 0.5rem;
   margin-right: 2rem;
   transition: background-color 0.2s;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .authButton:hover {
@@ -480,19 +212,6 @@ body {
 
 }
 
-.homeContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.topSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 2rem;
-}
-
 .faculties {
   margin: 0;
   font-weight: bold;
@@ -511,32 +230,7 @@ body {
 .share-button:hover {
   background-color: #8b0000; 
 }
-.closeButton {
-  background-color: #8b0000;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
 
-.facultyPageContainer {
-  padding: 20px;
-}
-
-.styledButton {
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  background-color: #8b0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s;
-}
-
-.styledButton:hover {
-  background-color: #6a0000;
-}
 
 .container {
   text-align: center;
@@ -553,23 +247,12 @@ body {
 }
 
 /* Faculty page background */
-.facultyPageContainer {
-  background-color: #ffffff; /* Light background color */
-  /* Other styles for the faculty page */
-}
+
 .subText {
   font-size: 1.2rem;
   margin-bottom: 40px;
 }
 
-.cacultyUploadButton {
-  margin-top: 20px;
-}
-
-
-.close-button {
-  margin-top: 10px;
-}
 
 
 body {
@@ -641,22 +324,7 @@ body {
   margin: 10px 0;
 }
 
-.upload-modal button {
-  background-color: #8b0000; /* Your desired button color */
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-right: 10px;
-  overflow: auto; /* Enable scrolling */
 
-}
-
-.upload-modal button:hover {
-  background-color: #6a0000; /* Color on hover */
-}
 
 .error-message {
   color: #ff0000; /* Red text color for errors */
@@ -760,16 +428,6 @@ body {
   box-sizing: border-box; /* Ensure padding doesn't affect the width */
 }
 
-.comment-form button {
-  background-color: #8b0000;
-  color: #fff;
-  padding: 10px;
-  text-align: center;
-  text-decoration: none;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-}
 
 
 /* For screens between 768px and 1200px wide (tablets and smaller laptops) */

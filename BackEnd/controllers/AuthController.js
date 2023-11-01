@@ -147,3 +147,39 @@ exports.refresh_token = async(req,res)=>
            
     }
 }
+
+exports.forgot_password  = [
+    body("email" , "Email must be required")
+    .trim()
+    .isLength({min:1})
+    .escape()
+    .custom(async (Email)=>
+    {
+        try {
+            const emailExists = await Users.findOne({Email : Email})
+            if(!emailExists)
+            {
+                throw new Error('Email does not exists')
+            }
+        } catch (error) {
+            throw new Error(error)
+        }
+    }),
+    asyncHandler(async(req,res,next)=>{
+        const emailExists = await Users.findOne({Email : req.body.email})
+        const secret = process.env.JWT_SECRET + emailExists.Password
+        const payload = {
+            email :  emailExists.Email,
+            id:emailExists._id
+        }
+        const token  = jwt.sign(payload,secret,{expiresIn :"20m"})
+        const link = `http://localhost:3000/reset-password/${emailExists._id}/${token}`
+        console.log(link) // replace this with the sendgrid mail instead.
+        return res.status(200).json({message:"password reset link has been sent to you're email... "})
+    })
+]
+
+exports.reset_password = asyncHandler(async(req,res,next)=>
+{
+
+})

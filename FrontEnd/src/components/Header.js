@@ -46,7 +46,6 @@ const Header = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [modalTitle, setModalTitle] = useState('');
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [signupData, setSignupData] = useState({
@@ -104,7 +103,6 @@ const Header = ({
 
   const openSignupModal = () => {
     setIsSignupOpen(true);
-    setModalTitle('Sign Up');
   };
 
   const closeSignupModal = () => {
@@ -127,7 +125,6 @@ const Header = ({
     setPassword('');
     setIsLoginModalOpen(false);
     setIsForgotPasswordOpen(true);
-    setModalTitle('Forgot Password');
   };
 
   const handleVerificationCodeChange = (e) => {
@@ -141,7 +138,6 @@ const Header = ({
     setVerificationCode(''); // Clear the verification code field
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
-    setModalTitle('Login');
   };
 
   const handleForgotPasswordSubmit = (e) => {
@@ -204,7 +200,7 @@ const Header = ({
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem('token', token);
-        setUserToken(token); // Update the user's token in state
+        setUserToken(token); 
         setSuccessMessage('Login successful');
         console.log('Login successful:', response.data);
         setLoginError('');
@@ -218,14 +214,10 @@ const Header = ({
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setUserToken(null); // Clear the user's token in state
-    // Add any additional logout logic you need
-  };
+    setUserToken(null); 
+  }
 
-  const modalTitleStyle = {
-    color: 'white',
-  };
-
+  
   
 
   const closeForgotPasswordModal = () => {
@@ -241,7 +233,6 @@ const Header = ({
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
-    setModalTitle('Login');
   };
 
   const closeLoginModal = () => {
@@ -325,7 +316,7 @@ const Header = ({
       </div>
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
-        <h2 style={modalTitleStyle}>{modalTitle}</h2>
+      <label htmlFor="username"><h1>SignUp</h1></label>
 
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -390,7 +381,7 @@ const Header = ({
       </Modal>
 
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} isDarkMode={isDarkMode}>
-        <h2 style={modalTitleStyle}>{modalTitle}</h2>
+      <label htmlFor="username"><h1>Forget Password</h1></label>
 
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -437,7 +428,7 @@ const Header = ({
       </Modal>
 
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
-        <h2 style={modalTitleStyle}>{modalTitle}</h2>
+      <label htmlFor="username"><h1>LogIn</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {loginError && <div className="error-message">{loginError}</div>}
 

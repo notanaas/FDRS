@@ -15,6 +15,7 @@ import {
   LinkedinIcon,
   EmailIcon,
 } from 'react-share';
+//Modal Class
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
 
@@ -64,7 +65,6 @@ const FacultyPage = () => {
   const [setFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive] = useState(false);
-
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
   useEffect(() => {
@@ -241,7 +241,7 @@ const FacultyPage = () => {
           )}
 
           <div className="form-container">
-          <h2 style={{ color: 'white' }}>Upload File</h2>
+          <label htmlFor="username"><h1>Upload File</h1></label>
 
   <div className="form-group">
     <label>Title:</label>

@@ -1,15 +1,29 @@
-
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #333;
-    color: #fff;
+    color: #ffffff;
+  }
+
+  .bm-menu {
+    background-color: #444 !important; 
+
+  }
+  .bm-overlay {
+    background-color: #333 !important;
+
   }
 }
-
 @media (prefers-color-scheme: light) {
   body {
-    background-color: #fff;
-    color: #333;
+    background-color: #ffffff;
+    color: #ffffff;
+  }
+
+  .bm-menu {
+    background-color: #ffffff !important; 
+  }
+  .bm-overlay {
+    background-color: #ffffff !important;
   }
 }
 
@@ -17,24 +31,13 @@
   width: 25% !important;
 }
 
-.bm-overlay {
-  background-color: #ffffff !important;
-}
-
-.modal-body h2 {
-  color: black !important;
-}
-
-.form-container h2 {
-  color: black !important;
-}
 
 .headerContainer {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100; /* Adjust the z-index as needed */
+  z-index: 100; 
   background-color: #8b0000;
   color: #fff;
   padding: 1rem;
@@ -69,7 +72,6 @@
   gap: 20px;
 }
 
-/* Default text color styles */
 .card-title,
 .card-text,
 .card-description {
@@ -192,8 +194,6 @@
   margin-right: 2rem;
   transition: background-color 0.2s;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
-  margin-top: 25px;
   align-items: center;
 }
 

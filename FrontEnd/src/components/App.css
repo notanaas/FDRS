@@ -3,6 +3,7 @@
     background-color: #333;
     color: #ffffff;
   }
+}
 
   .bm-menu {
     background-color: #444 !important; 
@@ -12,25 +13,36 @@
     background-color: #333 !important;
 
   }
-}
+
 @media (prefers-color-scheme: light) {
   body {
     background-color: #ffffff;
     color: #ffffff;
   }
-
+}
   .bm-menu {
     background-color: #ffffff !important; 
   }
+
+  .modal-body h2 {
+    color: black !important;
+  }
+
+  .bm-burger-button #react-burger-menu-btn {
+    width: 60px !important;
+    height: 100% !important;
+    position: fixed !important;
+    z-index: 1 !important;
+    top: 0 !important;
+    left: 0 !important;
+    overflow-x: hidden !important;
+    transition: 0.5s !important;
+    padding-top: 60px !important;
+  }
+
   .bm-overlay {
     background-color: #ffffff !important;
   }
-}
-
-#react-burger-menu-btn{
-  width: 25% !important;
-}
-
 
 .headerContainer {
   position: fixed;

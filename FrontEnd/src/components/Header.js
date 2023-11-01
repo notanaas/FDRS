@@ -261,10 +261,8 @@ const Header = ({
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
       <div>
         <button className="authButton" onClick={handleStateChange}> ☰ </button>
-      </div>
       {isSidebarOpen && (
         <Menu>
-          <div>
             <FacultyButtons onFacultySelect={handleFacultySelection} />
             {selectedFaculty && (
               <div>
@@ -278,9 +276,8 @@ const Header = ({
                 </Link>
               </div>
             )}
-          </div>
         </Menu>
-      )}
+      )} </div>
     
       <div className="logoContainer">
         <Link to="/">

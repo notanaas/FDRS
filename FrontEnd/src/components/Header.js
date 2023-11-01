@@ -277,7 +277,8 @@ const Header = ({
               </div>
             )}
         </Menu>
-      )} </div>
+      )} 
+      </div>
     
       <div className="logoContainer">
         <Link to="/">

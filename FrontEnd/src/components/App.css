@@ -4,14 +4,31 @@
     color: #ffffff;
   }
 }
+html {
+  margin: 0;
+  padding: 0;
 
+}
   .bm-menu {
-    background-color: #444 !important; 
+    background-color: #444 !important;
+    margin-top: 30px;
+    height: 50%;
 
   }
   .bm-overlay {
     background-color: #333 !important;
+    margin-top: 0;
+    height: 0% !important;
 
+  }
+
+  .bm-burger-bars {
+    background-color: white;
+    height: 0% !important;
+  }
+
+  .bm-menu-wrap{
+    height: 88% !important;
   }
 
 @media (prefers-color-scheme: light) {
@@ -22,11 +39,41 @@
 
   .bm-menu {
     background-color: #ffffff !important; 
+    width: 100%;
   }
+<<<<<<< Updated upstream
+=======
+
+  .modal-body h2 {
+    color: black !important;
+  }
+
+  .bm-burger-button #react-burger-cross-btn {
+    background: rgb(0, 128, 0) !important;
+
+  }
+
+  .bm-burger-button #react-burger-menu-btn {
+    width: 60px !important;
+    height: 100% !important;
+    position: fixed !important;
+    z-index: 1 !important;
+    top: 0 !important;
+    left: 0 !important;
+    overflow-x: hidden !important;
+    transition: 0.5s !important;
+    padding-top: 60px !important;
+  }
+
+>>>>>>> Stashed changes
   .bm-overlay {
     background-color: #ffffff !important;
   }
 }
+
+  .bm-item-list {
+    margin-top: 50px;
+  }
 
 .headerContainer {
   position: fixed;
@@ -42,6 +89,11 @@
   justify-content: space-between;
   align-items: center;
   text-align: center;
+}
+
+.contentContainer h1{
+  padding: 0 !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 
@@ -134,23 +186,18 @@
   display: none;
 }
 
-.logoContainer {
-  display: flex !important;
-  align-items: center !important;
-  margin-bottom: 10px;
-}
-
 .logoContainer .logo {
   width: 70px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-right: 10%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
+  text-justify: bold;
+  font-weight: bold;
 }
 
 .inputBar {
@@ -165,7 +212,7 @@
 
 
 .inputBar::placeholder {
-  color: #7e7e7e;
+  color: #c8c8c8;
 }
 
 .alert-message {
@@ -180,16 +227,14 @@
 }
 .authButton {
   padding: 0.6rem 1.2rem;
+  margin: 10px;
   font-size: 1rem;
   background-color: #8b0000;
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-left: 0.5rem;
-  margin-right: 2rem;
   transition: background-color 0.2s;
-  margin-top: 0.5rem;
   align-items: center;
 }
 
@@ -213,6 +258,8 @@
   margin: 0;
   font-weight: bold;
 }
+
+
 
 .share-button {
   color: #fff; /* White text color */

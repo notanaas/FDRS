@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
 import ResourcePage from './ResourcePage';
-import Header from './Header';
 
 
 function App() {
@@ -29,7 +28,6 @@ function App() {
     <div>
         <div className="App">
           <Router>
-          <Header />
             <div className="contentContainer">
               <Switch>
                 <Route path="/" exact component={WelcomingPage} />

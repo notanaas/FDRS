@@ -17,6 +17,111 @@ export const faculties = [
       
     ],
   },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
+  {
+    id: 2,
+    name: 'Faculty Of Engineering',
+    Facultys: [
+      
+    ],
+  },
   
 
 ];

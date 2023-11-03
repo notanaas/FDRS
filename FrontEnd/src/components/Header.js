@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
-const Sidebar=() =>{
+const Sidebar = () => {
   return (
     <div className="sidebar" >
       <FacultyButtons />
@@ -18,8 +18,8 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   }, [isDarkMode]);
 
   const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? '#333' : 'white', 
-    color: localIsDarkMode ? 'white' : 'black', 
+    backgroundColor: localIsDarkMode ? '#333' : 'white',
+    color: localIsDarkMode ? 'white' : 'black',
   };
 
   return (
@@ -29,10 +29,10 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
         </div>
         <div className="modal-body">
           {children}
-          
+
         </div>
         <div className="modal-footer">
-          
+
         </div>
       </div>
     </div>
@@ -179,20 +179,20 @@ const Header = ({
       [name]: value,
     });
   };
-  
+
   const checkLogin = (usernameOrEmail, password) => {
     const isEmail = usernameOrEmail.includes('@');
-    
+
     const loginData = isEmail
       ? { email: usernameOrEmail, password }
       : { username: usernameOrEmail, password };
-  
+
     axios
       .post(`${backendURL}/api_auth/login`, loginData)
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem('token', token);
-        setUserToken(token); 
+        setUserToken(token);
         setSuccessMessage('Login successful');
         console.log('Login successful:', response.data);
         setLoginError('');
@@ -202,21 +202,21 @@ const Header = ({
         console.error('Login failed:', error.response.data);
       });
   };
-  
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setUserToken(null); 
+    setUserToken(null);
   }
 
-  
-  
+
+
 
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
-    setVerificationCode(''); 
+    setVerificationCode('');
   };
 
   const handlePasswordConfirmChange = (e) => {
@@ -238,18 +238,23 @@ const Header = ({
     e.preventDefault();
     checkLogin(email, password);
   };
-  
+
 
   return (
-    <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
+    <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
+      <div className='left'>
         <button className="sidebarToggle" onClick={() => setIsSidebarOpen(prev => !prev)}>☰</button>
-   {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)}/>}
-
-      <div className="logoContainer">
+        <div>
+          <div className="logoContainer">
         <Link to="/">
           <img src="/logo.png" alt="Logo" className="logo" />
         </Link>
       </div>
+        </div>
+      </div>
+      {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
+
+      
 
       <div>
         {isFacultyPage && (
@@ -290,7 +295,7 @@ const Header = ({
       </div>
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
-      <label htmlFor="username"><h1>SignUp</h1></label>
+        <label htmlFor="username"><h1>SignUp</h1></label>
 
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -355,7 +360,7 @@ const Header = ({
       </Modal>
 
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} isDarkMode={isDarkMode}>
-      <label htmlFor="username"><h1>Forget Password</h1></label>
+        <label htmlFor="username"><h1>Forget Password</h1></label>
 
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -402,49 +407,49 @@ const Header = ({
       </Modal>
 
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
-      <label htmlFor="username"><h1>LogIn</h1></label>
+        <label htmlFor="username"><h1>LogIn</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {loginError && <div className="error-message">{loginError}</div>}
 
         <form onSubmit={handleLoginSubmit}>
-  <div className="form-group">
-    <label htmlFor="usernameOrEmail">Username or Email:</label>
-    <input
-      type="text"
-      id="usernameOrEmail"
-      name="usernameOrEmail"
-      className="inputBar"
-      placeholder="Username or Email"
-      value={email}
-      onChange={handleEmailChange}
-      required
-    />
-  </div>
-  <div className="form-group">
-    <label htmlFor="password">Password:</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      className="inputBar"
-      placeholder="Password"
-      value={password}
-      onChange={handlePasswordChange}
-      required
-    />
-  </div>
-  <button type="submit" className="authButton">
-    Login
-  </button>
-  <button className="authButton" onClick={handleForgotPassword}>
-    Forgot Password
-  </button>
-  
-</form>
+          <div className="form-group">
+            <label htmlFor="usernameOrEmail">Username or Email:</label>
+            <input
+              type="text"
+              id="usernameOrEmail"
+              name="usernameOrEmail"
+              className="inputBar"
+              placeholder="Username or Email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="inputBar"
+              placeholder="Password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+          </div>
+          <button type="submit" className="authButton">
+            Login
+          </button>
+          <button className="authButton" onClick={handleForgotPassword}>
+            Forgot Password
+          </button>
+
+        </form>
       </Modal>
-      
+
     </header>
-    
+
   );
 };
 export default Header;

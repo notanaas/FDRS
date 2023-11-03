@@ -142,11 +142,11 @@ const FacultyButtons = () => {
   };
 
   return (
-    <div className="authButton">
+    <div className="facultyauthButton">
       {faculties.map((faculty) => (
         <div key={faculty.id}>
           <button
-            className={`authButton ${selectedFaculty === faculty.id ? 'selected' : ''}`}
+            className={`facultyauthButton ${selectedFaculty === faculty.id ? 'selected' : ''}`}
             onClick={() => handleFacultyClick(faculty.id, faculty.name)}
           >
             {faculty.name}

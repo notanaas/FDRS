@@ -1,8 +1,10 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
 import ResourcePage from './ResourcePage';
+
+import Header from './Header';
 
 
 function App() {
@@ -27,6 +29,10 @@ function App() {
   return (
     <div>
         <div className="App">
+        <Header />
+        <main>
+        <p>Main content of the page...</p>
+      </main>
           <Router>
             <div className="contentContainer">
               <Switch>

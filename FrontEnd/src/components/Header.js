@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FacultyButtons from './FacultyButtons';
+import WelcomingPage from './WelcomingPage';
+import Sidebar from './Sidebar';
 import axios from 'axios';
 import './App.css';
-import { slide as Menu } from 'react-burger-menu'; 
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
 
@@ -13,8 +14,8 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   }, [isDarkMode]);
 
   const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
-    color: localIsDarkMode ? 'white' : 'black', // Text color
+    backgroundColor: localIsDarkMode ? '#fff' : 'white', 
+    color: localIsDarkMode ? 'white' : 'black', 
   };
 
   return (
@@ -65,9 +66,8 @@ const Header = ({
   const [selectedFaculty, setSelectedFaculty] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleStateChange = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+
+
   
   const handleFacultySelection = (FacultyName) => {
     setSelectedFaculty(FacultyName);
@@ -246,31 +246,13 @@ const Header = ({
     e.preventDefault();
     checkLogin(email, password);
   };
+  
 
   return (
-    
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
-      <div>
-        <button className="authButton" onClick={handleStateChange}> ☰ </button>
-      {isSidebarOpen && (
-        <Menu>
-            <FacultyButtons onFacultySelect={handleFacultySelection} />
-            {selectedFaculty && (
-              <div>
-                <h2>{selectedFaculty}</h2>
-              </div>
-            )}
-            {isAdmin && (
-              <div className="adminButtonContainer">
-                <Link to="/admin" className="adminButton">
-                  Admin
-                </Link>
-              </div>
-            )}
-        </Menu>
-      )} 
-      </div>
-    
+        <button className="sidebarToggle" onClick={() => setIsSidebarOpen(prev => !prev)}isDarkMode={isDarkMode}>☰</button>
+   {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} isDarkMode={isDarkMode}/>}
+
       <div className="logoContainer">
         <Link to="/">
           <img src="/logo.png" alt="Logo" className="logo" />

@@ -3,77 +3,65 @@
     background-color: #333;
     color: #ffffff;
   }
+  .sidebar {
+    background-color: #444; /* Dark background for sidebar */
+    color: #f5f5f5; /* Light text for sidebar */
+  }
+}
+
+/* Existing Light Mode Styles for Body */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff;
+    color: #333;
+  }
+  .sidebar {
+    background-color: #eee; /* Light background for sidebar */
+    color: #333; /* Dark text for sidebar */
+  }
 }
 html {
   margin: 0;
   padding: 0;
 
 }
-  .bm-menu {
-    background-color: #444 !important;
-    margin-top: 30px;
-    height: 50%;
 
-  }
-  .bm-overlay {
-    background-color: #333 !important;
-    margin-top: 0;
-    height: 0% !important;
-
-  }
-
-  .bm-burger-bars {
-    background-color: white;
-    height: 0% !important;
-  }
-
-  .bm-menu-wrap{
-    height: 88% !important;
-  }
-
-@media (prefers-color-scheme: light) {
-  body {
-    background-color: #ffffff;
-    color: #ffffff;
-  }
-
-  .bm-menu {
-    background-color: #ffffff !important; 
-    width: 100%;
-  }
-<<<<<<< Updated upstream
-=======
-
-  .modal-body h2 {
-    color: black !important;
-  }
-
-  .bm-burger-button #react-burger-cross-btn {
-    background: rgb(0, 128, 0) !important;
-
-  }
-
-  .bm-burger-button #react-burger-menu-btn {
-    width: 60px !important;
-    height: 100% !important;
-    position: fixed !important;
-    z-index: 1 !important;
-    top: 0 !important;
-    left: 0 !important;
-    overflow-x: hidden !important;
-    transition: 0.5s !important;
-    padding-top: 60px !important;
-  }
-
->>>>>>> Stashed changes
-  .bm-overlay {
-    background-color: #ffffff !important;
-  }
+header {
+  background-color: #222;
+  color: white;
+  padding: 1rem;
 }
 
-  .bm-item-list {
-    margin-top: 50px;
-  }
+.sidebarToggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0; /* Moved to left */
+  width: 250px;
+  height: 100vh;
+  background-color: #eee;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.sidebar.dark {
+  background-color: #444;
+  color: #f5f5f5;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
 
 .headerContainer {
   position: fixed;
@@ -91,10 +79,7 @@ html {
   text-align: center;
 }
 
-.contentContainer h1{
-  padding: 0 !important;
-  color: rgb(0, 0, 0) !important;
-}
+
 
 
 .fa-star {
@@ -123,10 +108,9 @@ html {
 .card-title,
 .card-text,
 .card-description {
-  color: #6a0000; /* Default text color */
+  color: #6a0000; 
 }
 
-/* Dark Mode */
 .dark .card-title,
 .dark .card-text,
 .dark .card-description {
@@ -162,7 +146,6 @@ html {
   list-style: none;
   padding: 1;
 }
-/* Dark Mode */
 .dark .card {
   color: #fff; /* White text color in dark mode */
 }
@@ -322,7 +305,6 @@ body {
   }
 }
 
-/* CSS for the Upload Modal */
 .upload-modal {
   display: none;
   position: fixed;
@@ -373,7 +355,6 @@ body {
   font-weight: bold;
   font-size: 16px;
 }
-/* ResourcePage.css */
 .resource-page {
   display: grid;
   grid-template-columns: 1fr;
@@ -420,7 +401,6 @@ body {
   height: auto;
 }
 
-/* Comments.css */
 .comments {
   margin-top: 20px;
   padding: 20px;
@@ -456,7 +436,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
   display: block;
-  box-sizing: border-box; /* Ensure padding doesn't affect the width */
+  box-sizing: border-box; 
 }
 
 /* For screens between 768px and 1200px wide (tablets and smaller laptops) */

@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FacultyButtons from './FacultyButtons';
-import WelcomingPage from './WelcomingPage';
 import axios from 'axios';
 import './App.css';
-function Sidebar({ onClose ,isDarkMode}) {
-  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
-  const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? 'black' : 'white', 
-    color: localIsDarkMode ? 'white' : 'black', 
-  };
-  useEffect(() => {
-    setLocalIsDarkMode(isDarkMode);
-  }, [isDarkMode]);
+const Sidebar=() =>{
   return (
-    <div className="sidebar" style={modalContentStyle} >
-
-      <button className="closeBtn" onClick={onClose}isDarkMode={isDarkMode}>Press To Close</button>
+    <div className="sidebar" >
       <FacultyButtons />
     </div>
   );
 }
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
+
   useEffect(() => {
     setLocalIsDarkMode(isDarkMode);
   }, [isDarkMode]);
 
   const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? '#fff' : 'white', 
+    backgroundColor: localIsDarkMode ? '#333' : 'white', 
     color: localIsDarkMode ? 'white' : 'black', 
   };
 
@@ -77,19 +67,7 @@ const Header = ({
   const [loginError, setLoginError] = useState(''); // New state for login error message
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
-  const [selectedFaculty, setSelectedFaculty] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-
-
-  
-  const handleFacultySelection = (FacultyName) => {
-    setSelectedFaculty(FacultyName);
-  };
-  
-  
-
-  
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -264,8 +242,8 @@ const Header = ({
 
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>   
-        <button className="sidebarToggle" onClick={() => setIsSidebarOpen(prev => !prev)}isDarkMode={isDarkMode}>☰</button>
-   {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} isDarkMode={isDarkMode}/>}
+        <button className="sidebarToggle" onClick={() => setIsSidebarOpen(prev => !prev)}>☰</button>
+   {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)}/>}
 
       <div className="logoContainer">
         <Link to="/">

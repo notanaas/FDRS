@@ -2,13 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FacultyButtons from './FacultyButtons';
 import WelcomingPage from './WelcomingPage';
-import Sidebar from './Sidebar';
 import axios from 'axios';
 import './App.css';
+function Sidebar({ onClose ,isDarkMode}) {
+  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
+  const modalContentStyle = {
+    backgroundColor: localIsDarkMode ? 'black' : 'white', 
+    color: localIsDarkMode ? 'white' : 'black', 
+  };
+  useEffect(() => {
+    setLocalIsDarkMode(isDarkMode);
+  }, [isDarkMode]);
+  return (
+    <div className="sidebar" style={modalContentStyle} >
+
+      <button className="closeBtn" onClick={onClose}isDarkMode={isDarkMode}>Close</button>
+      <p>Sidebar content here...</p>
+    </div>
+  );
+}
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
-
-  
   useEffect(() => {
     setLocalIsDarkMode(isDarkMode);
   }, [isDarkMode]);

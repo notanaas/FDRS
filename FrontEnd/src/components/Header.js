@@ -16,8 +16,8 @@ function Sidebar({ onClose ,isDarkMode}) {
   return (
     <div className="sidebar" style={modalContentStyle} >
 
-      <button className="closeBtn" onClick={onClose}isDarkMode={isDarkMode}>Close</button>
-      <p>Sidebar content here...</p>
+      <button className="closeBtn" onClick={onClose}isDarkMode={isDarkMode}>Press To Close</button>
+      <FacultyButtons />
     </div>
   );
 }

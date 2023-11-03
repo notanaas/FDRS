@@ -58,6 +58,9 @@ header {
 }
 
 .closeBtn {
+  /* background: content-box;
+  background-color: #444;
+  color: #ddd; */
   background: none;
   border: none;
   font-size: 1.5rem;

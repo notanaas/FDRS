@@ -41,10 +41,11 @@ header {
 }
 .sidebar {
   position: fixed;
+  margin-top: 90px;
   top: 0;
   left: 0; /* Moved to left */
   width: 250px;
-  height: 100vh;
+  height: 85%;
   background-color: #eee;
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
   padding: 1rem;

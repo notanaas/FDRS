@@ -283,7 +283,7 @@ const Header = ({
             )}
           </div>
         ) : (
-          <div>
+          <div className='logoReg'>
             <button className="authButton" onClick={openLoginModal}>
               Login
             </button>

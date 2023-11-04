@@ -45,7 +45,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const FacultyPage = () => {
-  const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
+  const apiEndpoint = 'http://localhost:3007/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
   const [isLoggedIn] = useState(!!userToken);
   const [title, setTitle] = useState('');
@@ -62,7 +62,7 @@ const FacultyPage = () => {
   const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [setFileUrl] = useState('');
+  const [fileUrl,setFileUrl] = useState('');
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
@@ -164,7 +164,7 @@ const FacultyPage = () => {
     }
     
 
-    if (title && authorFirstName && authorLastName && description && img) {
+    if (title && authorFirstName && authorLastName && description && file && img) {
       try {
         const formData = new FormData();
         formData.append('title', title);

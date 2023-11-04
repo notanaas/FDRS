@@ -46,7 +46,7 @@ const Header = ({
   userToken,
   setUserToken,
 }) => {
-  const backendURL = 'http://localhost:3000';
+  const backendURL = 'http://localhost:3007';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -158,7 +158,6 @@ const Header = ({
   const handleSignupSubmit = (e) => {
     e.preventDefault();
 
-
     axios
       .post(`${backendURL}/api_auth/register`, signupData)
       .then((response) => {
@@ -167,10 +166,16 @@ const Header = ({
         closeSignupModal();
       })
       .catch((error) => {
-        setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-        console.error('Registration failed:', error.response.data.errors);
+        if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+            setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
+            console.error('Registration failed:', error.response.data.errors);
+        } else {
+            setErrorMessage('Registration failed. Please try again later.');
+            console.error('Registration failed:', error);
+        }
       });
-  };
+};
+
 
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
@@ -198,8 +203,13 @@ const Header = ({
         setLoginError('');
       })
       .catch((error) => {
-        setLoginError('Username or email and password are incorrect');
-        console.error('Login failed:', error.response.data);
+        if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+            setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
+            console.error('Registration failed:', error.response.data.errors);
+        } else {
+            setErrorMessage('Registration failed. Please try again later.');
+            console.error('Registration failed:', error);
+        }
       });
   };
 

@@ -185,7 +185,7 @@ const Header = ({
     });
   };
 
-  const checkLogin = (usernameOrEmail, password) => {
+  const handleLoginSubmit = (usernameOrEmail, password) => {
     const isEmail = usernameOrEmail.includes('@');
 
     const loginData = isEmail
@@ -244,10 +244,7 @@ const Header = ({
     setLoginError(''); // Clear the login error
   };
 
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    checkLogin(email, password);
-  };
+ 
 
 
   return (

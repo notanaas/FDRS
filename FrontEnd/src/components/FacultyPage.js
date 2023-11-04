@@ -17,28 +17,25 @@ import {
 } from 'react-share';
 //Modal Class
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
-  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
-  useEffect(() => {
-    setLocalIsDarkMode(isDarkMode);
-  }, [isDarkMode]);
-
   const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? '#333' : 'white', // Background color
-    color: localIsDarkMode ? 'white' : 'black', // Text color
+    backgroundColor: isDarkMode ? '#333' : 'white',
+    color: isDarkMode ? 'white' : 'black',
   };
 
   return (
-    <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
-      <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}>
-        </div>
-        <div className="modal-body">
-          {children}
-          
-        </div>
-        <div className="modal-footer">
-          
-        </div>
+    <div 
+      className="upload-modal" 
+      style={{ display: isOpen ? 'flex' : 'none' }} 
+      onClick={onClose}
+    >
+      <div 
+        className="upload-modal-content" 
+        style={modalContentStyle} 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header" style={{ backgroundColor: '#8b0000' }} />
+        <div className="modal-body">{children}</div>
+        <div className="modal-footer" />
       </div>
     </div>
   );
@@ -46,49 +43,44 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
 const FacultyPage = () => {
   const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
-  const [isLoggedIn] = useState(!!userToken);
+  const { facultyName } = useFaculty();
+  const { FacultyName } = useParams();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
   const [title, setTitle] = useState('');
   const [authorFirstName, setAuthorFirstName] = useState('');
   const [authorLastName, setAuthorLastName] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
   const [img, setImg] = useState(null);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [uploadedDocuments] = useState([]);
   const [imgUrl, setImgUrl] = useState('');
-  const { facultyName } = useFaculty();
-  const { FacultyName } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [fileUrl,setFileUrl] = useState('');
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [favoriteResources, setFavoriteResources] = useState([]);
-  const [isStarActive] = useState(false);
+  const [isStarActive, setIsStarActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
+  // Effects
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
     setIsDarkMode(prefersDarkMode);
 
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
     const darkModeChangeListener = (e) => {
       setIsDarkMode(e.matches);
-
       if (e.matches) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
     };
-
     darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
 
-    return () => {
-      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-    };
+    return () => darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
   }, []);
+
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -140,11 +132,14 @@ const FacultyPage = () => {
     setDescription(e.target.value);
   };
 
-  const handleFileChange = (file) => {
-    const uniqueId = uuidv4();
-    const fileName = `${uniqueId}_${file.name}`;
-    const uploadUrl = `${apiEndpoint}/${fileName}`;
-    setFileUrl(uploadUrl);
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const uniqueId = uuidv4();
+      const fileName = `${uniqueId}_${selectedFile.name}`;
+      const uploadUrl = `${apiEndpoint}/${fileName}`;
+      setFile(uploadUrl);
+    }
   };
 
   const handleImgChange = (file) => {
@@ -221,18 +216,16 @@ const FacultyPage = () => {
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
       <Header selectedFacultyName={facultyName} isFacultyPage={true} />
       <h1 style={{ marginTop: '120px' }}>{FacultyName}</h1>
-      <button onClick={openModal} className="authButton">
-        Upload
-      </button>
+      <button onClick={() => setIsModalOpen(true)} className="authButton">Upload</button>
+
       {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} isDarkMode={isDarkMode}>
             <div className="custom-upload-modal">
           {error && (
             <div className="error-message">
               <p className="error-text">{error}</p>
             </div>
           )}
-
           {successMessage && (
             <div className="success-message">
               <p className="success-text">{successMessage}</p>

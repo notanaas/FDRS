@@ -287,7 +287,7 @@ const FacultyPage = () => {
     <input
       type="file"
       accept="application/pdf"
-      onChange={(e) => handleFileChange(e.target.files[0])}
+      onChange={handleFileChange}
       className="inputBar"
     />
   </div>

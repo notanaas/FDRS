@@ -190,7 +190,7 @@ exports.forgot_password = [
           
           const mailOptions = {
             from: 'FDRS1697@gmail.com',
-            to: 'wfarid31@gmail.com',  // emailExists
+            to: emailExists.Email,  // emailExists
             subject: 'Reset password link',
             text: link
           };

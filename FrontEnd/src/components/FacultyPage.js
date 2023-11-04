@@ -18,7 +18,6 @@ import {
 //Modal Class
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
-
   useEffect(() => {
     setLocalIsDarkMode(isDarkMode);
   }, [isDarkMode]);
@@ -45,7 +44,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const FacultyPage = () => {
-  const apiEndpoint = 'http://localhost:3007/api_resource/create/6522b2eb6f293d94d943256a';
+  const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
   const [isLoggedIn] = useState(!!userToken);
   const [title, setTitle] = useState('');

@@ -10,30 +10,29 @@ const Sidebar = () => {
     </div>
   );
 }
+const baseURL = 'http://localhost:3000';
+
+const axiosInstance = axios.create({ baseURL: `${baseURL}/api_auth` });
+
+const Input = ({ type, id, name, value, onChange, placeholder }) => (
+  <div className="form-group">
+    <label htmlFor={id}>{placeholder}</label>
+    <input type={type} id={id} name={name} className="inputBar" placeholder={placeholder} value={value} onChange={onChange} required />
+  </div>
+);
+
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
-  const [localIsDarkMode, setLocalIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    setLocalIsDarkMode(isDarkMode);
-  }, [isDarkMode]);
-
   const modalContentStyle = {
-    backgroundColor: localIsDarkMode ? '#333' : 'white',
-    color: localIsDarkMode ? 'white' : 'black',
+    backgroundColor: isDarkMode ? '#333' : 'white',
+    color: isDarkMode ? 'white' : 'black',
   };
 
   return (
     <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
       <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}>
-        </div>
-        <div className="modal-body">
-          {children}
-
-        </div>
-        <div className="modal-footer">
-
-        </div>
+        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}></div>
+        <div className="modal-body">{children}</div>
+        <div className="modal-footer"></div>
       </div>
     </div>
   );
@@ -46,7 +45,7 @@ const Header = ({
   userToken,
   setUserToken,
 }) => {
-  const backendURL = 'http://localhost:3007';
+  const backendURL = 'http://localhost:3000';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -119,10 +118,15 @@ const Header = ({
     setIsForgotPasswordOpen(true);
   };
 
-  const handleVerificationCodeChange = (e) => {
-    setVerificationCode(e.target.value);
+  const handleAPIError = (error) => {
+    if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+        setErrorMessage('Operation failed: ' + error.response.data.errors[0].msg);
+        console.error('Operation failed:', error.response.data.errors);
+    } else {
+        setErrorMessage('Operation failed. Please try again later.');
+        console.error('Operation failed:', error);
+    }
   };
-
   const handleBackToLogin = () => {
     // When the user clicks "Back to Login" from the password reset screen
     setPasswordResetEmail(false); // Clear the password reset email state
@@ -131,50 +135,22 @@ const Header = ({
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
   };
-
-  const handleForgotPasswordSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    // Implement the backend logic to verify the email and send a reset code
-    axios
-      .post(`${backendURL}/api_auth/forgot-password`, { email: passwordResetEmail, verificationCode })
-      .then((response) => {
-        setSuccessMessage('An email with a password reset link has been sent.');
-        closeForgotPasswordModal();
-      })
-      .catch((error) => {
-        setErrorMessage('Password reset failed: ' + error.response.data.errors[0].msg);
-        console.error('Password reset failed:', error.response.data.errors);
-      });
+    if (passwordConfirm !== signupData.password) {
+      setErrorMessage("Passwords don't match");
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post('/register', signupData);
+      setSuccessMessage('Registration successful: ' + response.data.message);
+      alert(response.data.message);
+      closeSignupModal();
+    } catch (error) {
+      handleAPIError(error);
+    }
   };
-
-  const handleForgotPasswordInputChange = (e) => {
-    const { name, value } = e.target;
-    setForgotPasswordData({
-      ...forgotPasswordData,
-      [name]: value,
-    });
-  };
-
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
-
-    axios
-      .post(`${backendURL}/api_auth/register`, signupData)
-      .then((response) => {
-        setSuccessMessage('Registration successful: ' + response.data.message);
-        alert(response.data.message);
-        closeSignupModal();
-      })
-      .catch((error) => {
-        if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
-            setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-            console.error('Registration failed:', error.response.data.errors);
-        } else {
-            setErrorMessage('Registration failed. Please try again later.');
-            console.error('Registration failed:', error);
-        }
-      });
-};
 
 
   const handleSignupInputChange = (e) => {
@@ -218,10 +194,6 @@ const Header = ({
     localStorage.removeItem('token');
     setUserToken(null);
   }
-
-
-
-
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
@@ -229,9 +201,7 @@ const Header = ({
     setVerificationCode('');
   };
 
-  const handlePasswordConfirmChange = (e) => {
-    setPasswordConfirm(e.target.value);
-  };
+
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
@@ -244,7 +214,34 @@ const Header = ({
     setLoginError(''); // Clear the login error
   };
 
- 
+  const handleForgotPasswordInputChange = (e) => {
+    setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
+};
+const handleVerificationCodeChange = (e) => {
+  setVerificationCode(e.target.value);
+};
+const handleForgotPasswordSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    if (passwordResetEmail) {
+        await axios.post(`${baseURL}/verify-code`, {
+            email: forgotPasswordData.email,
+            code: verificationCode,
+        });
+        // Handle successful verification. For example, navigate to reset password page or show a success message.
+    } else {
+        const response = await axios.post(`${baseURL}/forgot-password`, { email: forgotPasswordData.email });
+        
+        if (response && response.data && response.data.message) {
+            setPasswordResetEmail(true);  // Show verification input
+            setSuccessMessage(response.data.message);
+        }
+    }
+  } catch (error) {
+      handleAPIError(error);
+  }
+};
 
 
   return (
@@ -260,9 +257,6 @@ const Header = ({
         </div>
       </div>
       {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
-
-      
-
       <div>
         {isFacultyPage && (
           <div>
@@ -303,75 +297,21 @@ const Header = ({
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>
-
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
-
         <form onSubmit={handleSignupSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              className="inputBar"
-              placeholder="Username"
-              value={signupData.username}
-              onChange={handleSignupInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="inputBar"
-              placeholder="Email"
-              value={signupData.email}
-              onChange={handleSignupInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="inputBar"
-              placeholder="Password"
-              value={signupData.password}
-              onChange={handleSignupInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="passwordConfirm">Confirm Password</label>
-            <input
-              type="password"
-              id="passwordConfirm"
-              name="passwordConfirm"
-              className="inputBar"
-              placeholder="Confirm Password"
-              value={passwordConfirm}
-              onChange={handlePasswordConfirmChange}
-              required
-            />
-          </div>
-          <button type="submit" className="authButton">
-            Sign Up
-          </button>
+          <Input type="text" id="username" name="username" value={signupData.username} onChange={handleSignupInputChange} placeholder="Username" />
+          <Input type="email" id="email" name="email" value={signupData.email} onChange={handleSignupInputChange} placeholder="Email" />
+          <Input type="password" id="password" name="password" value={signupData.password} onChange={handleSignupInputChange} placeholder="Password" />
+          <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
+          <button type="submit" className="authButton">Submit</button>
         </form>
       </Modal>
 
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>Forget Password</h1></label>
-
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
-
         <form onSubmit={handleForgotPasswordSubmit}>
           {passwordResetEmail ? (
             <div className="form-group">

@@ -45,7 +45,7 @@ const Header = ({
   userToken,
   setUserToken,
 }) => {
-  const backendURL = 'http://localhost:3000';
+  const backendURL = 'http://localhost:3002';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -143,7 +143,7 @@ const Header = ({
     }
 
     try {
-      const response = await axiosInstance.post('/register', signupData);
+      const response = await axiosInstance.post(`${backendURL}/api_auth/register`, signupData);
       setSuccessMessage('Registration successful: ' + response.data.message);
       alert(response.data.message);
       closeSignupModal();
@@ -160,16 +160,15 @@ const Header = ({
       [name]: value,
     });
   };
-
   const handleLoginSubmit = (usernameOrEmail, password) => {
     const isEmail = usernameOrEmail.includes('@');
-
+  
     const loginData = isEmail
       ? { email: usernameOrEmail, password }
       : { username: usernameOrEmail, password };
-
+  
     axios
-      .post(`${backendURL}/api_auth/login`, loginData)
+      .post(`${backendURL}/api_auth/login`, loginData)  // Use the correct login endpoint
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem('token', token);
@@ -180,14 +179,15 @@ const Header = ({
       })
       .catch((error) => {
         if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
-            setErrorMessage('Registration failed: ' + error.response.data.errors[0].msg);
-            console.error('Registration failed:', error.response.data.errors);
+          setErrorMessage('Login failed: ' + error.response.data.errors[0].msg);
+          console.error('Login failed:', error.response.data.errors);
         } else {
-            setErrorMessage('Registration failed. Please try again later.');
-            console.error('Registration failed:', error);
+          setErrorMessage('Login failed. Please try again later.');
+          console.error('Login failed:', error);
         }
       });
   };
+  
 
 
   const handleLogout = () => {

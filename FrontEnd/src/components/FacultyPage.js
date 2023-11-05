@@ -41,7 +41,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const FacultyPage = () => {
-  const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
+  const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();

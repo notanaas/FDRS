@@ -10,9 +10,7 @@ const Sidebar = () => {
     </div>
   );
 }
-const baseURL = 'http://localhost:3000';
-
-const axiosInstance = axios.create({ baseURL: `${baseURL}/api_auth` });
+const axiosInstance = axios.create({ backendURL: `${backendURL}/api_auth` });
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">
@@ -45,7 +43,7 @@ const Header = ({
   userToken,
   setUserToken,
 }) => {
-  const backendURL = 'http://localhost:3002';
+  const backendURL = 'http://localhost:3000';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -160,15 +158,16 @@ const Header = ({
       [name]: value,
     });
   };
-  const handleLoginSubmit = (usernameOrEmail, password) => {
-    const isEmail = usernameOrEmail.includes('@');
-  
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    const isEmail = email.includes('@'); 
+    
     const loginData = isEmail
-      ? { email: usernameOrEmail, password }
-      : { username: usernameOrEmail, password };
+      ? { email: email, password: password }
+      : { username: email, password: password };
   
     axios
-      .post(`${backendURL}/api_auth/login`, loginData)  // Use the correct login endpoint
+      .post(`${backendURL}/api_auth/login`, loginData)
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem('token', token);
@@ -225,13 +224,13 @@ const handleForgotPasswordSubmit = async (e) => {
 
   try {
     if (passwordResetEmail) {
-        await axios.post(`${baseURL}/verify-code`, {
+        await axios.post(`${backendURL}/verify-code`, {
             email: forgotPasswordData.email,
             code: verificationCode,
         });
         // Handle successful verification. For example, navigate to reset password page or show a success message.
     } else {
-        const response = await axios.post(`${baseURL}/forgot-password`, { email: forgotPasswordData.email });
+        const response = await axios.post(`${backendURL}/forgot-password`, { email: forgotPasswordData.email });
         
         if (response && response.data && response.data.message) {
             setPasswordResetEmail(true);  // Show verification input
@@ -359,39 +358,17 @@ const handleForgotPasswordSubmit = async (e) => {
         {loginError && <div className="error-message">{loginError}</div>}
 
         <form onSubmit={handleLoginSubmit}>
-          <div className="form-group">
+            <div className="form-group">
             <label htmlFor="usernameOrEmail">Username or Email:</label>
-            <input
-              type="text"
-              id="usernameOrEmail"
-              name="usernameOrEmail"
-              className="inputBar"
-              placeholder="Username or Email"
-              value={email}
-              onChange={handleEmailChange}
-              required
-            />
+            <input type="text" id="usernameOrEmail" name="usernameOrEmail" className="inputBar" placeholder="Username or Email" value={email} onChange={handleEmailChange} required/>
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="inputBar"
-              placeholder="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
+            <input type="password" id="password" name="password" className="inputBar" placeholder="Password" value={password} onChange={handlePasswordChange} required/>
           </div>
-          <button type="submit" className="authButton">
-            Login
-          </button>
-          <button className="authButton" onClick={handleForgotPassword}>
-            Forgot Password
-          </button>
-
+          <button type="submit" className="authButton"> Login </button>
+          <button className="authButton" onClick={handleForgotPassword}> Forgot Password</button>
         </form>
       </Modal>
 

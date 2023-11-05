@@ -61,9 +61,9 @@ const Header = ({
   const [verificationCode, setVerificationCode] = useState(''); // New state for verification code
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginError, setLoginError] = useState(''); // New state for login error message
+  const [loginError, setLoginError] = useState(''); 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [passwordResetEmail, setPasswordResetEmail] = useState(false); // New state for password reset email
+  const [passwordResetEmail, setPasswordResetEmail] = useState(''); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -104,12 +104,8 @@ const Header = ({
     setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
+  
   const handleForgotPassword = () => {
-    // When "Forgot Password" is clicked, set the password reset email state and hide the password field
     setPasswordResetEmail(email);
     setPassword('');
     setIsLoginModalOpen(false);
@@ -161,12 +157,13 @@ const Header = ({
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     const isEmail = email.includes('@'); 
-    
-    const loginData = isEmail
-      ? { email: email, password: password }
-      : { username: email, password: password };
   
-    axios
+    const loginData = {
+      [isEmail ? 'email' : 'username']: email,
+      password: password,
+    };
+  
+    axiosInstance
       .post(`${backendURL}/api_auth/login`, loginData)
       .then((response) => {
         const token = response.data.token;
@@ -174,16 +171,15 @@ const Header = ({
         setUserToken(token);
         setSuccessMessage('Login successful');
         console.log('Login successful:', response.data);
-        setLoginError('');
+        setLoginError(''); 
       })
       .catch((error) => {
-        if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
-          setErrorMessage('Login failed: ' + error.response.data.errors[0].msg);
-          console.error('Login failed:', error.response.data.errors);
-        } else {
-          setErrorMessage('Login failed. Please try again later.');
-          console.error('Login failed:', error);
-        }
+        const errorMessage = error.response?.data?.errors?.length > 0
+          ? 'Login failed: ' + error.response.data.errors[0].msg
+          : 'Login failed. Please try again later.';
+        
+        setErrorMessage(errorMessage);
+        console.error('Login failed:', error.response?.data?.errors || error);
       });
   };
   
@@ -224,11 +220,10 @@ const handleForgotPasswordSubmit = async (e) => {
 
   try {
     if (passwordResetEmail) {
-        await axios.post(`${backendURL}/verify-code`, {
+        await axios.post(`${backendURL}/forgot-password`, {
             email: forgotPasswordData.email,
             code: verificationCode,
         });
-        // Handle successful verification. For example, navigate to reset password page or show a success message.
     } else {
         const response = await axios.post(`${backendURL}/forgot-password`, { email: forgotPasswordData.email });
         
@@ -241,7 +236,6 @@ const handleForgotPasswordSubmit = async (e) => {
       handleAPIError(error);
   }
 };
-
 
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
@@ -259,12 +253,7 @@ const handleForgotPasswordSubmit = async (e) => {
       <div>
         {isFacultyPage && (
           <div>
-            <input
-              type="text"
-              className="inputBar"
-              placeholder={`Search in `}
-              onChange={onSearchChange}
-            />
+            <input type="text" className="inputBar" placeholder={`Search in `} onChange={onSearchChange} />
             <button className="authButton">Search</button>
           </div>
         )}
@@ -273,23 +262,15 @@ const handleForgotPasswordSubmit = async (e) => {
       <div className="authButtons">
         {userToken ? (
           <div>
-            <button className="authButton" onClick={handleLogout}>
-              Logout
-            </button>
+            <button className="authButton" onClick={handleLogout}> Logout </button>
             {isAdmin && (
-              <Link to="/admin" className="admin-button">
-                Admin Page
-              </Link>
+              <Link to="/admin" className="admin-button"> Admin Page </Link>
             )}
           </div>
         ) : (
           <div className='logoReg'>
-            <button className="authButton" onClick={openLoginModal}>
-              Login
-            </button>
-            <button className="authButton" onClick={openSignupModal}>
-              Sign Up
-            </button>
+            <button className="authButton" onClick={openLoginModal}> Login </button>
+            <button className="authButton" onClick={openSignupModal}> Sign Up </button>
           </div>
         )}
       </div>
@@ -315,39 +296,19 @@ const handleForgotPasswordSubmit = async (e) => {
           {passwordResetEmail ? (
             <div className="form-group">
               <label htmlFor="verificationCode">Verification Code:</label>
-              <input
-                type="text"
-                id="verificationCode"
-                name="verificationCode"
-                className="inputBar"
-                placeholder="Verification Code"
-                value={verificationCode}
-                onChange={handleVerificationCodeChange}
-                required
-              />
+              <input type="text" id="verificationCode" name="verificationCode"  className="inputBar" placeholder="Verification Code" value={verificationCode} onChange={handleVerificationCodeChange} required/>
             </div>
           ) : (
             <div className="form-group">
               <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="inputBar"
-                placeholder="Email"
-                value={forgotPasswordData.email}
-                onChange={handleForgotPasswordInputChange}
-                required
-              />
+              <input type="email" id="email" name="email" className="inputBar" placeholder="Email" value={forgotPasswordData.email} onChange={handleForgotPasswordInputChange} required/>
             </div>
           )}
           <button type="submit" className="authButton">
             {passwordResetEmail ? 'Reset Password' : 'Send Verification Code'}
           </button>
           {passwordResetEmail && (
-            <button className="authButton" onClick={handleBackToLogin}>
-              Back to Login
-            </button>
+            <button className="authButton" onClick={handleBackToLogin}> Back to Login </button>
           )}
         </form>
       </Modal>
@@ -365,7 +326,7 @@ const handleForgotPasswordSubmit = async (e) => {
 
           <div className="form-group">
             <label htmlFor="password">Password:</label>
-            <input type="password" id="password" name="password" className="inputBar" placeholder="Password" value={password} onChange={handlePasswordChange} required/>
+            <Input type="password" id="confirm-password" name="passwordConfirm" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
           </div>
           <button type="submit" className="authButton"> Login </button>
           <button className="authButton" onClick={handleForgotPassword}> Forgot Password</button>

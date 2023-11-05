@@ -10,6 +10,7 @@ const Sidebar = () => {
     </div>
   );
 }
+const backendURL = 'http://localhost:3000';
 const axiosInstance = axios.create({ backendURL: `${backendURL}/api_auth` });
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
@@ -43,7 +44,6 @@ const Header = ({
   userToken,
   setUserToken,
 }) => {
-  const backendURL = 'http://localhost:3000';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

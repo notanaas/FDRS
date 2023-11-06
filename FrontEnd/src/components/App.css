@@ -191,6 +191,7 @@ html {
   display: flex;
   margin-right: 10%;
   padding: 5px 10px;
+  padding-top: 10px;
   justify-content: center;
   align-items: center;
 }

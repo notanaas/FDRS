@@ -41,7 +41,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const FacultyPage = () => {
-  const apiEndpoint = 'http://localhost:3000/api_resource/create/6522b2eb6f293d94d943256a';
+  const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
@@ -157,26 +157,28 @@ const FacultyPage = () => {
       return;
     }
     
-
     if (title && authorFirstName && authorLastName && description && file && img) {
       try {
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('authorFirstName', authorFirstName);
-        formData.append('authorLastName', authorLastName);
+        formData.append('firstname', authorFirstName); // Changed from authorFirstName to firstname
+        formData.append('lastname', authorLastName); // Changed from authorLastName to lastname
         formData.append('description', description);
-        formData.append('photo', img);
-        formData.append('file', file);
-
+        formData.append('img', img); // This should be the actual image file, not a path
+        formData.append('file', file); // This should be the actual file object, not a path
+     
+        
+  
         const response = await axios.post(apiEndpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${userToken}`,
           },
         });
-
-        if (response.data.success) {
+  
+        if (response.status === 201) { // Assuming 201 means created
           setSuccessMessage('Document uploaded successfully');
+          // Reset form and clear errors
           setTitle('');
           setAuthorFirstName('');
           setAuthorLastName('');
@@ -188,13 +190,16 @@ const FacultyPage = () => {
           setError('Upload failed. Please try again later.');
         }
       } catch (error) {
-        setError('An error occurred while uploading the document. Please try again later.');
-        console.error('Error uploading document:', error);
+        
+        const message = error.response?.data?.error || 'An error occurred while uploading the document. Please try again later.';
+        setError(message);
+        console.error('Error uploading document:', message);
       }
     } else {
       setError('Please fill in all required fields.');
     }
   };
+  
 
   
 

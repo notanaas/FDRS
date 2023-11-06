@@ -10,7 +10,7 @@ const Sidebar = () => {
     </div>
   );
 }
-const backendURL = 'http://localhost:3000';
+const backendURL = 'http://localhost:3002';
 const axiosInstance = axios.create({ backendURL: `${backendURL}/api_auth` });
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
@@ -65,6 +65,8 @@ const Header = ({
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(''); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [loginErrorMessage, setLoginErrorMessage] = useState('');
+  const [forgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -139,7 +141,6 @@ const Header = ({
     try {
       const response = await axiosInstance.post(`${backendURL}/api_auth/register`, signupData);
       setSuccessMessage('Registration successful: ' + response.data.message);
-      alert(response.data.message);
       closeSignupModal();
     } catch (error) {
       handleAPIError(error);
@@ -154,34 +155,54 @@ const Header = ({
       [name]: value,
     });
   };
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    const isEmail = email.includes('@'); 
+
   
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setSuccessMessage('');
+    setLoginErrorMessage('');
+
+    // Basic validation
+    if (!email || !password) {
+        setLoginErrorMessage('Email and password are required.');
+        return;
+    }
+
+    // Determine if the user is logging in with an email or username
+    const isEmail = email.includes('@');
     const loginData = {
       [isEmail ? 'email' : 'username']: email,
       password: password,
     };
-  
-    axiosInstance
-      .post(`${backendURL}/api_auth/login`, loginData)
-      .then((response) => {
-        const token = response.data.token;
-        localStorage.setItem('token', token);
-        setUserToken(token);
-        setSuccessMessage('Login successful');
-        console.log('Login successful:', response.data);
-        setLoginError(''); 
-      })
-      .catch((error) => {
-        const errorMessage = error.response?.data?.errors?.length > 0
-          ? 'Login failed: ' + error.response.data.errors[0].msg
-          : 'Login failed. Please try again later.';
-        
-        setErrorMessage(errorMessage);
-        console.error('Login failed:', error.response?.data?.errors || error);
+
+    // Log the login data for debugging
+    console.log('Sending login data:', loginData);
+
+    try {
+      const response = await axios.post(`${backendURL}/api_auth/login`, loginData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-  };
+
+      // Assuming the token is in the response data directly
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      setUserToken(token);
+      setSuccessMessage('Login successful');
+      console.log('Login successful:', response.data);
+    } catch (error) {
+      // Handle errors appropriately
+      const errorMessage = error.response?.data?.errors && error.response.data.errors.length > 0
+        ? 'Login failed: ' + error.response.data.errors[0].msg
+        : 'Login failed. Please try again later.';
+
+      setLoginErrorMessage(errorMessage);
+      console.error('Login failed:', error.response?.data || error);
+    }
+};
+
+
   
 
 
@@ -314,24 +335,42 @@ const handleForgotPasswordSubmit = async (e) => {
       </Modal>
 
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
-        <label htmlFor="username"><h1>LogIn</h1></label>
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        {loginError && <div className="error-message">{loginError}</div>}
+  <h1>LogIn</h1>
+  {successMessage && <div className="success-message">{successMessage}</div>}
+  {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
 
-        <form onSubmit={handleLoginSubmit}>
-            <div className="form-group">
-            <label htmlFor="usernameOrEmail">Username or Email:</label>
-            <input type="text" id="usernameOrEmail" name="usernameOrEmail" className="inputBar" placeholder="Username or Email" value={email} onChange={handleEmailChange} required/>
-          </div>
+  <form onSubmit={handleLoginSubmit}>
+    <div className="form-group">
+      <label htmlFor="usernameOrEmail">Username or Email:</label>
+      <input
+        type="text"
+        id="usernameOrEmail"
+        name="usernameOrEmail"
+        className="inputBar"
+        placeholder="Username or Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)} // Changed handleEmailChange to setEmail
+        required
+      />
+    </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <Input type="password" id="confirm-password" name="passwordConfirm" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
-          </div>
-          <button type="submit" className="authButton"> Login </button>
-          <button className="authButton" onClick={handleForgotPassword}> Forgot Password</button>
-        </form>
-      </Modal>
+    <div className="form-group">
+      <label htmlFor="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        className="inputBar"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)} // Changed setPasswordConfirm to setPassword
+        placeholder="Password"
+        required
+      />
+    </div>
+    <button type="submit" className="authButton">Login</button>
+    <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
+  </form>
+</Modal>
 
     </header>
 

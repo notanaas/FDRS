@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
@@ -11,7 +11,7 @@ const Sidebar = () => {
   );
 }
 const backendURL = 'http://localhost:3002';
-const axiosInstance = axios.create({ backendURL: `${backendURL}/api_auth` });
+const axiosInstance = axios.create({ baseURL: backendURL });
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">
@@ -161,46 +161,39 @@ const Header = ({
     e.preventDefault();
     setSuccessMessage('');
     setLoginErrorMessage('');
-
-    // Basic validation
     if (!email || !password) {
-        setLoginErrorMessage('Email and password are required.');
-        return;
+      setLoginErrorMessage('Email and password are required.');
+      return;
     }
-
-    // Determine if the user is logging in with an email or username
     const isEmail = email.includes('@');
     const loginData = {
       [isEmail ? 'email' : 'username']: email,
       password: password,
     };
-
-    // Log the login data for debugging
-    console.log('Sending login data:', loginData);
-
     try {
-      const response = await axios.post(`${backendURL}/api_auth/login`, loginData, {
+      const response = await axiosInstance.post(`${backendURL}/api_auth/login`, loginData, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-
-      // Assuming the token is in the response data directly
-      const token = response.data.token;
+      const { token } = response.data;
       localStorage.setItem('token', token);
       setUserToken(token);
       setSuccessMessage('Login successful');
-      console.log('Login successful:', response.data);
+      closeLoginModal();
+  
     } catch (error) {
-      // Handle errors appropriately
-      const errorMessage = error.response?.data?.errors && error.response.data.errors.length > 0
-        ? 'Login failed: ' + error.response.data.errors[0].msg
+      // Error handling
+      const errorMessage = error.response?.data?.errors?.length > 0
+        ? `Login failed: ${error.response.data.errors[0].msg}`
         : 'Login failed. Please try again later.';
-
       setLoginErrorMessage(errorMessage);
+  
+      // Log the error for debugging purposes
       console.error('Login failed:', error.response?.data || error);
     }
-};
+  };
+  
 
 
   

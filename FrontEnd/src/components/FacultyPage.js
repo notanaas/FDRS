@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFaculty } from './context/FacultyContext';
+import { useAuth } from './context/AuthContext';
 import { useParams, Link } from 'react-router-dom';
 import Header from './Header';
 import axios from 'axios';
@@ -60,6 +61,7 @@ const FacultyPage = () => {
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
+  const { token, saveToken } = useAuth(); // Use the useAuth hook
 
   // Effects
   useEffect(() => {

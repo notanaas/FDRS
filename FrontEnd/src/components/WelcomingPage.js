@@ -1,45 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header'; 
-import axios from 'axios';
+import { useAuth } from './context/AuthContext';
+import { Redirect } from 'react-router-dom'; // Make sure to import Redirect
 
 import './App.css';
 
 const WelcomingPage = () => {
-  const apiEndpoint = 'http://localhost:3002';
-  const userToken = localStorage.getItem('token');
-  const [isDarkMode] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Added a setter for isDarkMode
+  const { token } = useAuth(); // Use the useAuth hook to get the current token
 
   useEffect(() => {
-    // Check local storage for an existing token
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Optionally verify token with the backend to ensure it's still valid
-      axios.get('/verifyToken', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then(response => {
-        // If token is verified, set login state
-        setIsLoggedIn(true);
-      }).catch(error => {
-        // If token is not valid, handle accordingly, perhaps by logging out
-        setIsLoggedIn(false);
-        localStorage.removeItem('token');
-        if (isDarkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }, [isDarkMode]);
-      
+    // Apply dark mode class to the document element
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
-  }, []);
-  
+  }, [isDarkMode]);
+
+  // Redirect if there is no token (user is not logged in)
+  if (!token) {
+    return <Redirect to="/login" />;
+  }
+
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
       <Header />
-    </div>
+      <main>
+        <p>Welcome, you are logged in!</p>
+        {token ? (
+          <p>Welcome, you are logged in!</p>
+        ) : (
+          <p>Please log in to access more features.</p>
+        )}
+      </main>
+          </div>
     
   );
 };

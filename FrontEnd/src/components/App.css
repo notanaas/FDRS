@@ -38,8 +38,9 @@ html {
 }
 
 .sidebarToggle:hover {
-  background-color: #7d0909;
+  background:transparent;
   transform: scale(1.02);
+  background-color:rgba(76, 9, 3, 0.815);
 
 }
 
@@ -54,30 +55,22 @@ html {
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
   padding: 0;
   overflow-y: auto;
-  transition: 0.5s;
 }
-
-.sidebar:hover {
-  transition: all 0.3s ease-in-out;
-  /* transform: translateX(60%); */
-}
-
-
 
 .headerContainer {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
-  background-color: #8b0000;
-  color: #fff;
   padding: 1rem;
-  text-align: center;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   text-align: center;
+  background: moz-linear-gradient(45deg, #090709 0%, #ff0000 100%);
+  background: -webkit-linear-gradient(45deg, #a00202 0%, #04120b 100%);
+  background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
 }
 
 .headerContainer .left {
@@ -250,22 +243,27 @@ html {
 }
 
 .authButton {
-  background-color: #800303;
+  background:transparent;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  /* transition: background-color 0.2s; */
   align-items: center;
   height: 35px;
   margin: 10px;
   margin-top: 8px;
   font-size: large;
   display: inline-block;
+  background: moz-linear-gradient(45deg, #090709 0%, #ff0000 100%);
+  background: -webkit-linear-gradient(45deg, #a00202 0%, #04120b 100%);
+  background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+  overflow: hidden;
+  position: relative;
 }
 
 .authButton:hover {
-  background-color: #5c0606;
+  background:darkred;
 }
 
 .form {
@@ -281,12 +279,13 @@ html {
 }
 
 .facultyauthButton {
-  background-color: #930404;
+  background: moz-linear-gradient(45deg, #090709 0%, #ff0000 100%);
+  background: -webkit-linear-gradient(45deg, #a00202 0%, #04120b 100%);
+  background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.2s;
   align-items: center;
   margin: 10px;
   margin-top: 8px;
@@ -295,16 +294,13 @@ html {
   position: relative;
 }
 .facultyauthButton:hover {
-  background-color: #5c0101;
-  color: #ffffff;
+  background: #6a0000;
 }
 
 .faculties {
   margin: 0;
   font-weight: bold;
 }
-
-
 
 .share-button {
   color: #fff;

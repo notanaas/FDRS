@@ -41,8 +41,6 @@ const Header = ({
   onSearchChange,
   isFacultyPage,
   isAdmin,
-  userToken,
-  setUserToken,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
@@ -67,6 +65,8 @@ const Header = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [forgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
+  const [userToken, setUserToken] = useState(null);
+
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -335,11 +335,10 @@ const handleForgotPasswordSubmit = async (e) => {
       </Modal>
 
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
-  <h1>LogIn</h1>
-  {successMessage && <div className="success-message">{successMessage}</div>}
-  {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
-
-  <form onSubmit={handleLoginSubmit}>
+        <h1>Login</h1>
+        {successMessage && <div className="success-message">{successMessage}</div>}
+        {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
+        <form onSubmit={handleLoginSubmit}>
     <div className="form-group">
       <label htmlFor="usernameOrEmail">Username or Email:</label>
       <input

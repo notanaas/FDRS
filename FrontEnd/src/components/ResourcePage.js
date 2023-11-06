@@ -75,8 +75,11 @@ const Comments = ({ comments, addComment, userAuthenticated }) => {
   );
 };
 const ResourcePage = () => {
+  const userToken = localStorage.getItem('token');
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
+
 
   // Sample resource data
   const resource = {
@@ -100,18 +103,50 @@ const ResourcePage = () => {
   const [commentsContainerHeight] = useState('auto');
 
   useEffect(() => {
-    // Check the user's authentication status and fetch user name
-    axios.get('/api/auth/check-auth')
-      .then((response) => {
-        setUserAuthenticated(true);
-        setUserName(response.data.userName);
-      })
-      .catch((error) => {
-        setUserAuthenticated(false);
+    // Check local storage for an existing token
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Optionally verify token with the backend to ensure it's still valid
+      axios.get('/verifyToken', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(response => {
+        // If token is verified, set login state
+        setIsLoggedIn(true);
+      }).catch(error => {
+        // If token is not valid, handle accordingly, perhaps by logging out
+        setIsLoggedIn(false);
+        localStorage.removeItem('token');
+        // Redirect to login or do something else
       });
+    }
   }, []);
+  
 
   
+  useEffect(() => {
+    // Check for token in localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Set the axios default header with the token
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Check the user's authentication status with the token
+      axios.get('/api/auth/check-auth')
+        .then((response) => {
+          // If the token is valid, the API should return a successful response
+          setUserAuthenticated(true);
+          setUserName(response.data.userName);
+        })
+        .catch((error) => {
+          // If the token is invalid or expired, remove it and set authentication to false
+          console.error(error);
+          localStorage.removeItem('token');
+          setUserAuthenticated(false);
+        });
+    }
+  }, []);
 
   const addComment = (newComment) => {
     if (userAuthenticated) {

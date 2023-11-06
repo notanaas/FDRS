@@ -15,7 +15,6 @@ import {
   LinkedinIcon,
   EmailIcon,
 } from 'react-share';
-//Modal Class
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   const modalContentStyle = {
     backgroundColor: isDarkMode ? '#333' : 'white',
@@ -64,6 +63,21 @@ const FacultyPage = () => {
 
   // Effects
   useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        axios.get('/verifyToken', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then(response => {
+          setIsLoggedIn(true);
+        }).catch(error => {
+          setIsLoggedIn(false);
+          localStorage.removeItem('token');
+        });
+      }
+     
+    
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
 

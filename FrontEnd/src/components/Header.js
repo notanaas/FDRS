@@ -13,7 +13,6 @@ const Sidebar = () => {
 }
 const backendURL = 'http://localhost:3002';
 const axiosInstance = axios.create({ baseURL: backendURL });
-
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">
     <label htmlFor={id}>{placeholder}</label>
@@ -68,12 +67,10 @@ const Header = ({
   const [userToken, setUserToken] = useState(null);
   const { authToken, setAuthToken } = useContext(AuthContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Get token from localStorage
+    const token = localStorage.getItem('token'); 
     if (token) {
-      setAuthToken(token); // Set token in AuthContext if found
+      setAuthToken(token); 
     }
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
@@ -92,7 +89,26 @@ const Header = ({
     setIsLoggedIn(!!authToken);
   }, [authToken]);
 
+  const closeForgotPasswordModal = () => {
+    setIsForgotPasswordOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
+    setVerificationCode('');
+  };
 
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
+    setLoginError('');
+  };
+
+  const handleForgotPasswordInputChange = (e) => {
+    setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
+  };
+  const handleVerificationCodeChange = (e) => {
+  setVerificationCode(e.target.value);
+  };
   const closeSignupModal = () => {
     setIsSignupOpen(false);
     setSuccessMessage('');
@@ -137,17 +153,13 @@ const Header = ({
       handleAPIError(error);
     }
   };
-
-
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
     setSignupData({
       ...signupData,
       [name]: value,
     });
-  };
-
-  
+  };  
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
@@ -186,15 +198,12 @@ const Header = ({
       console.error('No auth token found.');
       return;
     }
-  
     try {
       const response = await axios.post(`${backendURL}/api_auth/logout`, {}, {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
       });
-  
-      // Check the response from the server
       if (response.status === 200) {
         console.log('Logged out successfully');
       } else {
@@ -203,55 +212,37 @@ const Header = ({
     } catch (error) {
       console.error('Logout error:', error);
     }
-  
-    // Clear the auth token and update any relevant state
-    localStorage.removeItem('token'); // Or the key you use to store the token
-    setIsLoggedIn(false);
-    // Redirect to the login page or handle the logged-out state as needed
-  };
-  
-  
-  const closeForgotPasswordModal = () => {
-    setIsForgotPasswordOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-    setVerificationCode('');
+    localStorage.removeItem('token'); 
+    setAuthToken(null); 
+    setIsLoggedIn(false); 
   };
 
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-    setLoginError(''); // Clear the login error
-  };
 
-  const handleForgotPasswordInputChange = (e) => {
-    setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
-};
-const handleVerificationCodeChange = (e) => {
-  setVerificationCode(e.target.value);
-};
 const handleForgotPasswordSubmit = async (e) => {
   e.preventDefault();
-
+  if (!forgotPasswordData.email) {
+    setForgotPasswordErrorMessage('Email is required.');
+    return;
+  }
   try {
     if (passwordResetEmail) {
-        await axios.post(`${backendURL}/forgot-password`, {
-            email: forgotPasswordData.email,
-            code: verificationCode,
-        });
+      const response = await axios.post(`${backendURL}/api_auth/reset-password`, {
+        email: forgotPasswordData.email,
+        code: verificationCode,
+      });
     } else {
-        const response = await axios.post(`${backendURL}/forgot-password`, { email: forgotPasswordData.email });
-        
-        if (response && response.data && response.data.message) {
-            setPasswordResetEmail(true);  // Show verification input
-            setSuccessMessage(response.data.message);
-        }
+      const response = await axios.post(`${backendURL}/api_auth/forgot-password`, {
+        email: forgotPasswordData.email,
+      });
+      if (response.data.message) {
+        setSuccessMessage(response.data.message);
+      }
     }
   } catch (error) {
-      handleAPIError(error);
+    handleAPIError(error);
   }
 };
+
 
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>

@@ -112,7 +112,8 @@ exports.login = asyncHandler(async (req, res, next) => {
 exports.logout = asyncHandler(async(req,res,next)=>
 {
 const { refreshToken } = req.body;
-  const user = Users.find((u) => u.refreshToken === refreshToken);
+const user = await Users.findOne({ refreshToken: refreshToken }).exec();
+
 
   if (!user) {
     return res.status(400).json({ message: 'Invalid refresh token' });

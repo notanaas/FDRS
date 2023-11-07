@@ -181,10 +181,36 @@ const Header = ({
     }
   };
   
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove the token from localStorage
-    setAuthToken(null); // Clear the token in AuthContext
+  const handleLogout = async () => {
+    if (!authToken) {
+      console.error('No auth token found.');
+      return;
+    }
+  
+    try {
+      const response = await axios.post(`${backendURL}/api_auth/logout`, {}, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+  
+      // Check the response from the server
+      if (response.status === 200) {
+        console.log('Logged out successfully');
+      } else {
+        console.error('Failed to log out:', response.status, response.data);
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  
+    // Clear the auth token and update any relevant state
+    localStorage.removeItem('token'); // Or the key you use to store the token
+    setIsLoggedIn(false);
+    // Redirect to the login page or handle the logged-out state as needed
   };
+  
+  
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');

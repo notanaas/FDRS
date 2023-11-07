@@ -41,9 +41,9 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const FacultyPage = () => {
-  const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
+  const backendURL = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
-  const { authToken } = useContext(AuthContext);
+  const { authToken ,userId } = useContext(AuthContext);
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
@@ -63,26 +63,26 @@ const FacultyPage = () => {
   const [isStarActive, setIsStarActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
 
-  // Effects
   useEffect(() => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        axios.get('/verifyToken', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }).then(response => {
-          setIsLoggedIn(true);
-        }).catch(error => {
-          setIsLoggedIn(false);
-          localStorage.removeItem('token');
-        });
-      }
-     
-    
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get('/verifyToken', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setIsLoggedIn(true);
+      })
+      .catch(error => {
+        setIsLoggedIn(false);
+        localStorage.removeItem('token');
+      });
+    }
+  
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
-
+  
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const darkModeChangeListener = (e) => {
       setIsDarkMode(e.matches);
@@ -92,10 +92,14 @@ const FacultyPage = () => {
         document.documentElement.classList.remove('dark');
       }
     };
+  
     darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
-
-    return () => darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+  
+    return () => {
+      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+    };
   }, []);
+  
 
 
   const openModal = () => {
@@ -109,7 +113,7 @@ const FacultyPage = () => {
 
   const handleAddFavorite = async (resourceId) => {
     try {
-      await axios.post(`${apiEndpoint}/favorite/resources/${resourceId}/favorite`, null, {
+      await axios.post(`${backendURL}/favorite/resources/${resourceId}/favorite`, null, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -122,7 +126,7 @@ const FacultyPage = () => {
 
   const handleRemoveFavorite = async (resourceId) => {
     try {
-      await axios.delete(`${apiEndpoint}/favorite/resources/${resourceId}/unfavorite`, {
+      await axios.delete(`${backendURL}/favorite/resources/${resourceId}/unfavorite`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -153,7 +157,7 @@ const FacultyPage = () => {
     if (selectedFile) {
       const uniqueId = uuidv4();
       const fileName = `${uniqueId}_${selectedFile.name}`;
-      const uploadUrl = `${apiEndpoint}/${fileName}`;
+      const uploadUrl = `${backendURL}/${fileName}`;
       setFile(uploadUrl);
     }
   };
@@ -165,36 +169,35 @@ const FacultyPage = () => {
   };
 
   const handleUpload = async () => {
-    if (!isLoggedIn) {
+    if (!authToken) {
       setAlertMessage({
         message: 'You need to be logged in to upload documents.',
         type: 'error',
       });
       return;
     }
-    
+  
     if (title && authorFirstName && authorLastName && description && file && img) {
       try {
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('firstname', authorFirstName); // Changed from authorFirstName to firstname
-        formData.append('lastname', authorLastName); // Changed from authorLastName to lastname
+        formData.append('firstname', authorFirstName);
+        formData.append('lastname', authorLastName);
         formData.append('description', description);
-        formData.append('img', img); // This should be the actual image file, not a path
-        formData.append('file', file); // This should be the actual file object, not a path
-     
-        
+        formData.append('img', img, img.name); // Ensure img is the actual File object
+        formData.append('file', file, file.name); // Ensure file is the actual File object
   
-        const response = await axios.post(apiEndpoint, formData, {
+        // Use the API endpoint for uploading resources
+        const response = await axios.post(`${backendURL}/${userId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${userToken}`,
+            Authorization: `Bearer ${authToken}`, // Use the authToken from AuthContext
           },
         });
   
-        if (response.status === 201) { // Assuming 201 means created
+        if (response.status === 201) {
           setSuccessMessage('Document uploaded successfully');
-          // Reset form and clear errors
+          // Reset form fields after successful upload
           setTitle('');
           setAuthorFirstName('');
           setAuthorLastName('');
@@ -206,10 +209,8 @@ const FacultyPage = () => {
           setError('Upload failed. Please try again later.');
         }
       } catch (error) {
-        
-        const message = error.response?.data?.error || 'An error occurred while uploading the document. Please try again later.';
+        const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
         setError(message);
-        console.error('Error uploading document:', message);
       }
     } else {
       setError('Please fill in all required fields.');
@@ -217,11 +218,12 @@ const FacultyPage = () => {
   };
   
 
+
   
 
   const fetchFavoriteResources = async () => {
     try {
-      const response = await axios.get(`${apiEndpoint}/favorite/resources`, {
+      const response = await axios.get(`${backendURL}/favorite/resources`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },

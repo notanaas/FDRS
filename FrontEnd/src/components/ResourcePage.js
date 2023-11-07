@@ -1,7 +1,6 @@
-// ResourcePage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import Header from './Header';
-import { useAuth } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext';
 import axios from 'axios';
 import './App.css';
 const Comments = ({ comments, addComment, userAuthenticated }) => {
@@ -80,7 +79,7 @@ const ResourcePage = () => {
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
-  const { token, saveToken } = useAuth(); // Use the useAuth hook
+  const { authToken } = useContext(AuthContext);
 
 
   // Sample resource data

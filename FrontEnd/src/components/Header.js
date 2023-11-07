@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
@@ -37,7 +38,6 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const Header = ({
-  selectedFacultyName,
   onSearchChange,
   isFacultyPage,
   isAdmin,
@@ -66,46 +66,38 @@ const Header = ({
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [forgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
   const [userToken, setUserToken] = useState(null);
+  const { authToken, setAuthToken } = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
   useEffect(() => {
+    const token = localStorage.getItem('token'); // Get token from localStorage
+    if (token) {
+      setAuthToken(token); // Set token in AuthContext if found
+    }
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
     setIsDarkMode(prefersDarkMode);
 
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
     const darkModeChangeListener = (e) => {
       setIsDarkMode(e.matches);
-
-      if (e.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
     };
 
     darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
-
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, []);
+  }, [setAuthToken])
+  useEffect(() => {
+    setIsLoggedIn(!!authToken);
+  }, [authToken]);
 
-  const openSignupModal = () => {
-    setIsSignupOpen(true);
-  };
 
   const closeSignupModal = () => {
     setIsSignupOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
   };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
   
   const handleForgotPassword = () => {
     setPasswordResetEmail(email);
@@ -124,7 +116,6 @@ const Header = ({
     }
   };
   const handleBackToLogin = () => {
-    // When the user clicks "Back to Login" from the password reset screen
     setPasswordResetEmail(false); // Clear the password reset email state
     setPassword(''); // Clear the password field
     setVerificationCode(''); // Clear the verification code field
@@ -176,44 +167,29 @@ const Header = ({
           'Content-Type': 'application/json'
         }
       });
-      const { token } = response.data;
+       const { token } = response.data;
       localStorage.setItem('token', token);
-      setUserToken(token);
-      setSuccessMessage('Login successful');
-      closeLoginModal();
-  
+      setAuthToken(token);
+      setIsLoggedIn(true);
+      setIsLoginModalOpen(false);
     } catch (error) {
-      // Error handling
       const errorMessage = error.response?.data?.errors?.length > 0
         ? `Login failed: ${error.response.data.errors[0].msg}`
         : 'Login failed. Please try again later.';
       setLoginErrorMessage(errorMessage);
-  
-      // Log the error for debugging purposes
       console.error('Login failed:', error.response?.data || error);
     }
   };
   
-
-
-  
-
-
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUserToken(null);
-  }
+    localStorage.removeItem('token'); // Remove the token from localStorage
+    setAuthToken(null); // Clear the token in AuthContext
+  };
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
     setVerificationCode('');
-  };
-
-
-
-  const openLoginModal = () => {
-    setIsLoginModalOpen(true);
   };
 
   const closeLoginModal = () => {
@@ -274,17 +250,17 @@ const handleForgotPasswordSubmit = async (e) => {
       </div>
 
       <div className="authButtons">
-        {userToken ? (
+        {isLoggedIn ? (
           <div>
-            <button className="authButton" onClick={handleLogout}> Logout </button>
+            <button className="authButton" onClick={handleLogout}>Logout</button>
             {isAdmin && (
-              <Link to="/admin" className="admin-button"> Admin Page </Link>
+              <Link to="/admin" className="admin-button">Admin Page</Link>
             )}
           </div>
         ) : (
           <div className='logoReg'>
-            <button className="authButton" onClick={openLoginModal}> Login </button>
-            <button className="authButton" onClick={openSignupModal}> Sign Up </button>
+            <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
+            <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
           </div>
         )}
       </div>
@@ -341,7 +317,7 @@ const handleForgotPasswordSubmit = async (e) => {
         className="inputBar"
         placeholder="Username or Email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)} // Changed handleEmailChange to setEmail
+        onChange={(e) => setEmail(e.target.value)} 
         required
       />
     </div>

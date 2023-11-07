@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { useFaculty } from './context/FacultyContext';
-import { useAuth } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext';
 import { useParams, Link } from 'react-router-dom';
 import Header from './Header';
 import axios from 'axios';
@@ -43,6 +43,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
 const FacultyPage = () => {
   const apiEndpoint = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
   const userToken = localStorage.getItem('token');
+  const { authToken } = useContext(AuthContext);
   const { facultyName } = useFaculty();
   const { FacultyName } = useParams();
   const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
@@ -61,7 +62,6 @@ const FacultyPage = () => {
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
-  const { token, saveToken } = useAuth(); // Use the useAuth hook
 
   // Effects
   useEffect(() => {

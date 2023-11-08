@@ -251,30 +251,31 @@ const Header = ({
   
 
 
-const handleForgotPasswordSubmit = async (e) => {
-  e.preventDefault();
-  if (!forgotPasswordData.email) {
-    setForgotPasswordErrorMessage('Email is required.');
-    return;
-  }
-  try {
-    if (passwordResetEmail) {
-      const response = await axios.post(`${backendURL}/api_auth/reset-password`, {
-        email: forgotPasswordData.email,
-        code: verificationCode,
-      });
-    } else {
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setForgotPasswordErrorMessage('');
+    setSuccessMessage('');
+  
+    if (!forgotPasswordData.email) {
+      setForgotPasswordErrorMessage('Email is required.');
+      return;
+    }
+  
+    try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`, {
         email: forgotPasswordData.email,
       });
+  
       if (response.data.message) {
         setSuccessMessage(response.data.message);
+        setIsForgotPasswordOpen(false);
       }
+    } catch (error) {
+      handleAPIError(error);
+      setForgotPasswordData({ email: '' });
     }
-  } catch (error) {
-    handleAPIError(error);
-  }
-};
+  };
+  
 
 
   return (

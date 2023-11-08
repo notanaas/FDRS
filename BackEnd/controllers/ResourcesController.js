@@ -82,7 +82,11 @@ exports.Resource_create_post = [
       return res.status(400).json({ errors: errors.array()});
     }
     try {
-
+      const flag = false
+      if(user.isAdmin)
+      {
+        flag = true
+      }
       // Create a Resource object with escaped and trimmed data.
       const resource = new Resource({
         User: req.user._id, // Assuming you have a user object with _id
@@ -90,7 +94,7 @@ exports.Resource_create_post = [
         Author_first_name:req.body.firstname,
         Author_last_name : req.body.lastname,
         Title: req.body.title,
-        isAuthorized: false, // Default value is set to false
+        isAuthorized: flag, // Default value is set to false
         Description: req.body.description,
         file_path: req.files.file[0].path, // Store the file path
         file_size: req.files.file[0].size, // Store the file size

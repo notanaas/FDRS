@@ -301,7 +301,7 @@ const handleForgotPasswordSubmit = async (e) => {
 
       <div className="authButtons">
         {isLoggedIn ? (
-          <div>
+          <div className='button'>
             <button className="authButton" onClick={handleLogout}>Logout</button>
             {isAdmin && (
               <Link to="/admin" className="admin-button">Admin Page</Link>

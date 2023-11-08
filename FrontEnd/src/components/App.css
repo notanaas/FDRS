@@ -252,7 +252,7 @@ html {
   font-weight: bold;
 }
 
-.authButton {
+.authButton  {
   background:transparent;
   color: #fff;
   border: none;
@@ -274,6 +274,10 @@ html {
 
 .authButton:hover {
   background:darkred;
+}
+
+.authButtons .button .authButton {
+  margin-right: 30px;
 }
 
 .form {

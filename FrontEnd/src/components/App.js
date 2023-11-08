@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
 import ResourcePage from './ResourcePage';
+import PasswordReset from './PasswordReset';
 import { AuthProvider } from './context/AuthContext';
 import Header from './Header';
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <div className="contentContainer">
             <Switch>
               <Route path="/" exact component={WelcomingPage} />
+              <Route path="/reset-password" component={PasswordReset} />
               <Route
                 path="/faculty/:facultyId" // Use 'facultyId' as the URL parameter
                 render={(props) => (

@@ -160,30 +160,51 @@ const Header = ({
       [name]: value,
     });
   };  
+  const refreshAccessToken = async () => {
+    try {
+      const response = await axios.post(`${backendURL}/api_auth/refresh_token`, {
+        refreshToken: localStorage.getItem('refreshToken')
+      });
+  
+      localStorage.setItem('token', response.data.token);
+      // Update the auth token in state/context
+      setAuthToken(response.data.token);
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+    }
+  };
+  
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
     setLoginErrorMessage('');
+  
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
     }
+  
     const isEmail = email.includes('@');
     const loginData = {
       [isEmail ? 'email' : 'username']: email,
       password: password,
     };
+  
     try {
-      const response = await axiosInstance.post(`${backendURL}/api_auth/login`, loginData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-       const { token } = response.data;
+      const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+      
+      const { token } = response.data;
       localStorage.setItem('token', token);
       setAuthToken(token);
       setIsLoggedIn(true);
       setIsLoginModalOpen(false);
+  
+      // Clear the input fields
+      setEmail('');
+      setPassword('');
+  
     } catch (error) {
       const errorMessage = error.response?.data?.errors?.length > 0
         ? `Login failed: ${error.response.data.errors[0].msg}`
@@ -194,28 +215,40 @@ const Header = ({
   };
   
   const handleLogout = async () => {
-    if (!authToken) {
-      console.error('No auth token found.');
+    const storedRefreshToken = localStorage.getItem('refreshToken');
+    if (!authToken || !storedRefreshToken) {
+      console.error('No auth token or refresh token found. Redirecting to login...');
+      // Redirect to login or show message to user
+      setIsLoggedIn(false);
+      // Redirect to login page or similar action
       return;
     }
+  
     try {
-      const response = await axios.post(`${backendURL}/api_auth/logout`, {}, {
+      const response = await axios.post(`${backendURL}/api_auth/logout`, {
+        refreshToken: storedRefreshToken,
+      }, {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
       });
+  
       if (response.status === 200) {
-        console.log('Logged out successfully');
+        console.log('Logout successful');
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        setAuthToken(null);
+        setIsLoggedIn(false);
       } else {
-        console.error('Failed to log out:', response.status, response.data);
+        console.error('Logout failed:', response.status, response.data);
       }
     } catch (error) {
       console.error('Logout error:', error);
+      // Handle logout error
+      // Potentially redirect to login or show error message
     }
-    localStorage.removeItem('token'); 
-    setAuthToken(null); 
-    setIsLoggedIn(false); 
   };
+  
 
 
 const handleForgotPasswordSubmit = async (e) => {

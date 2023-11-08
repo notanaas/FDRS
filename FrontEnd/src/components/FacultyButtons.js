@@ -1,52 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import './App.css'; // Import your CSS file here
-
-export const faculties = [
-  {
-    id: 1,
-    name: 'Faculty Of IT',
-    Facultys: [
-    
-    ],
-  },
-  {
-    id: 2,
-    name: 'Faculty Of Engineering',
-    Facultys: [
-      
-    ],
-  },
-  
-];
+import './App.css';
 
 const FacultyButtons = () => {
-  const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [faculties, setFaculties] = useState([]);
   const history = useHistory();
 
-  const handleFacultyClick = (facultyId, facultyName) => {
-    setSelectedFaculty((prevSelectedFaculty) =>
-      prevSelectedFaculty === facultyId ? null : facultyId
-    );
-    navigateToFacultyPage(facultyName);
-  };
+  useEffect(() => {
+    const fetchFaculties = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/api_faculty/Faculties');
+        setFaculties(response.data.facultyNames); // Make sure the backend sends the data in this format
+      } catch (error) {
+        console.error('Failed to fetch faculties:', error);
+      }
+    };
 
-  const navigateToFacultyPage = (facultyName) => {
-    history.push(`/Facultys/${facultyName}`);
+    fetchFaculties();
+  }, []);
+
+  const navigateToFacultyPage = (facultyId) => {
+    history.push(`/faculty/${facultyId}`);
   };
 
   return (
-    <div className="facultyauthButton">
-      {faculties.map((faculty) => (
-        <div key={faculty.id}>
+    <div>
+      {faculties.length > 0 ? (
+        faculties.map((faculty) => (
           <button
-            className={`facultyauthButton ${selectedFaculty === faculty.id ? 'selected' : ''}`}
-            onClick={() => handleFacultyClick(faculty.id, faculty.name)}
+            key={faculty._id}
+            onClick={() => navigateToFacultyPage(faculty._id)}
+            className="facultyauthButton" // This could be a CSS class for styling
           >
-            {faculty.name}
+            {faculty.FacultyName}
           </button>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p>No faculties found.</p>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useContext } from 'react';
 import { useFaculty } from './context/FacultyContext';
 import { AuthContext } from './context/AuthContext';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useHistory,Redirect } from 'react-router-dom';
 import Header from './Header';
 import axios from 'axios';
 import './App.css';
@@ -21,7 +21,6 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
     backgroundColor: isDarkMode ? '#333' : 'white',
     color: isDarkMode ? 'white' : 'black',
   };
-
   return (
     <div 
       className="upload-modal" 
@@ -41,18 +40,18 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
   );
 };
 const FacultyPage = () => {
-  const backendURL = 'http://localhost:3002/api_resource/create/6522b2eb6f293d94d943256a';
-  const userToken = localStorage.getItem('token');
-  const { authToken ,userId } = useContext(AuthContext);
   const { facultyName } = useFaculty();
-  const { FacultyName } = useParams();
-  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken);
+  const { facultyId } = useParams();
+  const history = useHistory();
+  const { setAuthToken, authToken } = useContext(AuthContext);
+  const userToken = localStorage.getItem('token');
   const [title, setTitle] = useState('');
   const [authorFirstName, setAuthorFirstName] = useState('');
   const [authorLastName, setAuthorLastName] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
   const [img, setImg] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken); 
   const [imgUrl, setImgUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -62,8 +61,14 @@ const FacultyPage = () => {
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive, setIsStarActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
-
+  const backendURL = 'http://localhost:3002/api_resource';
+  const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
   useEffect(() => {
+    if (!facultyId) {
+      console.error('Faculty ID is required but was not provided.');
+      history.push('/error'); 
+      return;
+    }
     const token = localStorage.getItem('token');
     if (token) {
       axios.get('/verifyToken', {
@@ -98,14 +103,16 @@ const FacultyPage = () => {
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, []);
-  
+  }, [setAuthToken, facultyId]);
 
-
+    
+  if (!facultyId) {
+    console.error('Faculty ID is required but was not provided.');
+    return <Redirect to="/error" />;
+  }
   const openModal = () => {
     setIsModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setError(null);
@@ -169,57 +176,50 @@ const FacultyPage = () => {
   };
 
   const handleUpload = async () => {
-    if (!authToken) {
-      setAlertMessage({
-        message: 'You need to be logged in to upload documents.',
-        type: 'error',
-      });
+    if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
+      setError('Please fill in all required fields.');
       return;
     }
-  
-    if (title && authorFirstName && authorLastName && description && file && img) {
-      try {
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('firstname', authorFirstName);
-        formData.append('lastname', authorLastName);
-        formData.append('description', description);
-        formData.append('img', img, img.name); // Ensure img is the actual File object
-        formData.append('file', file, file.name); // Ensure file is the actual File object
-  
-        // Use the API endpoint for uploading resources
-        const response = await axios.post(`${backendURL}/${userId}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${authToken}`, // Use the authToken from AuthContext
-          },
-        });
-  
-        if (response.status === 201) {
-          setSuccessMessage('Document uploaded successfully');
-          // Reset form fields after successful upload
-          setTitle('');
-          setAuthorFirstName('');
-          setAuthorLastName('');
-          setDescription('');
-          setImg(null);
-          setFile(null);
-          setError(null);
-        } else {
-          setError('Upload failed. Please try again later.');
-        }
-      } catch (error) {
-        const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
-        setError(message);
+
+    if (!authToken) {
+      setError('You must be logged in to upload files.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('firstname', authorFirstName); // Changed to 'firstname' to match the backend field
+    formData.append('lastname', authorLastName); // Changed to 'lastname' to match the backend field
+    formData.append('description', description);
+    formData.append('file', file); // The actual file object
+    formData.append('img', img); // The actual image file object
+
+    try {
+      const response = await axios.post(`${backendURL}/create/${facultyId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      if (response.status === 201) {
+        setSuccessMessage('Document uploaded successfully');
+        // Reset form and fetch updated documents
+        setTitle('');
+        setAuthorFirstName('');
+        setAuthorLastName('');
+        setDescription('');
+        setFile(null);
+        setImg(null);
+        setImgUrl('');
+        setError(null);
+        fetchFavoriteResources(); // Assuming this function fetches and updates the state
+        setIsModalOpen(false); // Close modal after successful upload
       }
-    } else {
-      setError('Please fill in all required fields.');
+    } catch (error) {
+      const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
+      setError(message);
     }
   };
-  
-
-
-  
 
   const fetchFavoriteResources = async () => {
     try {
@@ -237,8 +237,8 @@ const FacultyPage = () => {
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-      <Header selectedFacultyName={facultyName} isFacultyPage={true} />
-      <h1 style={{ marginTop: '120px' }}>{FacultyName}</h1>
+        <Header selectedFacultyName={facultyName} isFacultyPage={true} />
+      <h1 style={{ marginTop: '120px' }}>{facultyName}</h1>
       <button onClick={() => setIsModalOpen(true)} className="authButton">Upload</button>
 
       {isModalOpen && (

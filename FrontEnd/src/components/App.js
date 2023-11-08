@@ -35,12 +35,12 @@ function App() {
             <Switch>
               <Route path="/" exact component={WelcomingPage} />
               <Route
-                path="/Facultys/:FacultyName"
+                path="/faculty/:facultyId" // Use 'facultyId' as the URL parameter
                 render={(props) => (
-                  <FacultyPage {...props} facultyName={props.match.params.FacultyName} />
+                  // Pass 'facultyId' to the FacultyPage component
+                  <FacultyPage {...props} facultyId={props.match.params.facultyId} />
                 )}
               />
-              {/* Route for ResourcePage */}
               <Route
                 path="/resource/:resourceId"
                 render={(props) => (
@@ -54,6 +54,7 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;
 

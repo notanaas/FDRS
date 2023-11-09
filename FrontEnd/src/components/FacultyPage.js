@@ -162,13 +162,13 @@ const FacultyPage = () => {
  
 
   const handleFileChange = (e) => {
-    if (e.target.files[0]) {
+    if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
   };
   
   const handleImgChange = (e) => {
-    if (e.target.files[0]) {
+    if (e.target.files && e.target.files.length > 0) {
       setImg(e.target.files[0]);
     }
   };
@@ -178,26 +178,25 @@ const FacultyPage = () => {
       setError('Please fill in all required fields.');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('title', title);
     formData.append('firstname', authorFirstName);
     formData.append('lastname', authorLastName);
     formData.append('description', description);
-    formData.append('file', file); // Ensure the file is appended
-    formData.append('img', img); // Ensure the image is appended
-
+    formData.append('file', file);
+    formData.append('img', img);
+  
     try {
       const response = await axios.post(uploadURL, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // This is important for file upload
-          Authorization: `Bearer ${authToken}`, // Ensure you're sending the correct token
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${userToken}` // Ensure the token is being sent correctly
         },
       });
-
+     
       if (response.status === 201) {
         setSuccessMessage('Document uploaded successfully');
-        // Reset form and fetch updated documents
         setTitle('');
         setAuthorFirstName('');
         setAuthorLastName('');
@@ -303,11 +302,11 @@ const FacultyPage = () => {
   <div className="form-group">
     <label>Choose Photo for Document (JPEG, JPG, PNG):</label>
     <input
-      type="file"
-      accept="image/jpeg, image/jpg, image/png"
-      onChange={(e) => handleImgChange(e.target.files[0])}
-      className="inputBar"
-    />
+  type="file"
+  accept="image/jpeg, image/jpg, image/png"
+  onChange={handleImgChange}
+  className="inputBar"
+/>
   </div>
   </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import WelcomingPage from './WelcomingPage';
+import { useLocation, useHistory } from 'react-router-dom'; // Import useHistory
 import './App.css';
 
 const PasswordReset = () => {
@@ -11,6 +12,7 @@ const PasswordReset = () => {
   const [userId, setUserId] = useState('');
   const [token, setToken] = useState('');
   const location = useLocation();
+  const history = useHistory(); 
   const url = `${backendURL}/api_auth/post_reset-password/${userId}/${token}`;
 
   // Extract id and token from URL
@@ -41,7 +43,7 @@ const PasswordReset = () => {
         password,
       });
       setMessage(response.data.message);
-      // Redirect to login or other appropriate action
+      history.push('/WelcomingPage'); 
     } catch (error) {
       if (error.response) {
         // The request was made and the server responded with a status code

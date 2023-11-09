@@ -15,18 +15,15 @@ const PasswordReset = () => {
 
   // Extract id and token from URL
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const userIdParam = queryParams.get('id');
-    const tokenParam = queryParams.get('token');
-    console.log('UserID:', userIdParam); // For debugging
-    console.log('Token:', tokenParam); // For debugging
-    if (userIdParam && tokenParam) {
-      setUserId(userIdParam);
-      setToken(tokenParam);
+    // Assuming the URL is "/reset-password/:userId/:token"
+    const pathSegments = location.pathname.split('/');
+    if (pathSegments.length >= 4) {
+      const userIdFromURL = pathSegments[2]; // '65488aaeae5efb44d9d76136'
+      const tokenFromURL = pathSegments[3]; // The JWT token part
+      setUserId(userIdFromURL);
+      setToken(tokenFromURL);
     }
   }, [location]);
-  
-  // Extract id and token from URL
   
 
   // ... rest of the imports and component

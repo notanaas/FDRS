@@ -83,7 +83,7 @@ exports.Resource_create_post = [
     }
     try {
       const flag = false
-      if(user.isAdmin)
+      if(req.user.isAdmin)
       {
         flag = true
       }

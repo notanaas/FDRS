@@ -173,7 +173,8 @@ exports.forgot_password = [
           return res.status(404).json({ message: 'Email not found' });
         }
   
-        const secret = process.env.JWT_SECRET + emailExists.Password;
+        const secret = process.env.JWT_SECRET + emailExists._id;
+
   
         const payload = {
           email: emailExists.Email,
@@ -212,48 +213,39 @@ exports.forgot_password = [
   ];
      
  
-exports.get_reset_password = asyncHandler(async(req,res,next)=>
-{
-    const {id,token} = req.params
-    console.log(req.params)
-    const userExists = await Users.findOne({_id : id})
-            if(!userExists)
-            {
-               return res.json({message:"User does not exist"})
-            }
-    const secret = process.env.JWT_SECRET + userExists._id
-    try {
-        const verify = jwt.verify(token,secret)
-        return res.json({email:verify.email})
-    } catch (error) {
-        return res.json({message:"Not verified"})
-    }
-})
+
 exports.post_reset_password =[
     body("password" , "password must be 8 characters long").trim().isLength({min:8}),
-    asyncHandler(async(req,res,next)=> 
-{
-    const {id,token} = req.params
-    const {password} = req.body
-    console.log(req.params)
-    const userExists = await Users.findOne({_id : id})
-            if(!userExists)
-            {
-               return res.json({message:"User does not exist"})
-            }
-    const secret = process.env.JWT_SECRET + userExists._id
-    try {
-        const verify = jwt.verify(token,secret)
-        const encryptedPassword = await bcrypt.hash(password , 10)
-        await Users.updateOne({
-            _id :id
-        },{
-            $set:{
-                Password : encryptedPassword
-            }
-        })
-        return res.status(201).json({message:"password updated"})
+    asyncHandler(async (req, res, next) => {
+      const { id, token } = req.params;
+      const { password } = req.body;
+
+      // Find the user by their ID
+      const userExists = await Users.findById(id);
+      if (!userExists) {
+          return res.status(404).json({ message: "User does not exist" });
+      }
+
+      // Verify the token
+      const secret = process.env.JWT_SECRET + userExists._id;
+      try {
+        jwt.verify(token, secret);
+    
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+    
+        // Update the user's password
+        const updatedUser = await Users.findByIdAndUpdate(id, { $set: { Password: hashedPassword } }, { new: true });
+        await updatedUser.save();
+        console.log(updatedUser);
+        if (updatedUser) {
+            return res.status(201).json({ message: "Password updated successfully" });
+        } else {
+            return res.status(400).json({ message: "Password could not be updated" });
+        }
     } catch (error) {
-        return res.json({message:"something went wrong"})
-    }
-})]
+      console.error("Error during password reset:", error);
+      return res.status(500).json({ message: "Error during password reset", error: error.message });
+  }
+  })
+];

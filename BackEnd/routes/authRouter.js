@@ -13,13 +13,7 @@ router.post('/logout' , auth.logout)
 router.post('/refreshToken' , auth.refresh_token)
 //forgot-password
 router.post('/forgot-password' , auth.forgot_password)
-//get reset-password
-router.get('/get_reset-password/:id/:token' , auth.get_reset_password)
 //post reset
 router.post('/post_reset-password/:id/:token' , auth.post_reset_password)
-// just testing authentication and authorization
-router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.send('You have accessed a protected route!');
-  });
 
 module.exports = router;

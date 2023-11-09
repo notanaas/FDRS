@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
+import AdminPage from './AdminPage';
 import ResourcePage from './ResourcePage';
 import PasswordReset from './PasswordReset';
 import { AuthProvider } from './context/AuthContext';
@@ -35,6 +36,7 @@ function App() {
           <div className="contentContainer">
             <Switch>
               <Route path="/" exact component={WelcomingPage} />
+              <Route path="/admin" component={AdminPage} />
               <Route path="/reset-password" component={PasswordReset} />
               <Route
                 path="/faculty/:facultyId" // Use 'facultyId' as the URL parameter

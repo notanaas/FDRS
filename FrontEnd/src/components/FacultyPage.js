@@ -159,45 +159,39 @@ const FacultyPage = () => {
     setDescription(e.target.value);
   };
 
+ 
+
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      const uniqueId = uuidv4();
-      const fileName = `${uniqueId}_${selectedFile.name}`;
-      const uploadUrl = `${backendURL}/${fileName}`;
-      setFile(uploadUrl);
+    if (e.target.files[0]) {
+      setFile(e.target.files[0]);
     }
   };
-
-  const handleImgChange = (file) => {
-    setImg(file);
-    const photoUrl = URL.createObjectURL(file);
-    setImgUrl(photoUrl);
+  
+  const handleImgChange = (e) => {
+    if (e.target.files[0]) {
+      setImg(e.target.files[0]);
+    }
   };
-
+  
   const handleUpload = async () => {
     if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
       setError('Please fill in all required fields.');
       return;
     }
 
-    if (!authToken) {
-      setError('You must be logged in to upload files.');
-      return;
-    }
-
     const formData = new FormData();
     formData.append('title', title);
-    formData.append('firstname', authorFirstName); // Changed to 'firstname' to match the backend field
-    formData.append('lastname', authorLastName); // Changed to 'lastname' to match the backend field
+    formData.append('firstname', authorFirstName);
+    formData.append('lastname', authorLastName);
     formData.append('description', description);
-    formData.append('file', file); // The actual file object
-    formData.append('img', img); // The actual image file object
+    formData.append('file', file); // Ensure the file is appended
+    formData.append('img', img); // Ensure the image is appended
 
     try {
-      const response = await axios.post(`${backendURL}/create/${facultyId}`, formData, {
+      const response = await axios.post(uploadURL, formData, {
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data', // This is important for file upload
+          Authorization: `Bearer ${authToken}`, // Ensure you're sending the correct token
         },
       });
 

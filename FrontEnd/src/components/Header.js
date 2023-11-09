@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory,Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
@@ -39,7 +39,6 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
 const Header = ({
   onSearchChange,
   isFacultyPage,
-  isAdmin,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState('');
@@ -66,12 +65,12 @@ const Header = ({
   const [forgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
   const [userToken, setUserToken] = useState(null);
   const { authToken, setAuthToken } = useContext(AuthContext);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const history = useHistory();
+
   useEffect(() => {
-    const token = localStorage.getItem('token'); 
-    if (token) {
-      setAuthToken(token); 
-    }
+    
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
 
@@ -84,10 +83,19 @@ const Header = ({
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, [setAuthToken])
+  }, [])
   useEffect(() => {
-    setIsLoggedIn(!!authToken);
-  }, [authToken]);
+    const token = localStorage.getItem('token');
+    const storedIsAdmin = localStorage.getItem('isAdmin');
+  
+    if (token) {
+      setAuthToken(token);
+      setIsLoggedIn(true);
+    }
+  
+    setIsAdmin(storedIsAdmin === 'true'); // Convert the string back to a boolean
+  
+  }, [setAuthToken, setIsLoggedIn, setIsAdmin]);
 
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -138,6 +146,9 @@ const Header = ({
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
   };
+  const goToAdminPage = () => {
+    history.push('/admin');
+  };
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     if (passwordConfirm !== signupData.password) {
@@ -178,41 +189,47 @@ const Header = ({
     e.preventDefault();
     setSuccessMessage('');
     setLoginErrorMessage('');
-  
+
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
     }
-  
-    const isEmail = email.includes('@');
+
     const loginData = {
-      [isEmail ? 'email' : 'username']: email,
+      email: email,
       password: password,
     };
-  
+
     try {
       const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      setAuthToken(token);
-      setIsLoggedIn(true);
-      setIsLoginModalOpen(false);
-  
-      // Clear the input fields
-      setEmail('');
-      setPassword('');
-  
+      const { token, refreshToken, isAdmin } = response.data; // Destructure isAdmin as adminFlag
+
+      if (token ) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('isAdmin', isAdmin); // Save admin status as a string
+        setAuthToken(token);
+        setIsLoggedIn(true);
+        setIsAdmin(isAdmin);
+        setIsLoginModalOpen(false);
+
+        // Clear the input fields
+        setEmail('');
+        setPassword('');
+      } else {
+        // Handle the case where token or refreshToken is not present
+        setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
+      }
     } catch (error) {
       const errorMessage = error.response?.data?.errors?.length > 0
         ? `Login failed: ${error.response.data.errors[0].msg}`
         : 'Login failed. Please try again later.';
       setLoginErrorMessage(errorMessage);
-      console.error('Login failed:', error.response?.data || error);
     }
   };
+  
+  
+  
   
   const handleLogout = async () => {
     const storedRefreshToken = localStorage.getItem('refreshToken');
@@ -301,20 +318,20 @@ const Header = ({
       </div>
 
       <div className="authButtons">
-        {isLoggedIn ? (
-          <div className='button'>
-            <button className="authButton" onClick={handleLogout}>Logout</button>
-            {isAdmin && (
-              <Link to="/admin" className="admin-button">Admin Page</Link>
-            )}
-          </div>
-        ) : (
-          <div className='logoReg'>
-            <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
-            <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
-          </div>
-        )}
-      </div>
+  {isLoggedIn ? (
+    <div className='button'>
+      <button className="authButton" onClick={handleLogout}>Logout</button>
+      {isLoggedIn && isAdmin && (
+      <button onClick={goToAdminPage}className="authButton">Admin Page</button>
+    )}
+    </div>
+      ) : (
+        <div className='logoReg'>
+          <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
+          <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
+        </div>
+      )}
+    </div>
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>

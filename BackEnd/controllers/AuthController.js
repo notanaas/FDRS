@@ -98,7 +98,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     const body = {
       _id: user._id,
       username: user.Username,
-      email: user.Email 
+      email: user.Email
     };
   
     const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
@@ -106,7 +106,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     });
   
     // Now, you can send the token in the response
-    return res.json({message:"Logged in successfuly",token , refreshToken});
+    return res.json({message:"Logged in successfully", token, refreshToken, isAdmin: user.isAdmin });
   });
   
 exports.logout = asyncHandler(async(req,res,next)=>

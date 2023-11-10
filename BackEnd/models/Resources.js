@@ -17,8 +17,9 @@ const ResourceSchema = new schema({
 })
 
 // Add indexes for efficient searching
-ResourceSchema.index({ ResourceAuthor: 1 });
-ResourceSchema.index({ ResourceTitle: 'text' }); // Text index for searching titles
+ResourceSchema.index({ Author_first_name: 1 });
+ResourceSchema.index({ Author_last_name: 1 });
+ResourceSchema.index({ Title: 'text' }); // Text index for searching titles
 
 ResourceSchema.virtual("Date_formatted").get(function() {
 
@@ -43,13 +44,13 @@ ResourceSchema.virtual("Date_formatted").get(function() {
     return `${month} ${day}${daySuffix}, ${year}`;
   });
   // You should declare the `fullname` variable using the `let` keyword to avoid a reference error.
-ResourceSchema.virtual("fullname").get(function () {
-  let fullname = ""; // Declare the variable using `let`
-  if (this.Author_first_name && this.Author_last_name) {
+  ResourceSchema.virtual("fullname").get(function () {
+    let fullname = "";
+    if (this.Author_first_name && this.Author_last_name) {
       fullname = `${this.Author_first_name} ${this.Author_last_name}`;
-  }
-  return fullname;
-});
+    }
+    return fullname;
+  });
 
 
 module.exports = mongoose.model("Resource", ResourceSchema);

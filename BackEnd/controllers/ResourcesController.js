@@ -135,21 +135,37 @@ exports.search_resource = asyncHandler(async (req, res, next) => {
 
   // Implement your search query based on the searchTerm
   // Search by both author's name and title using a case-insensitive text search
+  console.log(searchTerm)
   const searchResults = await Resource.find({
     $or: [
-        { Title: { $regex: searchTerm, $options: 'i' }},  // Case-insensitive search for title
-        { Author_first_name: { $regex: searchTerm, $options: 'i' }},  // Case-insensitive search for author's first name
-        { Author_last_name: { $regex: searchTerm, $options: 'i' }}  // Case-insensitive search for author's last name
-    ],
-});
+      { Title: { $regex: searchTerm, $options: 'i' }},  // Case-insensitive search for title
+      {
+        $or: [
+          {
+            fullname: {
+              $regex: searchTerm,
+              $options: 'i'
+            }
+          },
+          {
+            $expr: {
+              $regexMatch: {
+                input: { $concat: ['$Author_first_name', ' ', '$Author_last_name'] },
+                regex: searchTerm,
+                options: 'i'
+              }
+            }
+          }
+        ]
+      }
+    ]
+  });
 
 
   // Filter out resources with null ResourceAuthor (unpopulated authors)
-  const filteredResults = searchResults.filter((resource) => resource.ResourceAuthor);
-
-  if (filteredResults.length === 0) {
+  if (searchResults.length === 0) {
     return res.status(404).json({ message: 'No matching resources found' });
   }
 
-  res.json(filteredResults);
+  res.status(200).json(searchResults);
 });

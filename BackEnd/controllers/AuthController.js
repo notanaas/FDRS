@@ -106,7 +106,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     });
   
     // Now, you can send the token in the response
-    return res.json({message:"Logged in successfully", token, refreshToken, isAdmin: user.isAdmin });
+    return res.json({message:"Logged in successfully", token, refreshToken, user:user });
   });
   
 exports.logout = asyncHandler(async(req,res,next)=>

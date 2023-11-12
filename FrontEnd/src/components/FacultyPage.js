@@ -163,9 +163,15 @@ const FacultyPage = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+
+        // Create a URL for the file to be used in the UI
+        const fileUrl = URL.createObjectURL(selectedFile);
+        setImgUrl(fileUrl);
     }
-  };
+};
+
   
   const handleImgChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -190,11 +196,10 @@ const FacultyPage = () => {
     try {
       const response = await axios.post(uploadURL, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${userToken}` // Ensure the token is being sent correctly
+          'Authorization': `Bearer ${userToken}` // Assuming userToken is the valid JWT token
         },
       });
-     
+  
       if (response.status === 201) {
         setSuccessMessage('Document uploaded successfully');
         setTitle('');
@@ -205,14 +210,18 @@ const FacultyPage = () => {
         setImg(null);
         setImgUrl('');
         setError(null);
-        fetchFavoriteResources(); // Assuming this function fetches and updates the state
+        fetchFavoriteResources(); // Refetch favorite resources
         setIsModalOpen(false); // Close modal after successful upload
+      }
+      else{
+        console.log(response.data);
       }
     } catch (error) {
       const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
       setError(message);
     }
   };
+  
 
   const fetchFavoriteResources = async () => {
     try {

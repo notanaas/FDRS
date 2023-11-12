@@ -82,7 +82,7 @@ exports.Resource_create_post = [
       return res.status(400).json({ errors: errors.array()});
     }
     try {
-      const flag = false
+      let flag = false
       if(req.user.isAdmin)
       {
         flag = true
@@ -109,8 +109,9 @@ exports.Resource_create_post = [
 
     } catch (err) {
       // Handle any errors that occur during author or resource creation.
+      console.log("hhhh");
       console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ err:err,error: "Internal Server Error" });
     }
   }),
 ];

@@ -20,7 +20,7 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
     }
 
     // Use the faculty's unique ID to query resources
-    const allResources = await Resource.find({ Faculty: faculty._id }, 
+    const allResources = await Resource.find({ Faculty: faculty._id, isAuthorized : true }, 
       "ResourceTitle ResourceAuthor Description ResourceCover file_path Cover")
       .sort({ title: 1 })
       .populate("Faculty")

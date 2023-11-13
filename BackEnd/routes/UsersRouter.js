@@ -14,8 +14,8 @@ const isAdmin = (req, res, next) => {
 router.get('/profile',passport.authenticate('jwt', { session: false }), Profile.profile);
 
 // Your existing resource_authorize route
-app.get("/resource/authorize", passport.authenticate('jwt', { session: false }), isAdmin, resource_authorize);
+router.get("/resource/authorize", passport.authenticate('jwt', { session: false }), isAdmin, resource_authorize);
 
 // Your existing admin_acceptance route
-app.post("/admin/acceptance/:id", passport.authenticate('jwt', { session: false }), isAdmin, admin_acceptance);
+router.post("/admin/acceptance/:id", passport.authenticate('jwt', { session: false }), isAdmin, admin_acceptance);
 module.exports = router;

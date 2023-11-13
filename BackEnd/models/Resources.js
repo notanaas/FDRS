@@ -8,6 +8,7 @@ const ResourceSchema = new schema({
     Title:{type:String , required:true},
     Author_first_name:{type:String , required:true},
     Author_last_name:{type:String , required:true},
+    isAuthorized:{type:Boolean,default:false},
     Description:{type:String , required:true , minLength:10 , maxLength:500},
     file_path: { type: String, required: true },
     file_size: { type: Number, required: true },

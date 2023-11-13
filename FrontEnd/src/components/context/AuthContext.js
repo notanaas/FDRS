@@ -1,11 +1,13 @@
-// AuthContext.js
 import React, { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
-  const [isAdmin, setIsAdmin] = useState(JSON.parse(localStorage.getItem('isAdmin')));
+
+  // Safely parse the 'isAdmin' value from localStorage
+  
+  const [isAdmin, setIsAdmin] = useState();
 
   useEffect(() => {
     // On component mount, we check if we have a token in localStorage

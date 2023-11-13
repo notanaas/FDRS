@@ -171,19 +171,7 @@ const Header = ({
       [name]: value,
     });
   };  
-  const refreshAccessToken = async () => {
-    try {
-      const response = await axios.post(`${backendURL}/api_auth/refresh_token`, {
-        refreshToken: localStorage.getItem('refreshToken')
-      });
   
-      localStorage.setItem('token', response.data.token);
-      // Update the auth token in state/context
-      setAuthToken(response.data.token);
-    } catch (error) {
-      console.error('Error refreshing access token:', error);
-    }
-  };
   
   const handleLoginSubmit = async (e) => {
     e.preventDefault();

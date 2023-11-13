@@ -210,7 +210,6 @@ const FacultyPage = () => {
         setImg(null);
         setImgUrl('');
         setError(null);
-        fetchFavoriteResources(); // Refetch favorite resources
         setIsModalOpen(false); // Close modal after successful upload
       }
       else{

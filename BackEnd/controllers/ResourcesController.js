@@ -10,11 +10,11 @@ const { upload } = require('../multerconfig');
 // Get all resources
 exports.resource_list = asyncHandler(async (req, res, next) => {
     // Extract the faculty name from the URL parameter
-    const facultyName = req.params.FacultyName;
+    const FacultyID = req.params.id;
   
     // Find the faculty based on the name (you may need to adjust this based on your data model)
-    const faculty = await Faculty.findOne({ FacultyName: facultyName});
-  
+    const faculty = await Faculty.findById( FacultyID);
+    console.log(faculty)
     if (!faculty) {
       return res.status(404).json({ error: 'Faculty not found' });
     }

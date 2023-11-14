@@ -5,7 +5,6 @@ import { useParams, Link, useHistory,Redirect } from 'react-router-dom';
 import Header from './Header';
 import axios from 'axios';
 import './App.css';
-import { v4 as uuidv4 } from 'uuid';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -43,7 +42,7 @@ const FacultyPage = () => {
   const { facultyName } = useFaculty();
   const { facultyId } = useParams();
   const history = useHistory();
-  const { setAuthToken, authToken } = useContext(AuthContext);
+  const { setAuthToken} = useContext(AuthContext);
   const userToken = localStorage.getItem('token');
   const [title, setTitle] = useState('');
   const [authorFirstName, setAuthorFirstName] = useState('');
@@ -51,16 +50,16 @@ const FacultyPage = () => {
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
   const [img, setImg] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!userToken); 
   const [imgUrl, setImgUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [uploadedDocuments] = useState([]);
   const [favoriteResources, setFavoriteResources] = useState([]);
-  const [isStarActive, setIsStarActive] = useState(false);
-  const [alertMessage, setAlertMessage] = useState({ message: '', type: 'success' });
+  const [isStarActive] = useState(false);
+  const [alertMessage] = useState({ message: '', type: 'success' });
+  const { setIsLoggedIn } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002/api_resource';
   const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
   useEffect(() => {
@@ -103,16 +102,14 @@ const FacultyPage = () => {
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, [setAuthToken, facultyId]);
+  }, [setAuthToken, facultyId, history, setIsLoggedIn]); // Include missing dependencies
 
     
   if (!facultyId) {
     console.error('Faculty ID is required but was not provided.');
     return <Redirect to="/error" />;
   }
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  
   const closeModal = () => {
     setIsModalOpen(false);
     setError(null);

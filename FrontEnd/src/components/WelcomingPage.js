@@ -1,34 +1,44 @@
-import React, { useState, useEffect,useContext } from 'react';
-import Header from './Header'; 
+// WelcomingPage.js
+import React, { useState, useEffect, useContext } from 'react';
+import Header from './Header';
 import { AuthContext } from './context/AuthContext';
-import { Redirect } from 'react-router-dom'; 
 import './App.css';
 
 const WelcomingPage = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false); // Added a setter for isDarkMode
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const { authToken } = useContext(AuthContext);
+  const [message, setMessage] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
-    // Apply dark mode class to the document element
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [isDarkMode]);
 
-  // Redirect if there is no token (user is not logged in)
- 
+    if (authToken) {
+      setMessage('Welcome, you are logged in!');
+      setShowMessage(true);
+    } else {
+      setMessage('You are not logged in.');
+      setShowMessage(true);
+    }
+
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 4000); // Message will disappear after 4 seconds
+
+    return () => clearTimeout(timer); // Clear the timer if the component unmounts
+  }, [authToken, isDarkMode]);
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-      <Header />
+      <Header showMessage={showMessage} message={message} />
       <main>
-        <p>Welcome, you are logged in!</p>
-       
+        <p>Welcome to the page!</p>
       </main>
-          </div>
-    
+    </div>
   );
 };
 

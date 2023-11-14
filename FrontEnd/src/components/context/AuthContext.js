@@ -4,21 +4,22 @@ export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
-
-  // Safely parse the 'isAdmin' value from localStorage
-  
-  const [isAdmin, setIsAdmin] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
 
   useEffect(() => {
-    // On component mount, we check if we have a token in localStorage
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+
     if (token) {
       setAuthToken(token);
     }
+    setIsAdmin(storedIsAdmin);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authToken, setAuthToken, isAdmin, setIsAdmin }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, authToken, setAuthToken, isAdmin, setIsAdmin }}>
       {children}
     </AuthContext.Provider>
   );

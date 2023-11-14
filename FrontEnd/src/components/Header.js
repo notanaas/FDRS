@@ -21,10 +21,7 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 );
 
 const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
-  const modalContentStyle = {
-    backgroundColor: isDarkMode ? '#333' : 'white',
-    color: isDarkMode ? 'white' : 'black',
-  };
+  const modalContentStyle = { backgroundColor: isDarkMode ? '#333' : 'white',color: isDarkMode ? 'white' : 'black',};
 
   return (
     <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
@@ -57,20 +54,18 @@ const Header = ({
   const [verificationCode, setVerificationCode] = useState(''); // New state for verification code
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginError, setLoginError] = useState(''); 
+  const [setLoginError] = useState(''); 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState(''); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
-  const [forgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
-  const [userToken, setUserToken] = useState(null);
+  const [setForgotPasswordErrorMessage] = useState('');
   const { authToken, setAuthToken } = useContext(AuthContext);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const history = useHistory();
-
+  
   useEffect(() => {
-    
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
 
@@ -93,9 +88,9 @@ const Header = ({
       setIsLoggedIn(true);
     }
   
-    setIsAdmin(storedIsAdmin === 'true'); // Convert the string back to a boolean
-  
+    setIsAdmin(storedIsAdmin === 'true');
   }, [setAuthToken, setIsLoggedIn, setIsAdmin]);
+  
 
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -172,42 +167,43 @@ const Header = ({
     });
   };  
   
-  
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
     setLoginErrorMessage('');
-
+  
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
     }
-
+  
     const loginData = {
       email: email,
       password: password,
     };
-
+  
     try {
+      // Declare and assign 'response' within the try block
       const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
-      const { token, refreshToken, isAdmin } = response.data; // Destructure isAdmin as adminFlag
+      const { token, refreshToken, user } = response.data;
+const isAdmin = user.isAdmin;
 
-      if (token ) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('refreshToken', refreshToken);
-        localStorage.setItem('isAdmin', isAdmin); // Save admin status as a string
-        setAuthToken(token);
-        setIsLoggedIn(true);
-        setIsAdmin(isAdmin);
-        setIsLoginModalOpen(false);
+if (token) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('refreshToken', refreshToken);
+  localStorage.setItem('isAdmin', isAdmin.toString());
+  setAuthToken(token);
+  setIsLoggedIn(true);
+  setIsAdmin(isAdmin);
+  setIsLoginModalOpen(false);
 
-        // Clear the input fields
-        setEmail('');
-        setPassword('');
-      } else {
-        // Handle the case where token or refreshToken is not present
-        setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
-      }
+  // Clear the input fields
+  setEmail('');
+  setPassword('');
+} else {
+  setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
+}
+
     } catch (error) {
       const errorMessage = error.response?.data?.errors?.length > 0
         ? `Login failed: ${error.response.data.errors[0].msg}`
@@ -215,7 +211,6 @@ const Header = ({
       setLoginErrorMessage(errorMessage);
     }
   };
-  
   
   
   

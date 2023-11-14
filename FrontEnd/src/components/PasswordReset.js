@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import WelcomingPage from './WelcomingPage';
 import { useLocation, useHistory } from 'react-router-dom'; // Import useHistory
 import './App.css';
 

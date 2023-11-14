@@ -72,20 +72,22 @@ const PasswordReset = () => {
       <h1>Reset Your Password</h1>
       {message && <div className="message">{message}</div>}
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="password">New Password:</label>
+        <div className="form-group1">
+          <label className='input-Box' htmlFor="password">New Password:</label>
           <input
             type="password"
+            placeholder='New Password:'
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm New Password:</label>
+        <div className="form-group1">
+          <label className='input-Box' htmlFor="confirmPassword">Confirm New Password:</label>
           <input
             type="password"
+            placeholder='Confirm New Password:'
             id="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

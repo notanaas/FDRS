@@ -25,7 +25,7 @@ const FacultyButtons = () => {
   };
 
   return (
-    <div>
+    <div className='sides'>
       {faculties.length > 0 ? (
         faculties.map((faculty) => (
           <button

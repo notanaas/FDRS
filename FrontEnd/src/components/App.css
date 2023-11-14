@@ -12,6 +12,7 @@
   }
 }
 
+
 /* Existing Light Mode Styles for Body */
 @media (prefers-color-scheme: light) {
   body {
@@ -130,6 +131,22 @@ html {
   overflow: hidden;
 
 }
+.sides {
+  background: moz-linear-gradient(45deg, #090709 0%, #ff0000 100%);
+  background: -webkit-linear-gradient(45deg, #a00202 0%, #04120b 100%);
+  background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+  display: block;
+  text-decoration: none;
+  z-index: 1;
+  height: 100%;
+  padding: 5px;
+}
+
+.sides button {
+  display: flex;
+  justify-content: center;
+  flex-direction: column-reverse
+}
 
 .sidebarToggle {
   background: none;
@@ -148,11 +165,11 @@ html {
 
 .sidebar {
   position: fixed;
-  margin-top: 85px;
+  margin-top: 91px;
   left:0;
   top: 0px;
   width: 250px;
-  height: 85%;
+  height: 90%;
   background-color: transparent;
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
   padding: 0;
@@ -203,6 +220,10 @@ html {
   flex-wrap: wrap;
   gap: 20px;
 }
+.custom-upload-modal .form-group {
+  margin: -30px;
+  padding: 15px;
+}
 
 .card-title,
 .card-text,
@@ -231,11 +252,11 @@ html {
   padding: 10px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
-  width: 100px;
+  width: 100%;
   /* Adjust the width as needed */
   padding: 5px;
   /* Adjust the padding as needed */
-  font-size: 14px;
+  font-size: 12px;
   /* Adjust the font size as needed */
 }
 
@@ -398,9 +419,11 @@ html {
   align-items: center;
   margin: 10px;
   margin-top: 8px;
-  display: inline-block;
+  display: flex;
   font-size: large;
   position: relative;
+  width: 80%;
+  height: 50px;
 }
 .facultyauthButton:hover {
   background: #6a0000;
@@ -449,7 +472,13 @@ html {
 }
 
 body {
+  display: flex;
   font-size: 16px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
 }
 
 .container {
@@ -496,14 +525,69 @@ body {
   display: flex;
 }
 
-.upload-modal-content {
+.upload-modal-content  {
   background-color: #fff;
+  font-size: large;
+  margin: 25px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   max-width: 80%;
   text-align: center;
   z-index: 1;
+}
+
+.modal-footer {
+  padding-top: 13px;
+}
+.password-reset-container{
+  width: 420px;
+  background-color: white;
+  color:rgb(0, 0, 0);
+  border-radius: 10px;
+  padding: 30px 40px;
+}
+.password-reset-container h1 {
+  font-size: 36px;
+  text-align: center;
+}
+.form-group1 label {
+  font-weight: bold;
+  font-size: large;
+}
+
+.form-group1 input {
+  width: 70%;
+  height: 100%;
+  background: transparent;
+  border: 2px solid black;
+  outline: none;
+  border-radius: 40px;
+  font-size: 16px;
+  color: rgb(0, 0, 0);
+  padding: 20px 45px 20px 45px;
+  margin: 15px;
+}
+
+.submit-button {
+  width: 95%;
+  height: 45px;
+  background: moz-linear-gradient(45deg, #090709 0%, #ff0000 100%);
+  background: -webkit-linear-gradient(45deg, #a00202 0%, #04120b 100%);
+  background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: rgb(255, 255, 255);
+  font-weight: 680;
+  margin-top: 10px 0 15px;
+}
+
+.form-group input::placeholder{
+  color: white;
 }
 
 .upload-modal h2 {

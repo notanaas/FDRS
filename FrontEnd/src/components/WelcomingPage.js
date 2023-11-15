@@ -1,4 +1,3 @@
-// WelcomingPage.js
 import React, { useState, useEffect, useContext } from 'react';
 import Header from './Header';
 import { AuthContext } from './context/AuthContext';
@@ -6,9 +5,9 @@ import './App.css';
 
 const WelcomingPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [message, setMessage] = useState(''); // Define message state
+  const [showMessage, setShowMessage] = useState(false); // Define showMessage state
   const { authToken } = useContext(AuthContext);
-  const [message, setMessage] = useState('');
-  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -34,8 +33,9 @@ const WelcomingPage = () => {
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-      <Header showMessage={showMessage} message={message} />
+      <Header />
       <main>
+        {showMessage && <div className="header-message">{message}</div>}
         <p>Welcome to the page!</p>
       </main>
     </div>

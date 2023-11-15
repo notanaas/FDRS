@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext'; // Import AuthContext
 import './App.css';
 
 const FacultyButtons = () => {
   const [faculties, setFaculties] = useState([]);
   const history = useHistory();
+  const { authToken } = useContext(AuthContext); // Use AuthContext to check for token
 
   useEffect(() => {
     const fetchFaculties = async () => {
@@ -21,7 +23,16 @@ const FacultyButtons = () => {
   }, []);
 
   const navigateToFacultyPage = (facultyId) => {
-    history.push(`/faculty/${facultyId}`);
+    if (authToken) {
+      // If logged in, send the token to the FacultyPage via state
+      history.push({
+        pathname: `/faculty/${facultyId}`,
+        state: { token: authToken }
+      });
+    } else {
+      // If not logged in, just navigate without state
+      history.push(`/faculty/${facultyId}`);
+    }
   };
 
   return (

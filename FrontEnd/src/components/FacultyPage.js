@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useContext } from 'react';
 import { useFaculty } from './context/FacultyContext';
 import { AuthContext } from './context/AuthContext';
-import { useParams, Link, useHistory,Redirect } from 'react-router-dom';
+import { useParams, Link, useHistory,Redirect,useLocation } from 'react-router-dom';
 import Header from './Header';
 import axios from 'axios';
 import './App.css';
@@ -59,7 +59,11 @@ const FacultyPage = () => {
   const [favoriteResources, setFavoriteResources] = useState([]);
   const [isStarActive] = useState(false);
   const [alertMessage] = useState({ message: '', type: 'success' });
-  const { setIsLoggedIn } = useContext(AuthContext);
+  const { authToken, setIsLoggedIn } = useContext(AuthContext);
+  const location = useLocation();
+  const { state } = location;
+  const token = state?.token;
+
   const backendURL = 'http://localhost:3002/api_resource';
   const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
   useEffect(() => {
@@ -70,7 +74,7 @@ const FacultyPage = () => {
     }
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('/verifyToken', {
+      axios.get('/refreshToken', {
         headers: {
           Authorization: `Bearer ${token}`
         }

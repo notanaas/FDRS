@@ -60,12 +60,22 @@ const Header = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [setForgotPasswordErrorMessage] = useState('');
-  const { authToken, setAuthToken } = useContext(AuthContext);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
+  const [isLoggedIn, setIsLoggedIn] = useState(!!authToken);
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
+  const [message, setMessage] = useState('You are not logged in.'); // Set the default message
+  const [showMessage, setShowMessage] = useState(true);
   const history = useHistory();
-  
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 3000); // Hide the message after 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, []);
+
+  useEffect(() => {
+    
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
 
@@ -169,9 +179,10 @@ const Header = ({
   
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setLoginErrorMessage('');
+    setSuccessMessage(''); // Assuming you have this state to show success messages
+    setLoginErrorMessage(''); // Assuming you have this state to show error messages
   
+    // Check if email and password inputs are not empty
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
@@ -183,34 +194,39 @@ const Header = ({
     };
   
     try {
-      // Declare and assign 'response' within the try block
+      // Attempt to log in with the provided email and password
       const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
-      const { token, refreshToken, user } = response.data;
-const isAdmin = user.isAdmin;
-
-if (token) {
-  localStorage.setItem('token', token);
-  localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('isAdmin', isAdmin.toString());
-  setAuthToken(token);
-  setIsLoggedIn(true);
-  setIsAdmin(isAdmin);
-  setIsLoginModalOpen(false);
-
-  // Clear the input fields
-  setEmail('');
-  setPassword('');
-} else {
-  setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
-}
-
+      const { token, refreshToken, user } = response.data; // Destructure the response data
+  
+      // Check if the token is received
+      if (token) {
+        // Store the token, refresh token, and admin status in localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('isAdmin', user.isAdmin.toString());
+  
+        // Update the state with the token and admin status
+        setAuthToken(token); // Assuming you have this state/context method
+        setIsLoggedIn(true); // Assuming you have this state/context method
+        setIsAdmin(user.isAdmin); // Assuming you have this state/context method
+        setIsLoginModalOpen(false); // Assuming you have this state/context method to control the login modal display
+  
+        // Clear the input fields
+        setEmail('');
+        setPassword('');
+      } else {
+        // If no token is present in the response, show an error message
+        setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
+      }
     } catch (error) {
+      // If there is an error in the login process, show an error message
       const errorMessage = error.response?.data?.errors?.length > 0
         ? `Login failed: ${error.response.data.errors[0].msg}`
         : 'Login failed. Please try again later.';
       setLoginErrorMessage(errorMessage);
     }
   };
+  
   
   
   
@@ -315,6 +331,9 @@ if (token) {
         </div>
       )}
     </div>
+    {showMessage && (
+        <div className="login-status-message">{message}</div>
+      )}
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>

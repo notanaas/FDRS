@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios'; // Import axios
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import FacultyPage from './FacultyPage';
@@ -7,7 +8,23 @@ import ResourcePage from './ResourcePage';
 import PasswordReset from './PasswordReset';
 import { AuthProvider } from './context/AuthContext';
 import Header from './Header';
+import './App.css';
+
+const authToken = localStorage.getItem('token');
+axios.defaults.headers.common['Authorization'] = authToken ? `Bearer ${authToken}` : null;
+const configureAxios = () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
+};
+
+configureAxios();
+
 function App() {
+  useEffect(() => {
+    configureAxios();
+  }, []);
 
   const resources = [
     {
@@ -17,31 +34,22 @@ function App() {
       imageUrl: 'resource1.jpg',
       documentUrl: 'resource1.pdf',
     },
-    {
-      id: 2,
-      title: 'Resource 2',
-      author: 'Author 2',
-      imageUrl: 'resource2.jpg',
-      documentUrl: 'resource2.pdf',
-    },
   ];
+
   return (
     <Router> 
       <AuthProvider> 
         <div className="App">
           <Header />
-          <main>
-            <p>Main content of the page...</p>
-          </main>
+          
           <div className="contentContainer">
             <Switch>
-              <Route path="/" exact component={WelcomingPage} />
+              <Route path="/welcomingpage" exact component={WelcomingPage} />
               <Route path="/admin" component={AdminPage} />
               <Route path="/reset-password" component={PasswordReset} />
               <Route
-                path="/faculty/:facultyId" // Use 'facultyId' as the URL parameter
+                path="/faculty/:facultyId"
                 render={(props) => (
-                  // Pass 'facultyId' to the FacultyPage component
                   <FacultyPage {...props} facultyId={props.match.params.facultyId} />
                 )}
               />
@@ -59,6 +67,4 @@ function App() {
   );
 }
 
-
 export default App;
-

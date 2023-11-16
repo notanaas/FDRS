@@ -4,13 +4,25 @@ import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
+  const { isLoggedIn } = useContext(AuthContext); 
+  const history = useHistory();
+  const goToUserProfile = () => {
+    history.push('/my-profile');
+  };
+  useEffect(() => {
+    console.log("Login status in Sidebar:", isLoggedIn);
+  }, [isLoggedIn]);
   return (
     <div className="sidebar" >
+      {isLoggedIn && (
+  <button onClick={goToUserProfile} className="facultyauthButton">My Profile</button>
+)}
       <FacultyButtons />
     </div>
   );
 }
+
 const backendURL = 'http://localhost:3002';
 const axiosInstance = axios.create({ baseURL: backendURL });
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
@@ -38,6 +50,7 @@ const Header = ({
   isFacultyPage,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -51,31 +64,27 @@ const Header = ({
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '',
   });
-  const [verificationCode, setVerificationCode] = useState(''); // New state for verification code
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [setLoginError] = useState(''); 
+  const [loginError, setLoginError] = useState(''); 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [passwordResetEmail, setPasswordResetEmail] = useState(''); 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [passwordResetEmail, setPasswordResetEmail] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
-  const [setForgotPasswordErrorMessage] = useState('');
   const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
-  const [isLoggedIn, setIsLoggedIn] = useState(!!authToken);
-  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
-  const [message, setMessage] = useState('You are not logged in.'); // Set the default message
+  const [message, setMessage] = useState('You are not logged in.');
   const [showMessage, setShowMessage] = useState(true);
+  const [forgotPasswordError, setForgotPasswordErrorMessage] = useState(''); 
   const history = useHistory();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowMessage(false);
-    }, 3000); // Hide the message after 3 seconds
-
-    return () => clearTimeout(timer); // Cleanup the timer
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
 
@@ -88,25 +97,26 @@ const Header = ({
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, [])
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const storedIsAdmin = localStorage.getItem('isAdmin');
+    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
   
     if (token) {
-      setAuthToken(token);
+      // Validate the token with an API call or some logic
       setIsLoggedIn(true);
+      setIsAdmin(storedIsAdmin);
+    } else {
+      setIsLoggedIn(false);
+      setIsAdmin(false);
     }
+  }, [setIsLoggedIn, setIsAdmin]);
   
-    setIsAdmin(storedIsAdmin === 'true');
-  }, [setAuthToken, setIsLoggedIn, setIsAdmin]);
-  
-
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
-    setVerificationCode('');
   };
 
   const closeLoginModal = () => {
@@ -119,9 +129,7 @@ const Header = ({
   const handleForgotPasswordInputChange = (e) => {
     setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
   };
-  const handleVerificationCodeChange = (e) => {
-  setVerificationCode(e.target.value);
-  };
+  
   const closeSignupModal = () => {
     setIsSignupOpen(false);
     setSuccessMessage('');
@@ -145,15 +153,15 @@ const Header = ({
     }
   };
   const handleBackToLogin = () => {
-    setPasswordResetEmail(false); // Clear the password reset email state
-    setPassword(''); // Clear the password field
-    setVerificationCode(''); // Clear the verification code field
+    setPasswordResetEmail(false); 
+    setPassword(''); 
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
   };
   const goToAdminPage = () => {
     history.push('/admin');
   };
+  
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     if (passwordConfirm !== signupData.password) {
@@ -194,18 +202,14 @@ const Header = ({
     };
   
     try {
-      // Attempt to log in with the provided email and password
       const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
-      const { token, refreshToken, user } = response.data; // Destructure the response data
+      const { token, refreshToken, user } = response.data; 
   
-      // Check if the token is received
       if (token) {
-        // Store the token, refresh token, and admin status in localStorage
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isAdmin', user.isAdmin.toString());
   
-        // Update the state with the token and admin status
         setAuthToken(token); // Assuming you have this state/context method
         setIsLoggedIn(true); // Assuming you have this state/context method
         setIsAdmin(user.isAdmin); // Assuming you have this state/context method
@@ -214,6 +218,8 @@ const Header = ({
         // Clear the input fields
         setEmail('');
         setPassword('');
+        updateLoginStatus(true); 
+
       } else {
         // If no token is present in the response, show an error message
         setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
@@ -234,9 +240,7 @@ const Header = ({
     const storedRefreshToken = localStorage.getItem('refreshToken');
     if (!authToken || !storedRefreshToken) {
       console.error('No auth token or refresh token found. Redirecting to login...');
-      // Redirect to login or show message to user
       setIsLoggedIn(false);
-      // Redirect to login page or similar action
       return;
     }
   
@@ -260,8 +264,6 @@ const Header = ({
       }
     } catch (error) {
       console.error('Logout error:', error);
-      // Handle logout error
-      // Potentially redirect to login or show error message
     }
   };
   
@@ -269,11 +271,11 @@ const Header = ({
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
-    setForgotPasswordErrorMessage('');
+    setForgotPasswordErrorMessage(''); 
     setSuccessMessage('');
-  
+
     if (!forgotPasswordData.email) {
-      setForgotPasswordErrorMessage('Email is required.');
+      setForgotPasswordErrorMessage('Email is required.'); 
       return;
     }
   
@@ -292,12 +294,14 @@ const Header = ({
     }
   };
   
-
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev);
+  };
 
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
       <div className='left'>
-        <button className="sidebarToggle" onClick={() => setIsSidebarOpen(prev => !prev)}>☰</button>
+        <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
         <div>
           <div className="logoContainer">
         <Link to="/">
@@ -306,7 +310,7 @@ const Header = ({
       </div>
         </div>
       </div>
-      {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
+      {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
       <div>
         {isFacultyPage && (
           <div>
@@ -315,7 +319,6 @@ const Header = ({
           </div>
         )}
       </div>
-
       <div className="authButtons">
   {isLoggedIn ? (
     <div className='button'>
@@ -356,7 +359,6 @@ const Header = ({
           {passwordResetEmail ? (
             <div className="form-group">
               <label htmlFor="verificationCode">Verification Code:</label>
-              <input type="text" id="verificationCode" name="verificationCode"  className="inputBar" placeholder="Verification Code" value={verificationCode} onChange={handleVerificationCodeChange} required/>
             </div>
           ) : (
             <div className="form-group">

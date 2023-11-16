@@ -55,6 +55,10 @@
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.email-sent-message {
+  color: green;
+  margin-top: 10px;
+}
 .login-status-message {
   position: absolute;
   top: 50%;

@@ -6,6 +6,7 @@ import FacultyPage from './FacultyPage';
 import AdminPage from './AdminPage';
 import ResourcePage from './ResourcePage';
 import PasswordReset from './PasswordReset';
+import MyProfile from './MyProfile'; 
 import { AuthProvider } from './context/AuthContext';
 import Header from './Header';
 import './App.css';
@@ -47,6 +48,8 @@ function App() {
               <Route path="/welcomingpage" exact component={WelcomingPage} />
               <Route path="/admin" component={AdminPage} />
               <Route path="/reset-password" component={PasswordReset} />
+              <Route path="/my-profile" component={MyProfile} />
+
               <Route
                 path="/faculty/:facultyId"
                 render={(props) => (
@@ -63,6 +66,7 @@ function App() {
           </div>
         </div>
       </AuthProvider>
+
     </Router>
   );
 }

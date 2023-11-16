@@ -61,11 +61,30 @@ const FacultyPage = () => {
   const [alertMessage] = useState({ message: '', type: 'success' });
   const { authToken, setIsLoggedIn } = useContext(AuthContext);
   const location = useLocation();
-  const { state } = location;
-  const token = state?.token;
+const tokenFromLink = location.state?.token;
+
 
   const backendURL = 'http://localhost:3002/api_resource';
   const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
+  useEffect(() => {
+    // Example API call using the token
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/api_faculty/${facultyId}`, {
+          headers: {
+            Authorization: `Bearer ${tokenFromLink}`
+          }
+        });
+        // Process the response
+      } catch (error) {
+        // Handle any errors
+      }
+    };
+
+    if (tokenFromLink) {
+      fetchData();
+    }
+  }, [tokenFromLink]);
   useEffect(() => {
     if (!facultyId) {
       console.error('Faculty ID is required but was not provided.');

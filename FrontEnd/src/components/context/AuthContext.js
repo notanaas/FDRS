@@ -1,58 +1,41 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
-  const [isLoggedIn, setIsLoggedIn] = useState(!!authToken);
-  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const backendURL = 'http://localhost:3002';
 
-  useEffect(() => {
-    const token = sessionStorage.getItem('token');
-    setIsLoggedIn(!!token);
-    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-
-    if (token) {
-      setAuthToken(token);
+  // Method to update login status
+  
+  const triggerForgotPassword = async (email) => {
+    try {
+      await axios.post(`${backendURL}/api_auth/forgot-password`, { email });
+      // handle success - maybe set a state or show a notification
+    } catch (error) {
+      // handle error
     }
-    setIsAdmin(storedIsAdmin);
-  }, []);
+  };
   useEffect(() => {
-    axios.defaults.headers.common['Authorization'] = authToken ? `Bearer ${authToken}` : null;
-
-    // Check if the token is present upon initial load
-    setIsLoggedIn(!!authToken);
-    // Function to validate the token
-    const validateToken = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          // This is a hypothetical API endpoint that validates your token
-          await axios.get('/refreshToken', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          // If the token is valid, set the logged-in state
-          setIsLoggedIn(true);
-          setAuthToken(token);
-        } catch (error) {
-          // If the token is invalid or there's an error, handle accordingly
-          setIsLoggedIn(false);
-          setAuthToken(null);
-          localStorage.removeItem('token');
-        }
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get(`${backendURL}/api_refreshToken`, { withCredentials: true });
+        setIsLoggedIn(true);
+        setIsAdmin(response.data.isAdmin);
+      } catch (error) {
+        setIsLoggedIn(false);
+        setIsAdmin(false);
       }
     };
-  
-    validateToken();
-  }, [setIsLoggedIn, setAuthToken,authToken]); // Dependencies for the useEffect
-  
+
+    checkAuthStatus();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, authToken, setAuthToken, isAdmin, setIsAdmin  }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin,triggerForgotPassword }}>
       {children}
     </AuthContext.Provider>
   );
 };
-

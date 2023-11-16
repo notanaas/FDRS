@@ -75,9 +75,7 @@ const tokenFromLink = location.state?.token;
             Authorization: `Bearer ${tokenFromLink}`
           }
         });
-        // Process the response
       } catch (error) {
-        // Handle any errors
       }
     };
 
@@ -93,7 +91,7 @@ const tokenFromLink = location.state?.token;
     }
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('/refreshToken', {
+      axios.get('/api_auth/refreshToken', {
         headers: {
           Authorization: `Bearer ${token}`
         }

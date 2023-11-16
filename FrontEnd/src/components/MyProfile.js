@@ -8,6 +8,8 @@ const MyProfile = () => {
   const [user, setUser] = useState({ username: '', email: '' });
   const [showMessage, setShowMessage] = useState(false);
   const { triggerForgotPassword, authToken } = useContext(AuthContext); // Get authToken from AuthContext
+  const [uploadedResources, setUploadedResources] = useState([]);
+
   const handleChangePassword = async () => {
     try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`,
@@ -40,6 +42,8 @@ useEffect(() => {
           username: userData.Username,
           email: userData.Email
         });
+        setUploadedResources(userData.uploadedResources || []);
+
       } else {
         console.error('Unexpected response format:', response.data);
       }
@@ -61,8 +65,17 @@ useEffect(() => {
         <button onClick={handleChangePassword}>Change Password</button>
         {showMessage && <div className="email-sent-message">Check your email for password reset instructions</div>}
       </div>
+      <div className="uploaded-resources">
+        <h2>My Uploaded Resources</h2>
+        {uploadedResources.map(resource => (
+          <div key={resource._id}>
+            <h3>{resource.Title}</h3>
+            {/* Additional resource details */}
+          </div>
+        ))}
+      </div>
     </div>
   );
-}
+};
 
 export default MyProfile;

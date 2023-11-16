@@ -5,6 +5,8 @@ const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const crypto = require('crypto');  // for refreshTokens
 const nodemailer = require('nodemailer');
+const path = require('path');
+
 exports.register = [
     body('username' , "Username Must be required")
     .trim()
@@ -190,18 +192,28 @@ exports.forgot_password = [
             }
           });
           
-          const mailOptions = {
-            from: 'FDRS1697@gmail.com',
-            to: emailExists.Email,  // emailExists
-            subject: 'Reset password link',
-            html: `
-            <h1>Password Reset</h1>
-            <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
-            <p>Please click on the following link, or paste this into your browser to complete the process:</p>
-            <a href="${link}" target="_blank">Reset Password</a>
-            <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
-        `
-          };
+          const logoPath = path.join('/Users/anasalsayed/Documents/Anas Alsayed/UNIVERSTY/9TH/FDRS/BackEnd/LOGO', 'anas logo red png.png');
+
+const mailOptions = {
+    from: 'FDRS1697@gmail.com',
+    to: emailExists.Email,  // emailExists
+    subject: 'Reset password link',
+    attachments: [{
+        filename: 'logo.png',
+        path: logoPath,
+        cid: 'logo'
+    }],
+    html: `
+        <h1>Password Reset</h1>
+        <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
+        <p>Please click on the following link, or paste this into your browser to complete the process:</p>
+        <a href="${link}" target="_blank">Reset Password</a>
+        <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+        <div style="text-align: center; margin-top: 30px;">
+            <img src="cid:logo" alt="Your Logo" style="max-width: 200px;">
+        </div>
+    `
+};
           
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {

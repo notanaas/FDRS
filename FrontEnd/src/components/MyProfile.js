@@ -8,7 +8,6 @@ const MyProfile = () => {
   const [user, setUser] = useState({ username: '', email: '' });
   const [showMessage, setShowMessage] = useState(false);
   const { triggerForgotPassword, authToken } = useContext(AuthContext); // Get authToken from AuthContext
-
   const handleChangePassword = async () => {
     try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`,
@@ -19,29 +18,38 @@ const MyProfile = () => {
       setTimeout(() => setShowMessage(false), 4000); // Hide message after 4 seconds
     } catch (error) {
       console.error('Error:', error);
-      // Handle error
+    }
+  };
+  
+useEffect(() => {
+  const fetchProfileData = async () => {
+    const token = localStorage.getItem('token') || authToken;
+    if (!token) {
+      console.error("No auth token available.");
+      return;
+    }
+  
+    try {
+      const response = await axios.get(`${backendURL}/api_user/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data && response.data.profile && response.data.profile.length > 0) {
+        // Assuming the user's data is the first element in the profile array
+        const userData = response.data.profile[0];
+        setUser({
+          username: userData.Username,
+          email: userData.Email
+        });
+      } else {
+        console.error('Unexpected response format:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
     }
   };
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-        try {
-            const authToken = localStorage.getItem('token'); // Get token from local storage
-            const response = await axios.get(`${backendURL}/api_user/profile`, {
-                headers: { Authorization: `Bearer ${authToken}` }
-            });
-            setUser({
-                username: response.data.profile.Username,
-                email: response.data.profile.Email
-            });
-        } catch (error) {
-            console.error('Error fetching profile data:', error);
-        }
-    };
-
-    fetchProfileData();
-}, []);
-  
+  fetchProfileData();
+}, [authToken]);
 
   return (
     <div className="my-profile">
@@ -53,7 +61,6 @@ const MyProfile = () => {
         <button onClick={handleChangePassword}>Change Password</button>
         {showMessage && <div className="email-sent-message">Check your email for password reset instructions</div>}
       </div>
-      {/* Uploads and Favorites sections here */}
     </div>
   );
 }

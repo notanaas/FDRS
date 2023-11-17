@@ -15,6 +15,14 @@ exports.profile = asyncHandler(async(req,res,next)=>
     {
         return res.status(404).json({ message: 'User not found' });
     }
+    if(!resource)
+    {
+        res.status(404).json({message:"No uploaded resources for this user!"})
+    }
+    if(!favorites)
+    {
+        res.status(404).json({message:"No favorites resources for this user!"})
+    }
     return res.status(200).json({profile:profile ,UserResources:resource, userfavorites : favorites})
 
 })
@@ -36,7 +44,7 @@ exports.admin_acceptance = asyncHandler(async (req, res, next) => {
     }
 
     // Use await to wait for the update operation to complete
-    const resource = await Resrouce.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
+    const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
 
     // Additional code if needed
 

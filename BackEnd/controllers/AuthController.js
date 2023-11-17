@@ -192,7 +192,6 @@ exports.forgot_password = [
             }
           });
           
-          const logoPath = path.join('/Users/anasalsayed/Documents/Anas Alsayed/UNIVERSTY/9TH/FDRS/BackEnd/LOGO', 'anas logo red png.png');
 
 const mailOptions = {
     from: 'FDRS1697@gmail.com',
@@ -200,7 +199,7 @@ const mailOptions = {
     subject: 'Reset password link',
     attachments: [{
         filename: 'logo.png',
-        path: logoPath,
+        path: './LOGO/anas logo red png.png',
         cid: 'logo'
     }],
     html: `

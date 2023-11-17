@@ -9,7 +9,7 @@ const MyProfile = () => {
   const [showMessage, setShowMessage] = useState(false);
   const { triggerForgotPassword, authToken } = useContext(AuthContext); // Get authToken from AuthContext
   const [uploadedResources, setUploadedResources] = useState([]);
-
+ 
   const handleChangePassword = async () => {
     try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`,
@@ -23,37 +23,43 @@ const MyProfile = () => {
     }
   };
   
-useEffect(() => {
-  const fetchProfileData = async () => {
-    const token = localStorage.getItem('token') || authToken;
-    if (!token) {
-      console.error("No auth token available.");
-      return;
-    }
-  
-    try {
-      const response = await axios.get(`${backendURL}/api_user/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.data && response.data.profile && response.data.profile.length > 0) {
-        // Assuming the user's data is the first element in the profile array
-        const userData = response.data.profile[0];
-        setUser({
-          username: userData.Username,
-          email: userData.Email
-        });
-        setUploadedResources(userData.uploadedResources || []);
-
-      } else {
-        console.error('Unexpected response format:', response.data);
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const token = localStorage.getItem('token') || authToken;
+      if (!token) {
+        console.error("No auth token available.");
+        return;
       }
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
-
-  fetchProfileData();
-}, [authToken]);
+    
+      try {
+        const response = await axios.get(`${backendURL}/api_user/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+  
+        // Check if response data has profile and if profile has uploadedResources
+        if (response.data && response.data.profile) {
+          const userData = response.data.profile;
+          setUser({
+            username: userData.Username,
+            email: userData.Email
+          });
+  
+          if (userData.uploadedResources) {
+            setUploadedResources(userData.uploadedResources);
+          } else {
+            console.log('No uploaded resources found for the user.');
+          }
+        } else {
+          console.error('Unexpected response format:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+    
+    fetchProfileData();
+  }, [authToken]);
+  
 
   return (
     <div className="my-profile">

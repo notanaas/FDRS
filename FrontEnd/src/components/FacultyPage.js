@@ -65,6 +65,8 @@ const tokenFromLink = location.state?.token;
 
 
   const backendURL = 'http://localhost:3002/api_resource';
+
+  const authBackendURL = 'http://localhost:3002/api_auth';
   const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
   useEffect(() => {
     // Example API call using the token
@@ -90,13 +92,16 @@ const tokenFromLink = location.state?.token;
       return;
     }
     const token = localStorage.getItem('token');
+    const refreshToken = localStorage.getItem('refreshToken');
     if (token) {
-      axios.get('/api_auth/refreshToken', {
+      axios.post(`${authBackendURL}/refreshToken`, {
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        refreshToken 
       })
       .then(response => {
+        localStorage.setItem('token', response.data.accessToken);
         setIsLoggedIn(true);
       })
       .catch(error => {

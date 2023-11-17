@@ -17,8 +17,22 @@ export const AuthProvider = ({ children }) => {
   };
   useEffect(() => {
     const checkAuthStatus = async () => {
+
+      const token = localStorage.getItem('token');
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken || refreshToken.length < 1 || !token || token.length < 1) {
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+        return;
+      }
       try {
-        const response = await axios.get(`${backendURL}/api_auth/refreshToken`, { withCredentials: true });
+        const response = await axios.post(`${backendURL}/api_auth/refreshToken`, { 
+          headers: {
+            Authorization: 'Bearer: ' + token
+          },
+          refreshToken
+        });
+        localStorage.setItem('token', response.data.accessToken);
         setIsLoggedIn(true);
         setIsAdmin(response.data.isAdmin);
       } catch (error) {

@@ -1,20 +1,21 @@
 const Users = require("../models/Users")
 const UserFavs = require('../models/UserFavRes')
-const Resrouce = require('../models/Resources')
+const Resource = require('../models/Resources')
 const asyncHandler = require("express-async-handler")
 
 
 exports.profile = asyncHandler(async(req,res,next)=>
 {
-    const [profile,resource] = await Promise.all([
-        Users.find(req.user._id).exec(),
-        UserFavs.findById(req.user._id).populate("Resource").exec()
+    const [profile,resource,favorites] = await Promise.all([
+        Users.findById(req.user._id).exec(),
+        Resource.findById(req.user._id).exec(),
+        UserFavs.findById(req.user._id).populate("Resource").exec(),
     ])
     if(!profile)
     {
         return res.status(404).json({ message: 'User not found' });
     }
-    return res.status(200).json({profile:profile , userfavorites : UserFavs})
+    return res.status(200).json({profile:profile ,UserResources:resource, userfavorites : favorites})
 
 })
 exports.resource_authorize = asyncHandler(async(req,res,next)=>

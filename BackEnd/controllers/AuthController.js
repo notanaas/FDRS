@@ -144,8 +144,10 @@ exports.refresh_token = async(req,res)=>
      const accessToken = jwt.sign({ user: { _id: user._id, username: user.Username, email: user.Email } }, process.env.JWT_SECRET, {
         expiresIn: '1d', // Set the expiration time for the new access token
       });
+      res.json({ accessToken });
     } catch (error) {
-           
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

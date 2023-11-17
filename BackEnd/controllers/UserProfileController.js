@@ -4,31 +4,24 @@ const Resource = require('../models/Resources')
 const asyncHandler = require("express-async-handler")
 
 
-exports.profile = asyncHandler(async(req,res,next)=>
-{
-    const [profile,resource,favorites] = await Promise.all([
-        Users.findById(req.user._id).exec(),
-        Resource.findById(req.user._id).exec(),
-        UserFavs.findById(req.user._id).populate("Resource").exec(),
-    ])
-    if(!profile)
-    {
-        return res.status(404).json({ message: 'User not found' });
-    }
-    if(!resource)
-    {
-        res.status(404).json({message:"No uploaded resources for this user!"})
-    }
-    if(!favorites)
-    {
-        res.status(404).json({message:"No favorites resources for this user!"})
-    }
-    return res.status(200).json({profile:profile ,UserResources:resource, userfavorites : favorites})
-
-})
+exports.profile = asyncHandler(async (req, res, next) => {
+    
+      const profile = await Users.findById(req.user._id).exec();
+      const resource = await Resource.findById(req.user._id).exec();
+      const favorites = await UserFavs.findById(req.user._id).exec();
+      const ProfileData = {
+        profile: profile,
+        UserResources: resource ? resource : { message: 'uploaded resources not found' },
+        userFavorites: favorites ? favorites : { message: 'Favorites not found' }
+      };    
+  
+      return res.status(200).json(ProfileData);
+    
+  });
+  
 exports.resource_authorize = asyncHandler(async(req,res,next)=>
 {
-    const resource = await Resrouce.find({isAuthorized:false}).exec()
+    const resource = await Resource.find({isAuthorized:false}).exec()
     if(!resource)
     {
         return res.status(404).json({message:"no resources available"})

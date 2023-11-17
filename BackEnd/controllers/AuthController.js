@@ -5,8 +5,6 @@ const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const crypto = require('crypto');  // for refreshTokens
 const nodemailer = require('nodemailer');
-const path = require('path');
-
 exports.register = [
     body('username' , "Username Must be required")
     .trim()
@@ -192,27 +190,68 @@ exports.forgot_password = [
             }
           });
           
-
-const mailOptions = {
-    from: 'FDRS1697@gmail.com',
-    to: emailExists.Email,  // emailExists
-    subject: 'Reset password link',
-    attachments: [{
-        filename: 'logo.png',
-        path: './LOGO/anas logo red png.png',
-        cid: 'logo'
-    }],
-    html: `
-        <h1>Password Reset</h1>
-        <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
-        <p>Please click on the following link, or paste this into your browser to complete the process:</p>
-        <a href="${link}" target="_blank">Reset Password</a>
-        <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
-        <div style="text-align: center; margin-top: 30px;">
-            <img src="cid:logo" alt="Your Logo" style="max-width: 200px;">
-        </div>
-    `
-};
+          const mailOptions = {
+            from: 'FDRS1697@gmail.com',
+            to: emailExists.Email,  // emailExists
+            subject: 'Reset password link',
+            attachments: [{
+              filename: 'logo.png',
+              path: './LOGO/anas logo red png.png',
+              cid: 'logo'
+            }],
+            html: `
+          <style>
+          body {
+              font-family: 'Arial', sans-serif;
+              margin: 20px;
+              text-align: center;
+          }
+      
+          h1 {
+              color: #333;
+          }
+      
+          p {
+              color: #555;
+              line-height: 1.5;
+              margin-bottom: 10px;
+          }
+      
+          a {
+              display: inline-block;
+              padding: 10px 20px;
+              margin: 10px 0;
+              background-color: darkred;
+              color: #fff;
+              text-decoration: none;
+              border-radius: 5px;
+          }
+      
+          a:hover {
+              background-color: rgb(185, 4, 4);
+          }
+      
+          .logo-container {
+              text-align: center;
+              margin-top: 30px;
+          }
+      
+          .logo-container img {
+              max-width: 200px;
+      
+          .Do8Zj{
+            align-item: center !importent;
+          }
+      </style>
+              <img src="cid:logo" alt="Your Logo" style="max-width: 200px; text-align: center; width: 200px;">
+              
+              <h1>Password Reset</h1>
+              <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
+              <p>Please click on the following link, or paste this into your browser to complete the process:</p>
+              <a href="${link}" target="_blank">Reset Password</a>
+              <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+            `
+          };
           
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {

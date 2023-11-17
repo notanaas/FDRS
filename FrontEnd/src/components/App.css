@@ -163,6 +163,10 @@ html {
   flex-direction: column-reverse
 }
 
+.sides h1 {
+  color: white;
+}
+
 .sidebarToggle {
   background: none;
   border: none;

@@ -180,7 +180,7 @@ html {
 
 .sidebar {
   position: fixed;
-  margin-top: 91px;
+  margin-top: 85px;
   left:0;
   top: 0px;
   width: 250px;
@@ -188,6 +188,10 @@ html {
   background-color: transparent;
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
   padding: 0;
+  overflow-y: auto;
+}
+
+.contentContainer {
   overflow-y: auto;
 }
 
@@ -360,7 +364,6 @@ html {
   border-radius: 5px;
   background-color: #6a0000;
   color: #fff;
-  margin-bottom: 1rem;
 }
 
 
@@ -557,10 +560,10 @@ body {
 }
 .password-reset-container{
   width: 420px;
-  background-color: white;
   color:rgb(0, 0, 0);
   border-radius: 10px;
   padding: 30px 40px;
+  background: transparent;
 }
 .password-reset-container h1 {
   font-size: 36px;

@@ -89,22 +89,24 @@ exports.login = asyncHandler(async (req, res, next) => {
     if (!passwordMatch) {
       return res.status(400).json({ message: "Invalid username or password" });
     }
-    const refreshTokenOptions = {
-      expiresIn: '1d'
-    };
+    const refreshToken = crypto.randomBytes(40).toString('hex');
+    process.env.REFRESH_TOKEN_SECRET = refreshToken;
+    // Store the refresh token in the user's record
+    user.refreshToken = refreshToken;
+    await user.save();
+  
     const body = {
       _id: user._id,
       username: user.Username,
       email: user.Email
     };
-    const refreshToken = jwt.sign({ user: body }, process.env.JWT_SECRET, refreshTokenOptions);
-    user.refreshToken = refreshToken;
-    await user.save();
-    const accessToken = jwt.sign({ user: { _id: user._id, username: user.Username, email: user.Email } }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
+  
+    const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
+        expiresIn: "1d" // 1 minute expiration
     });
+  
     // Now, you can send the token in the response
-    return res.json({message:"Logged in successfully", token:accessToken, refreshToken, user:user });
+    return res.json({message:"Logged in successfully", token, refreshToken, user:user });
   });
   
 exports.logout = asyncHandler(async(req,res,next)=>
@@ -127,14 +129,13 @@ const user = await Users.findOne({ refreshToken: refreshToken }).exec();
 exports.refresh_token = async(req,res)=>
 {
     const { refreshToken } = req.body;
-    console.log('REfresh token: ', refreshToken);
+    
     try {
-        const decoded = jwt.verify(refreshToken ,process.env.JWT_SECRET)
+        const decoded = jwt.verify(refreshToken ,process.env.REFRESH_TOKEN_SECRET)
 
     // Find the user associated with the refresh token
-    console.log('Token content: ', decoded);
-    const user = await Users.findById(decoded.user._id)
-        //console.log('Expected refresh token: ', user.refreshToken,)
+    const user = await Users.findById(decoded._id)
+
     if(!user || user.refreshToken !== refreshToken)
     {
         return res.status(401).json({ message: 'Invalid refresh token' });

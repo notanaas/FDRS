@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from './context/AuthContext';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
+import './App.css';
 
 const AdminPage = () => {
   const [faculties, setFaculties] = useState([]);
@@ -7,11 +10,18 @@ const AdminPage = () => {
   const [documents, setDocuments] = useState([]);
   const [isLoadingFaculties, setIsLoadingFaculties] = useState(false);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+  const { isAdmin } = useContext(AuthContext);
+  useEffect(() => {
+    if (!isAdmin) {
+      setRedirect(true);
+    }
+  }, [isAdmin]);
 
   const setApprovalStatus = (documentId, isApproved) => {
     // Handle approval logic here
   };
-
+  
   useEffect(() => {
     const fetchFaculties = async () => {
       try {
@@ -73,13 +83,28 @@ const AdminPage = () => {
         <p className="document-author">{document.ResourceAuthor ? `Author: ${document.ResourceAuthor}` : 'Author not provided'}</p>
         <a href={`http://localhost:3002/${document.file_path}`} download>Download Document</a> 
       </div>
+      <div>
+      <a href={`http://localhost:3002/${document.file_path}`} download>Download Document</a>
+      {/* Preview the document in an iframe */}
+      {document.file_path && (
+        <iframe
+          src={`http://localhost:3002/${document.file_path}`}
+          width="100%"
+          height="500px"
+          title="Document Preview"
+          frameBorder="0"
+        ></iframe>
+      )}
+    </div>
       <div className="document-actions">
         <button onClick={() => setApprovalStatus(document._id, true)} className="approve-button">Approve</button>
         <button onClick={() => setApprovalStatus(document._id, false)} className="disapprove-button">Disapprove</button>
       </div>
     </div>
   );
-
+if (redirect) {
+    return <Redirect to="/" />;
+  }
   return (
     <div>
       <h1>Admin Page</h1>

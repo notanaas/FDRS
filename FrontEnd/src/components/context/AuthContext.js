@@ -17,20 +17,18 @@ export const AuthProvider = ({ children }) => {
   };
   useEffect(() => {
     const checkAuthStatus = async () => {
-
       const token = localStorage.getItem('token');
       const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken || refreshToken.length < 1 || !token || token.length < 1) {
+      if (!refreshToken || !token) {
         setIsLoggedIn(false);
         setIsAdmin(false);
         return;
       }
       try {
-        const response = await axios.post(`${backendURL}/api_auth/refreshToken`, { 
+        const response = await axios.post(`${backendURL}/api_auth/refreshToken`, { refreshToken }, {
           headers: {
-            Authorization: 'Bearer: ' + token
-          },
-          refreshToken
+            Authorization: `Bearer ${token}` 
+          }
         });
         localStorage.setItem('token', response.data.accessToken);
         setIsLoggedIn(true);
@@ -38,11 +36,14 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         setIsLoggedIn(false);
         setIsAdmin(false);
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
       }
     };
-
+  
     checkAuthStatus();
   }, []);
+  
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin,triggerForgotPassword }}>

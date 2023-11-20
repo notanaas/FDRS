@@ -20,5 +20,5 @@ router.get("/resource/authorize", passport.authenticate('jwt', { session: false 
 router.post("/admin/acceptance/:id", passport.authenticate('jwt', { session: false }), isAdmin, Profile.admin_acceptance);
 
 //Update user email or username
-router.put('/update_profile' , passport,passport.authenticate('jwt' , {session:false}) , Profile.updateProfile)
+router.put('/update_profile' , passport.authenticate('jwt', { session: false }) , Profile.updateProfile)
 module.exports = router;

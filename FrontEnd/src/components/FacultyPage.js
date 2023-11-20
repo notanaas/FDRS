@@ -5,7 +5,6 @@ import { useParams, Link, useHistory,Redirect,useLocation } from 'react-router-d
 import Header from './Header';
 import axios from 'axios';
 import './App.css';
-import { jwtDecode } from 'jwt-decode'; // Correct import for jwtDecode
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -69,9 +68,6 @@ const tokenFromLink = location.state?.token;
 
   const authBackendURL = 'http://localhost:3002/api_auth';
   const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
-
-
-
   useEffect(() => {
     // Example API call using the token
     const fetchData = async () => {
@@ -88,40 +84,31 @@ const tokenFromLink = location.state?.token;
     if (tokenFromLink) {
       fetchData();
     }
-  }, [tokenFromLink, facultyId]);
-
-
+  }, [tokenFromLink]);
   useEffect(() => {
     if (!facultyId) {
-      history.push('/error');
+      console.error('Faculty ID is required but was not provided.');
+      history.push('/error'); 
       return;
     }
-
     const token = localStorage.getItem('token');
     const refreshToken = localStorage.getItem('refreshToken');
-
-    if (token && refreshToken) {
-      axios.post(`${authBackendURL}/refreshToken`, {}, {
+    if (token) {
+      axios.post(`${authBackendURL}/refreshToken`, {
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        refreshToken 
       })
       .then(response => {
-        const decodedToken = jwtDecode(response.data.accessToken);
         localStorage.setItem('token', response.data.accessToken);
         setIsLoggedIn(true);
-        setAuthToken(response.data.accessToken);
-        // You can now use decodedToken.isAdmin to check if the user is an admin
       })
       .catch(error => {
         setIsLoggedIn(false);
         localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        // Redirect to the login page or display an error
-        history.push('/login');
       });
     }
-  
   
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
@@ -141,7 +128,8 @@ const tokenFromLink = location.state?.token;
     return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
     };
-  }, [setAuthToken, facultyId, history, setIsLoggedIn, authBackendURL]); 
+  }, [setAuthToken, facultyId, history, setIsLoggedIn]); // Include missing dependencies
+
     
   if (!facultyId) {
     console.error('Faculty ID is required but was not provided.');
@@ -354,23 +342,15 @@ const tokenFromLink = location.state?.token;
   </div>
 
   {imgUrl && (
-            <div className="card">
-              <img className="uploaded-photo" src={imgUrl} alt="Document" />
-              {file && file.type === 'application/pdf' && (
-                <iframe
-                  src={URL.createObjectURL(file)}
-                  width="100%"
-                  height="500px"
-                  title="Document Preview"
-                ></iframe>
-              )}
-    <div className="card-body">
-      <p className="card-title">{title}</p>
-      <p className="card-text">Author First Name: {authorFirstName}</p>
-      <p className="card-text">Author Last Name: {authorLastName}</p>
+    <div className="card">
+      <img className="uploaded-photo" src={imgUrl} alt="Document" />
+      <div className="card-body">
+        <p className="card-title">{title}</p>
+        <p className="card-text">Author First Name: {authorFirstName}</p>
+        <p className="card-text">Author Last Name: {authorLastName}</p>
+      </div>
     </div>
-  </div>
-)}
+  )}
 
         <div className="modal-footer">
                 <button onClick={closeModal} className="authButton">
@@ -389,24 +369,16 @@ const tokenFromLink = location.state?.token;
         </Modal>
       )}
 
-{uploadedDocuments.length > 0 && (
-  <div>
-    <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
-      {uploadedDocuments.map((item, index) => (
+      {uploadedDocuments.length > 0 && (
+        <div>
+          <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
+            {uploadedDocuments.map((item, index) => (
               <li key={index} className="card">
                 <Link to={`/resource/${item.id}`}>
                   <h3 className="card-title">{item.title}</h3>
                   <p className="card-text">Author: {item.author}</p>
                   <p className="card-description">Description: {item.description}</p>
                 </Link>
-                {item.file && (
-            <iframe
-              src={`http://localhost:3002/${item.file}`}
-              width="100%"
-              height="500px"
-              title="Document Preview"
-            ></iframe>
-          )}
                 {item.img && (
                   <div>
                     <img

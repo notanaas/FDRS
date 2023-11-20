@@ -1,10 +1,12 @@
 const Resource = require("../models/Resources")
 const Faculty = require("../models/Faculty")
 const comments = require("../models/Comment")
+const Favorite = require("../models/UserFavRes")
 const asyncHandler = require("express-async-handler")
 const {body,validationResult} = require("express-validator")
 const path  = require("path")
 const { upload } = require('../multerconfig');
+const { comment } = require("./CommentController")
 
 
 // Get all resources
@@ -172,4 +174,26 @@ exports.search_resource = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json(searchResults);
+});
+// Delete resource middleware
+exports.deleteResource = asyncHandler(async (req, res, next) => {
+  const resourceId = req.params.id;
+
+
+    const resource = await Resource.findById(resourceId);
+
+    if (!resource) {
+      return res.status(404).json({ message: "Resource does not exist" });
+    }
+
+    // Check if the user is an admin or if the resource belongs to the user
+    if (req.user.isAdmin || resource.User._id.toString() === req.user._id.toString()) {
+      await Resource.findByIdAndDelete(resourceId).exec()
+
+      // deleting the associated favorites and comments
+      await Favorite.deleteMany({ Resource: resource._id }).exec() 
+      await comment.deleteMany({Resource:resource._id}).exec()
+      return res.status(200).json({ message: "Resource deleted successfully" });
+    }
+      return res.status(403).json({ message: "Unauthorized to delete this resource" });
 });

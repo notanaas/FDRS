@@ -28,3 +28,35 @@ exports.comment =[
     // Return a success response
     return res.status(201).json({ message: 'Comment created successfully' });
 })];
+
+exports.Delete_comment = asyncHandler(async(req,res,next)=>
+{
+    const resourceId = req.params.id; // finding the comment by the resource id
+    const comment = await Comment.findById({Resource:id}).exec();
+
+    if (!comment) {
+      return res.status(404).json({ message: "Resource does not exist" });
+    }
+
+    // Check if the user is an admin or if the resource belongs to the user
+    if (req.user.isAdmin || comment.User._id.toString() === req.user._id.toString()) {
+      await Resource.findByIdAndDelete(resourceId);
+      return res.status(200).json({ message: "Comment deleted successfully" });
+    }
+      return res.status(403).json({ message: "Unauthorized to delete this comment" });
+})
+exports.Update_Comment =[
+    body("NewComment" , "Required text to post").trim().isLength({min:1}).escape(),
+    asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req)
+    const resourceId = req.params.id;    // finding the comment by the resource id
+    const comment = await Comment.findById({Resource : id}).exec()
+    if(comment.User._id.toString() === req.user._id.toString())
+    {
+        //if user then delete
+        await Comment.findByIdAndDelete({Resource:resourceId}).exec()
+        return res.status(200).json({ message: "Comment Updated successfully" });
+    }
+    // Return a success response
+    return res.status(403).json({ message: "Unauthorized to Update this Comment" });
+  })];

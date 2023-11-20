@@ -2,6 +2,7 @@ const Users = require("../models/Users")
 const UserFavs = require('../models/UserFavRes')
 const Resource = require('../models/Resources')
 const asyncHandler = require("express-async-handler")
+const fs = require("fs")
 
 
 exports.profile = asyncHandler(async (req, res, next) => {
@@ -34,13 +35,23 @@ exports.admin_acceptance = asyncHandler(async (req, res, next) => {
 
     if (flag !== btnAccept) {
         flag = true;
+        const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
+        res.status(200).json({ accepted:"resource accepeted" , data: resource });
+
     }
-
-    // Use await to wait for the update operation to complete
-    const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
-
-    // Additional code if needed
-
-    // Send a response or do something else
-    res.status(200).json({ success: true, data: resource });
-});
+    const uploadDir = path.join(__dirname, '..', 'uploads'); // Adjust the path as necessary
+    const resource = await Resource.findByIdAndDelete(req.params.id).exec()
+    fs.unlink(`${uploadDir}/${resource.file_path}`,(err)=>{
+        if(err)
+        {
+            res.status(404).json({message:"file not found"})
+        }
+    })
+    fs.unlink(`${uploadDir}/${resource.file_path}`,(err)=>{
+        if(err)
+        {
+            res.status(404).json({message:"file not found"})
+        }
+    })
+    res.status(200).json({declined:"resource declined"})
+})

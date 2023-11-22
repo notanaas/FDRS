@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useHistory,Link } from 'react-router-dom';
-import { AuthContext } from './context/AuthContext'; // Import AuthContext
+import { Link } from 'react-router-dom';
 import './App.css';
 
 const FacultyButtons = () => {
   const [faculties, setFaculties] = useState([]);
-  const history = useHistory();
-  const { authToken } = useContext(AuthContext); // Use AuthContext to check for token
   const userToken = localStorage.getItem('token'); // Retrieve token from local storage
 
   useEffect(() => {
@@ -27,7 +24,7 @@ const FacultyButtons = () => {
 
   return (
     <div className='sides'>
-      <h1>Select a Faculty</h1>
+      <h1>Faculties</h1>
       {faculties.length > 0 ? (
         faculties.map((faculty) => (
           <Link 

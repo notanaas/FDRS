@@ -55,6 +55,13 @@
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.login-prompt {
+  color: red; 
+}
+.scrollable-container {
+  max-height: 500px; /* Adjust as needed */
+  overflow-y: auto;  /* Enables vertical scrolling */
+}
 .email-sent-message {
   color: green;
   margin-top: 10px;

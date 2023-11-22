@@ -66,7 +66,7 @@ const MyProfile = () => {
         <h2>User Information</h2>
         <p>Username: {userProfile.username}</p>
         <p>Email: {userProfile.email}</p>
-        <button classname = ''onClick={handleChangePassword}>Change Password</button>
+        <button className = ''onClick={handleChangePassword}>Change Password</button>
         {showMessage && <div className="email-sent-message">Check your email for password reset instructions</div>}
       </div>
       <div className="uploaded-resources">

@@ -1,17 +1,16 @@
-import React, { createContext, useContext, useState } from 'react';
+// FacultyContext.js
+import React, { createContext, useState, useContext } from 'react';
 
 const FacultyContext = createContext();
 
-export function FacultyProvider({ children }) {
-  const [facultyName, setFacultyName] = useState('');
+export const useFaculty = () => useContext(FacultyContext);
+
+export const FacultyProvider = ({ children }) => {
+  const [currentFaculty, setCurrentFaculty] = useState(null);
 
   return (
-    <FacultyContext.Provider value={{ facultyName, setFacultyName }}>
+    <FacultyContext.Provider value={{ currentFaculty, setCurrentFaculty }}>
       {children}
     </FacultyContext.Provider>
   );
-}
-
-export function useFaculty() {
-  return useContext(FacultyContext);
-}
+};

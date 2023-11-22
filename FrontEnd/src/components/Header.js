@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory,Link } from 'react-router-dom';
+import { useParams, Link, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
@@ -22,7 +22,6 @@ const Sidebar = ({ onClose }) => {
     </div>
   );
 }
-
 const backendURL = 'http://localhost:3002';
 const axiosInstance = axios.create({ baseURL: backendURL });
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
@@ -42,15 +41,31 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
         <div className="modal-body">{children}</div>
         <div className="modal-footer"></div>
       </div>
+      <div 
+      className="upload-modal" 
+      style={{ display: isOpen ? 'flex' : 'none' }} 
+      onClick={onClose}
+    >
+      <div 
+        className="upload-modal-content" 
+        style={modalContentStyle} 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header" style={{ backgroundColor: '#8b0000' }} />
+        <div className="modal-body">{children}</div>
+        <div className="modal-footer" />
+      </div>
     </div>
+    </div>
+    
   );
 };
 const Header = ({
   onSearchChange,
-  isFacultyPage,
 }) => {
+  const [setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
+  const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -64,54 +79,73 @@ const Header = ({
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '',
   });
-  const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginError, setLoginError] = useState(''); 
+  const [loginError,setLoginError] = useState(''); 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
-  const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
-  const [message, setMessage] = useState('You are not logged in.');
   const [showMessage, setShowMessage] = useState(true);
-  const [forgotPasswordError, setForgotPasswordErrorMessage] = useState(''); 
+  const [setForgotPasswordErrorMessage] = useState(''); 
+  const { facultyId } = useParams();
   const history = useHistory();
+  const { setAuthToken} = useContext(AuthContext);
+  const [title, setTitle] = useState('');
+  const [authorFirstName, setAuthorFirstName] = useState('');
+  const [authorLastName, setAuthorLastName] = useState('');
+  const [description, setDescription] = useState('');
+  const [file, setFile] = useState(null);
+  const [img, setImg] = useState(null);
+  const [imgUrl, setImgUrl] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [alertMessage] = useState({ message: '', type: 'success' });
+  const location = useLocation();
+  const backendURL = 'http://localhost:3002';
+  const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : `${backendURL}/create`;
+  const userToken = localStorage.getItem('token');
+  const isFacultyPage = location.pathname.includes(`/faculty/`);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowMessage(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+const tokenFromLink = location.state?.token;
+const promptLogin = () => {
+  setShowLoginPrompt(true);
+  setTimeout(() => setShowLoginPrompt(false), 3000);
+};
+useEffect(() => {
+  const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setIsDarkMode(prefersDarkMode);
 
-  useEffect(() => {
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(prefersDarkMode);
-
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const darkModeChangeListener = (e) => {
-      setIsDarkMode(e.matches);
-    };
-
-    darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
-    return () => {
-      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-    };
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-  
-    if (token) {
-      // Validate the token with an API call or some logic
-      setIsLoggedIn(true);
-      setIsAdmin(storedIsAdmin);
+  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const darkModeChangeListener = (e) => {
+    setIsDarkMode(e.matches);
+    if (e.matches) {
+      document.documentElement.classList.add('dark');
     } else {
-      setIsLoggedIn(false);
-      setIsAdmin(false);
+      document.documentElement.classList.remove('dark');
     }
-  }, [setIsLoggedIn, setIsAdmin]);
+  };
+  darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+  if (tokenFromLink) {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${backendURL}/api_faculty/${facultyId}`, {
+          headers: {
+            Authorization: `Bearer ${tokenFromLink}`
+          }
+        });
+      } catch (error) {
+      }
+    };
+    fetchData();
+  }
+    return () => {
+    darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+  };
+
+}, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL,isFacultyPage]);
+
   
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -177,6 +211,7 @@ const Header = ({
       handleAPIError(error);
     }
   };
+
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
     setSignupData({
@@ -187,10 +222,9 @@ const Header = ({
   
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage(''); // Assuming you have this state to show success messages
-    setLoginErrorMessage(''); // Assuming you have this state to show error messages
+    setSuccessMessage(''); 
+    setLoginErrorMessage('');
   
-    // Check if email and password inputs are not empty
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
@@ -210,65 +244,46 @@ const Header = ({
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isAdmin', user.isAdmin.toString());
   
-        setAuthToken(token); // Assuming you have this state/context method
-        setIsLoggedIn(true); // Assuming you have this state/context method
-        setIsAdmin(user.isAdmin); // Assuming you have this state/context method
-        setIsLoginModalOpen(false); // Assuming you have this state/context method to control the login modal display
+        setAuthToken(token); 
+        setIsLoggedIn(true); 
+        setIsAdmin(user.isAdmin); 
+        setIsLoginModalOpen(false); 
   
-        // Clear the input fields
         setEmail('');
         setPassword('');
         updateLoginStatus(true); 
-
+  
       } else {
-        // If no token is present in the response, show an error message
-        setLoginErrorMessage('Error: Login response is missing the token or refreshToken.');
+        setLoginErrorMessage('Login response did not include the token.');
       }
     } catch (error) {
-      // If there is an error in the login process, show an error message
+      console.error('Login error:', error);
       const errorMessage = error.response?.data?.errors?.length > 0
         ? `Login failed: ${error.response.data.errors[0].msg}`
         : 'Login failed. Please try again later.';
       setLoginErrorMessage(errorMessage);
     }
   };
-  
-  
-  
-  
-  const handleLogout = async () => {
-    const storedRefreshToken = localStorage.getItem('refreshToken');
-    if (!authToken || !storedRefreshToken) {
-      console.error('No auth token or refresh token found. Redirecting to login...');
-      setIsLoggedIn(false);
-      return;
-    }
-  
+
+  const handleLogout = async () => {  
     try {
-      const response = await axios.post(`${backendURL}/api_auth/logout`, {
-        refreshToken: storedRefreshToken,
-      }, {
+      const refreshToken = localStorage.getItem('refreshToken');
+      await axios.post(`${backendURL}/api_auth/logout`, { refreshToken }, {
         headers: {
-          'Authorization': `Bearer ${authToken}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
   
-      if (response.status === 200) {
-        console.log('Logout successful');
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        setAuthToken(null);
-        setIsLoggedIn(false);
-      } else {
-        console.error('Logout failed:', response.status, response.data);
-      }
+      // Clear local storage and reset state
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      setIsLoggedIn(false);
+      setIsAdmin(false);
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
   
-
-
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
     setForgotPasswordErrorMessage(''); 
@@ -297,7 +312,95 @@ const Header = ({
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
   };
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
 
+  const handleAuthorFirstNameChange = (e) => {
+    setAuthorFirstName(e.target.value);
+  };
+
+  const handleAuthorLastNameChange = (e) => {
+    setAuthorLastName(e.target.value);
+  };
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        const fileUrl = URL.createObjectURL(selectedFile);
+        setImgUrl(fileUrl);
+    }
+};
+
+  const handleImgChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImg(e.target.files[0]);
+    }
+  };
+  
+  const handleUpload = async () => {
+    if (!isLoggedIn) {
+      promptLogin();
+      return;
+    }
+    if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('firstname', authorFirstName);
+    formData.append('lastname', authorLastName);
+    formData.append('description', description);
+    formData.append('file', file);
+    formData.append('img', img);
+  
+    if (isAdmin) {
+      formData.append('isApproved', true);
+    }
+  
+    try {
+      const response = await axios.post(uploadURL, formData, {
+        headers: {
+          'Authorization': `Bearer ${userToken}` 
+        },
+      });
+  
+      if (response.status === 201) {
+        setSuccessMessage('Document uploaded successfully');
+        if (isAdmin) {
+          setSuccessMessage('Document uploaded and automatically approved');
+        }
+        setTitle('');
+        setAuthorFirstName('');
+        setAuthorLastName('');
+        setDescription('');
+        setFile(null);
+        setImg(null);
+        setImgUrl('');
+        setError(null);
+        setIsModalOpen(false); // Close modal after successful upload
+      }
+      else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
+      setError(message);
+    }
+  };
+  
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setError(null);
+  };
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
       <div className='left'>
@@ -316,6 +419,7 @@ const Header = ({
           <div>
             <input type="text" className="inputBar" placeholder={`Search in `} onChange={onSearchChange} />
             <button className="authButton">Search</button>
+            <button onClick={() => setIsModalOpen(true)} className="authButton">Upload</button>
           </div>
         )}
       </div>
@@ -334,11 +438,8 @@ const Header = ({
         </div>
       )}
     </div>
-    {showMessage && (
-        <div className="login-status-message">{message}</div>
-      )}
 
-      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
+<Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -412,8 +513,113 @@ const Header = ({
   </form>
 </Modal>
 
+
+{isModalOpen && (
+  <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
+      <div className="custom-upload-modal">
+    {error && (
+      <div className="error-message">
+        <p className="error-text">{error}</p>
+      </div>
+    )}
+    {successMessage && (
+      <div className="success-message">
+        <p className="success-text">{successMessage}</p>
+      </div>
+    )}
+
+    <div className="form-container">
+    <label htmlFor="username"><h1>Upload File</h1></label>
+
+<div className="form-group">
+<label>Title:</label>
+<input
+type="text"
+name="title"
+value={title}
+onChange={handleTitleChange}
+className="inputBar"
+/>
+</div>
+<div className="form-group">
+<label>Author First Name:</label>
+<input
+type="text"
+name="authorFirstName"
+value={authorFirstName}
+onChange={handleAuthorFirstNameChange}
+className="inputBar"
+/>
+</div>
+<div className="form-group">
+<label>Author Last Name:</label>
+<input
+type="text"
+name="authorLastName"
+value={authorLastName}
+onChange={handleAuthorLastNameChange}
+className="inputBar"
+/>
+</div>
+<div className="form-group">
+<label>Description:</label>
+<textarea
+name="description"
+value={description}
+onChange={handleDescriptionChange}
+className="inputBar"
+></textarea>
+</div>
+<div className="form-group">
+<label>Choose Document (PDF):</label>
+<input
+type="file"
+accept="application/pdf"
+onChange={handleFileChange}
+className="inputBar"
+/>
+</div>
+<div className="form-group">
+<label>Choose Photo for Document (JPEG, JPG, PNG):</label>
+<input
+type="file"
+accept="image/jpeg, image/jpg, image/png"
+onChange={handleImgChange}
+className="inputBar"
+/>
+</div>
+</div>
+
+{imgUrl && (
+<div className="card">
+<img className="uploaded-photo" src={imgUrl} alt="Document" />
+<div className="card-body">
+  <p className="card-title">{title}</p>
+  <p className="card-text">Author First Name: {authorFirstName}</p>
+  <p className="card-text">Author Last Name: {authorLastName}</p>
+</div>
+</div>
+)}
+
+  <div className="modal-footer">
+          <button onClick={closeModal} className="authButton">
+            Close
+          </button>
+          <button onClick={handleUpload} className="authButton">
+            Upload
+          </button>
+        </div>
+        {alertMessage.message && (
+          <div className={`alert-message ${alertMessage.type}`}>
+            {alertMessage.message}
+          </div>
+        )}
+      </div>
+  </Modal>
+)}
     </header>
 
   );
 };
+
 export default Header;

@@ -1,115 +1,28 @@
-import React, { useState, useEffect,useContext } from 'react';
-import { useFaculty } from './context/FacultyContext';
-import { AuthContext } from './context/AuthContext';
-import { useParams, Link, useHistory,Redirect,useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import Header from './Header';
+import { useFaculty } from './context/FacultyContext';
 import axios from 'axios';
-import './App.css';
-import {
-  FacebookShareButton,
-  TwitterShareButton,
-  LinkedinShareButton,
-  EmailShareButton,
-  FacebookIcon,
-  TwitterIcon,
-  LinkedinIcon,
-  EmailIcon,
-} from 'react-share';
-const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
-  const modalContentStyle = {
-    backgroundColor: isDarkMode ? '#333' : 'white',
-    color: isDarkMode ? 'white' : 'black',
-  };
-  return (
-    <div 
-      className="upload-modal" 
-      style={{ display: isOpen ? 'flex' : 'none' }} 
-      onClick={onClose}
-    >
-      <div 
-        className="upload-modal-content" 
-        style={modalContentStyle} 
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-header" style={{ backgroundColor: '#8b0000' }} />
-        <div className="modal-body">{children}</div>
-        <div className="modal-footer" />
-      </div>
-    </div>
-  );
-};
-const FacultyPage = () => {
-  const { facultyName } = useFaculty();
-  const { facultyId } = useParams();
-  const history = useHistory();
-  const { setAuthToken} = useContext(AuthContext);
-  const userToken = localStorage.getItem('token');
-  const [title, setTitle] = useState('');
-  const [authorFirstName, setAuthorFirstName] = useState('');
-  const [authorLastName, setAuthorLastName] = useState('');
-  const [description, setDescription] = useState('');
-  const [file, setFile] = useState(null);
-  const [img, setImg] = useState(null);
-  const [imgUrl, setImgUrl] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+
+const FacultyPage = ({ match }) => {
+  const [facultyData, setFacultyData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [uploadedDocuments] = useState([]);
-  const [favoriteResources, setFavoriteResources] = useState([]);
-  const [isStarActive] = useState(false);
-  const [alertMessage] = useState({ message: '', type: 'success' });
-  const { authToken, setIsLoggedIn } = useContext(AuthContext);
-  const location = useLocation();
-const tokenFromLink = location.state?.token;
+  const backendURL = 'http://localhost:3002';
+  const { setCurrentFaculty } = useFaculty();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-
-  const backendURL = 'http://localhost:3002/api_resource';
-
-  const authBackendURL = 'http://localhost:3002/api_auth';
-  const uploadURL = facultyId ? `${backendURL}/create/${facultyId}` : `${backendURL}/create`;
   useEffect(() => {
-    // Example API call using the token
-    const fetchData = async () => {
+    const fetchFacultyData = async () => {
       try {
-        const response = await axios.get(`/api_faculty/${facultyId}`, {
-          headers: {
-            Authorization: `Bearer ${tokenFromLink}`
-          }
-        });
-      } catch (error) {
+        const response = await axios.get(`${backendURL}/api/faculty/${match.params.facultyId}`);
+        setFacultyData(response.data);
+        setIsLoading(false);
+        setCurrentFaculty(response.data.name); // Assume the faculty name is in the response
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
       }
     };
-
-    if (tokenFromLink) {
-      fetchData();
-    }
-  }, [tokenFromLink]);
-  useEffect(() => {
-    if (!facultyId) {
-      console.error('Faculty ID is required but was not provided.');
-      history.push('/error'); 
-      return;
-    }
-    const token = localStorage.getItem('token');
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (token) {
-      axios.post(`${authBackendURL}/refreshToken`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        refreshToken 
-      })
-      .then(response => {
-        localStorage.setItem('token', response.data.accessToken);
-        setIsLoggedIn(true);
-      })
-      .catch(error => {
-        setIsLoggedIn(false);
-        localStorage.removeItem('token');
-      });
-    }
-  
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
   
@@ -122,353 +35,38 @@ const tokenFromLink = location.state?.token;
         document.documentElement.classList.remove('dark');
       }
     };
-  
     darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
   
-    return () => {
-      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-    };
-  }, [setAuthToken, facultyId, history, setIsLoggedIn]); // Include missing dependencies
-
     
-  if (!facultyId) {
-    console.error('Faculty ID is required but was not provided.');
-    return <Redirect to="/error" />;
+      return () => {
+      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+      setCurrentFaculty(null);
+    };
+    
+  }, [setCurrentFaculty]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
-  
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setError(null);
-  };
 
-  const handleAddFavorite = async (resourceId) => {
-    try {
-      await axios.post(`${backendURL}/favorite/resources/${resourceId}/favorite`, null, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      fetchFavoriteResources();
-    } catch (error) {
-      console.error('Error adding to favorites:', error);
-    }
-  };
-
-  const handleRemoveFavorite = async (resourceId) => {
-    try {
-      await axios.delete(`${backendURL}/favorite/resources/${resourceId}/unfavorite`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      fetchFavoriteResources();
-    } catch (error) {
-      console.error('Error removing from favorites:', error);
-    }
-  };
-
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleAuthorFirstNameChange = (e) => {
-    setAuthorFirstName(e.target.value);
-  };
-  const handleAuthorLastNameChange = (e) => {
-    setAuthorLastName(e.target.value);
-  };
-
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-
- 
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-        const selectedFile = e.target.files[0];
-        setFile(selectedFile);
-
-        // Create a URL for the file to be used in the UI
-        const fileUrl = URL.createObjectURL(selectedFile);
-        setImgUrl(fileUrl);
-    }
-};
-
-  
-  const handleImgChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setImg(e.target.files[0]);
-    }
-  };
-  
-  const handleUpload = async () => {
-    if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('firstname', authorFirstName);
-    formData.append('lastname', authorLastName);
-    formData.append('description', description);
-    formData.append('file', file);
-    formData.append('img', img);
-  
-    try {
-      const response = await axios.post(uploadURL, formData, {
-        headers: {
-          'Authorization': `Bearer ${userToken}` // Assuming userToken is the valid JWT token
-        },
-      });
-  
-      if (response.status === 201) {
-        setSuccessMessage('Document uploaded successfully');
-        setTitle('');
-        setAuthorFirstName('');
-        setAuthorLastName('');
-        setDescription('');
-        setFile(null);
-        setImg(null);
-        setImgUrl('');
-        setError(null);
-        setIsModalOpen(false); // Close modal after successful upload
-      }
-      else{
-        console.log(response.data);
-      }
-    } catch (error) {
-      const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
-      setError(message);
-    }
-  };
-  
-
-  const fetchFavoriteResources = async () => {
-    try {
-      const response = await axios.get(`${backendURL}/favorite/resources`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-
-      setFavoriteResources(response.data);
-    } catch (error) {
-      console.error('Error fetching favorite resources:', error);
-    }
-  };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-        <Header selectedFacultyName={facultyName} isFacultyPage={true} />
-      <h1 style={{ marginTop: '120px' }}>{facultyName}</h1>
-      <button onClick={() => setIsModalOpen(true)} className="authButton">Upload</button>
-
-      {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} isDarkMode={isDarkMode}>
-            <div className="custom-upload-modal">
-          {error && (
-            <div className="error-message">
-              <p className="error-text">{error}</p>
-            </div>
-          )}
-          {successMessage && (
-            <div className="success-message">
-              <p className="success-text">{successMessage}</p>
-            </div>
-          )}
-
-          <div className="form-container">
-          <label htmlFor="username"><h1>Upload File</h1></label>
-
-  <div className="form-group">
-    <label>Title:</label>
-    <input
-      type="text"
-      name="title"
-      value={title}
-      onChange={handleTitleChange}
-      className="inputBar"
-    />
-  </div>
-  <div className="form-group">
-    <label>Author First Name:</label>
-    <input
-      type="text"
-      name="authorFirstName"
-      value={authorFirstName}
-      onChange={handleAuthorFirstNameChange}
-      className="inputBar"
-    />
-  </div>
-  <div className="form-group">
-    <label>Author Last Name:</label>
-    <input
-      type="text"
-      name="authorLastName"
-      value={authorLastName}
-      onChange={handleAuthorLastNameChange}
-      className="inputBar"
-    />
-  </div>
-  <div className="form-group">
-    <label>Description:</label>
-    <textarea
-      name="description"
-      value={description}
-      onChange={handleDescriptionChange}
-      className="inputBar"
-    ></textarea>
-  </div>
-  <div className="form-group">
-    <label>Choose Document (PDF):</label>
-    <input
-      type="file"
-      accept="application/pdf"
-      onChange={handleFileChange}
-      className="inputBar"
-    />
-  </div>
-  <div className="form-group">
-    <label>Choose Photo for Document (JPEG, JPG, PNG):</label>
-    <input
-  type="file"
-  accept="image/jpeg, image/jpg, image/png"
-  onChange={handleImgChange}
-  className="inputBar"
-/>
-  </div>
-  </div>
-
-  {imgUrl && (
-    <div className="card">
-      <img className="uploaded-photo" src={imgUrl} alt="Document" />
-      <div className="card-body">
-        <p className="card-title">{title}</p>
-        <p className="card-text">Author First Name: {authorFirstName}</p>
-        <p className="card-text">Author Last Name: {authorLastName}</p>
-      </div>
-    </div>
-  )}
-
-        <div className="modal-footer">
-                <button onClick={closeModal} className="authButton">
-                  Close
-                </button>
-                <button onClick={handleUpload} className="authButton">
-                  Upload
-                </button>
-              </div>
-              {alertMessage.message && (
-                <div className={`alert-message ${alertMessage.type}`}>
-                  {alertMessage.message}
-                </div>
-              )}
-            </div>
-        </Modal>
-      )}
-
-      {uploadedDocuments.length > 0 && (
+      <Header isFacultyPage={true} /> 
+    <div>
+      <h1>Faculty Page</h1>
+      {facultyData && (
         <div>
-          <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
-            {uploadedDocuments.map((item, index) => (
-              <li key={index} className="card">
-                <Link to={`/resource/${item.id}`}>
-                  <h3 className="card-title">{item.title}</h3>
-                  <p className="card-text">Author: {item.author}</p>
-                  <p className="card-description">Description: {item.description}</p>
-                </Link>
-                {item.img && (
-                  <div>
-                    <img
-                      className="uploaded-photo"
-                      src={item.photo}
-                      alt="Document or Link"
-                    />
-                  </div>
-                )}
-                <div className="authButton">
-                  {item.file && (
-                    <a
-                      href={item.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={item.title || 'document'}
-                      className="authButton"
-                    >
-                      Download Document
-                    </a>
-                  )}
-                </div>
-                <div className="share-buttons">
-                  <FacebookShareButton url={item.link || ''}>
-                    <FacebookIcon size={32} round />
-                  </FacebookShareButton>
-                  <TwitterShareButton url={item.link || ''}>
-                    <TwitterIcon size={32} round />
-                  </TwitterShareButton>
-                  <LinkedinShareButton url={item.link || ''}>
-                    <LinkedinIcon size={32} round />
-                  </LinkedinShareButton>
-                  <EmailShareButton url={item.link || ''}>
-                    <EmailIcon size={32} round />
-                  </EmailShareButton>
-                </div>
-                <i
-                  className={`fas fa-star${isStarActive ? ' active' : ''}`}
-                  onClick={() => isStarActive ? handleRemoveFavorite(item.id) : handleAddFavorite(item.id)}
-                ></i>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {favoriteResources.length > 0 && (
-        <div>
-          <h2>Your Favorite Resources</h2>
-          <ul className={`card-container ${isDarkMode ? 'dark' : 'light'}`}>
-            {favoriteResources.map((item, index) => (
-              <li key={index} className="card">
-                <Link to={`/resource/${item.id}`}>
-                  <h3 className="card-title">{item.title}</h3>
-                  <p className="card-text">Author: {item.author}</p>
-                  <p className="card-description">Description: {item.description}</p>
-                </Link>
-                {item.photo && (
-                  <div> <img className="uploaded-photo" src={item.photo} alt="Document or Link" /></div>
-                )}
-                <div className="download-button-container">
-                  {item.file && (
-                    <a href={item.file} target="_blank" rel="noopener noreferrer" download={item.title || 'document'} className="download-button">
-                      Download Document
-                    </a>
-                  )}
-                </div>
-                <div className="share-buttons">
-                  <FacebookShareButton url={item.link || ''}>
-                    <FacebookIcon size={32} round />
-                  </FacebookShareButton>
-                  <TwitterShareButton url={item.link || ''}>
-                    <TwitterIcon size={32} round />
-                  </TwitterShareButton>
-                  <LinkedinShareButton url={item.link || ''}>
-                    <LinkedinIcon size={32} round />
-                  </LinkedinShareButton>
-                  <EmailShareButton url={item.link || ''}>
-                    <EmailIcon size={32} round />
-                  </EmailShareButton>
-                </div>
-                <i
-                  className="fas fa-star active"
-                  onClick={() => handleRemoveFavorite(item.id)}
-                ></i>
-              </li>
-            ))}
-          </ul>
+          <h2>{facultyData.name}</h2>
         </div>
       )}
     </div>
+    </div>
+
   );
 };
+
 export default FacultyPage;

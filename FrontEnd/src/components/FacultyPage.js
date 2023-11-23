@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
-import { useFaculty } from './context/FacultyContext';
 import axios from 'axios';
 
 const FacultyPage = ({ match }) => {
@@ -8,7 +7,6 @@ const FacultyPage = ({ match }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const backendURL = 'http://localhost:3002';
-  const { setCurrentFaculty } = useFaculty();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -17,7 +15,6 @@ const FacultyPage = ({ match }) => {
         const response = await axios.get(`${backendURL}/api/faculty/${match.params.facultyId}`);
         setFacultyData(response.data);
         setIsLoading(false);
-        setCurrentFaculty(response.data.name); // Assume the faculty name is in the response
       } catch (err) {
         setError(err.message);
         setIsLoading(false);
@@ -40,10 +37,9 @@ const FacultyPage = ({ match }) => {
     
       return () => {
       darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-      setCurrentFaculty(null);
     };
     
-  }, [setCurrentFaculty]);
+  }, []);
 
   if (isLoading) {
     return <div>Loading...</div>;

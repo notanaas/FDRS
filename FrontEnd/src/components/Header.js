@@ -63,7 +63,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
 const Header = ({
   onSearchChange,
 }) => {
-  const [setShowLoginPrompt] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
   const [email, setEmail] = useState('');
@@ -85,7 +85,6 @@ const Header = ({
   const [passwordResetEmail, setPasswordResetEmail] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
-  const [showMessage, setShowMessage] = useState(true);
   const [setForgotPasswordErrorMessage] = useState(''); 
   const { facultyId } = useParams();
   const history = useHistory();
@@ -102,15 +101,15 @@ const Header = ({
   const [successMessage, setSuccessMessage] = useState(null);
   const [alertMessage] = useState({ message: '', type: 'success' });
   const location = useLocation();
-  const backendURL = 'http://localhost:3002';
-  const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : `${backendURL}/create`;
   const userToken = localStorage.getItem('token');
+  const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
   const isFacultyPage = location.pathname.includes(`/faculty/`);
 
 const tokenFromLink = location.state?.token;
+
 const promptLogin = () => {
   setShowLoginPrompt(true);
-  setTimeout(() => setShowLoginPrompt(false), 3000);
+  setTimeout(() => setShowLoginPrompt(false), 4000); 
 };
 useEffect(() => {
   const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -145,7 +144,6 @@ useEffect(() => {
   };
 
 }, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL,isFacultyPage]);
-
   
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -342,7 +340,14 @@ useEffect(() => {
       setImg(e.target.files[0]);
     }
   };
-  
+  const handleUploadClick = () => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      setTimeout(() => setShowLoginPrompt(false), 4000);
+      return;
+    }
+    setIsModalOpen(true);
+  };
   const handleUpload = async () => {
     if (!isLoggedIn) {
       promptLogin();
@@ -404,7 +409,7 @@ useEffect(() => {
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
       <div className='left'>
-        <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
+      <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
         <div>
           <div className="logoContainer">
         <Link to="/">
@@ -415,11 +420,15 @@ useEffect(() => {
       </div>
       {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
       <div>
+      {showLoginPrompt && (
+        <div className="login-prompt">You need to be logged in to upload files.</div>
+      )}
         {isFacultyPage && (
           <div>
             <input type="text" className="inputBar" placeholder={`Search in `} onChange={onSearchChange} />
             <button className="authButton">Search</button>
-            <button onClick={() => setIsModalOpen(true)} className="authButton">Upload</button>
+           
+            <button onClick={handleUploadClick} className="authButton">Upload</button>
           </div>
         )}
       </div>

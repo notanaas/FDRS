@@ -9,7 +9,6 @@ import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile'; 
 import { AuthProvider } from './context/AuthContext';
 import Header from './Header';
-import { FacultyProvider } from './context/FacultyContext';
 import './App.css';
 
 function App() {
@@ -38,7 +37,6 @@ function App() {
 
   return (
     <Router>
-    <FacultyProvider> {/* Move FacultyProvider outside AuthProvider */}
       <AuthProvider>
         <div className="App">
           <Header />
@@ -48,13 +46,12 @@ function App() {
               <Route path="/admin" component={AdminPage} />
               <Route path="/reset-password" component={PasswordReset} />
               <Route path="/my-profile" component={MyProfile} />
-              <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} />} />
+              <Route path="/faculty/:facultyId" component={Header} />
               <Route path="/resource/:resourceId" render={(props) => <ResourcePage {...props} resources={resources} />} />
             </Switch>
           </div>
         </div>
       </AuthProvider>
-    </FacultyProvider>
   </Router>
   );
 }

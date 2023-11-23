@@ -20,18 +20,16 @@ const FacultyButtons = () => {
     fetchFaculties();
   }, []);
 
-  
-
   return (
     <div className='sides'>
       <h1>Faculties</h1>
       {faculties.length > 0 ? (
         faculties.map((faculty) => (
           <Link 
-            key={faculty._id} 
+            key={faculty._id} // Make sure each faculty has a unique _id
             to={{
               pathname: `/faculty/${faculty._id}`,
-              state: { token: userToken } // Pass the token in the state
+              state: { token: userToken }
             }}
             className="facultyauthButtonLink" 
           >

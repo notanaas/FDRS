@@ -22,6 +22,26 @@
   }
 
 }
+.login-prompt {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffc107; /* Yellow shade for warning message */
+  color: #000;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  animation: fadeOut 4s forwards; /* Animation to fade out the prompt */
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 
 /* Add this to your CSS file */
 

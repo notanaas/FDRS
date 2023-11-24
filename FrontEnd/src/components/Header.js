@@ -10,15 +10,12 @@ const Sidebar = ({ onClose }) => {
   const goToUserProfile = () => {
     history.push('/my-profile');
   };
-  useEffect(() => {
-    console.log("Login status in Sidebar:", isLoggedIn);
-  }, [isLoggedIn]);
   return (
     <div className="sidebar" >
       {isLoggedIn && (
   <button onClick={goToUserProfile} className="facultyauthButton">My Profile</button>
 )}
-      <FacultyButtons />
+    <FacultyButtons />
     </div>
   );
 }
@@ -104,14 +101,19 @@ const Header = ({
   const userToken = localStorage.getItem('token');
   const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
   const isFacultyPage = location.pathname.includes(`/faculty/`);
-
-const tokenFromLink = location.state?.token;
+  const tokenFromLink = location.state?.token;
 
 const promptLogin = () => {
   setShowLoginPrompt(true);
   setTimeout(() => setShowLoginPrompt(false), 4000); 
 };
 useEffect(() => {
+  if (location.pathname.includes('/faculty')) {
+    setIsSidebarOpen(false);
+  } else {
+    setIsSidebarOpen(true);
+
+  }
   const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
   setIsDarkMode(prefersDarkMode);
 
@@ -142,8 +144,8 @@ useEffect(() => {
     return () => {
     darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
   };
-
-}, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL,isFacultyPage]);
+  
+}, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL,isFacultyPage,location]);
   
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -417,20 +419,22 @@ useEffect(() => {
         </Link>
       </div>
         </div>
+        {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
+
       </div>
-      {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
       <div>
       {showLoginPrompt && (
         <div className="login-prompt">You need to be logged in to upload files.</div>
       )}
         {isFacultyPage && (
+          
           <div>
             <input type="text" className="inputBar" placeholder={`Search in `} onChange={onSearchChange} />
             <button className="authButton">Search</button>
-           
             <button onClick={handleUploadClick} className="authButton">Upload</button>
           </div>
         )}
+
       </div>
       <div className="authButtons">
   {isLoggedIn ? (

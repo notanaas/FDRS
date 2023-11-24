@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
 import axios from 'axios';
 
 const FacultyPage = ({ match }) => {
@@ -51,9 +50,7 @@ const FacultyPage = ({ match }) => {
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-      <Header isFacultyPage={true} /> 
     <div>
-      <h1>Faculty Page</h1>
       {facultyData && (
         <div>
           <h2>{facultyData.name}</h2>

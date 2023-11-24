@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
-import FacultyPage from './FacultyPage';
-import AdminPage from './AdminPage';
 import ResourcePage from './ResourcePage';
 import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile'; 
@@ -43,11 +41,12 @@ function App() {
           <div className="contentContainer">
             <Switch>
               <Route path="/welcomingpage" exact component={WelcomingPage} />
-              <Route path="/admin" component={AdminPage} />
+
               <Route path="/reset-password" component={PasswordReset} />
               <Route path="/my-profile" component={MyProfile} />
               <Route path="/faculty/:facultyId" component={Header} />
               <Route path="/resource/:resourceId" render={(props) => <ResourcePage {...props} resources={resources} />} />
+
             </Switch>
           </div>
         </div>

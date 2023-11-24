@@ -192,9 +192,7 @@ useEffect(() => {
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
   };
-  const goToAdminPage = () => {
-    history.push('/admin');
-  };
+ 
   
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
@@ -440,9 +438,7 @@ useEffect(() => {
   {isLoggedIn ? (
     <div className='button'>
       <button className="authButton" onClick={handleLogout}>Logout</button>
-      {isLoggedIn && isAdmin && (
-      <button onClick={goToAdminPage}className="authButton">Admin Page</button>
-    )}
+     
     </div>
       ) : (
         <div className='logoReg'>

@@ -23,7 +23,7 @@ exports.profile = asyncHandler(async (req, res, next) => {
   
 exports.resource_authorize = asyncHandler(async(req,res,next)=>
 {
-    const resource = await Resource.find({isAuthorized:false}).exec()
+    const resource = await Resource.find({isAuthorized:false}).populate("User").exec()
     if(!resource)
     {
         return res.status(404).json({message:"no resources available"})

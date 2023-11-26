@@ -124,7 +124,7 @@ exports.Resource_create_post = [
 
 
 exports.pdf_download = asyncHandler(async (req, res, next) => {
-  const UPLOADS_DIR = path.join(__dirname, '..', 'uploads'); // Adjust the path as necessary
+  const UPLOADS_DIR = path.join(__dirname,'..', 'uploads'); // Adjust the path as necessary
   const ResourceId = req.params.id;
 
   try {
@@ -158,8 +158,6 @@ exports.pdf_download = asyncHandler(async (req, res, next) => {
     return next({ status: 500, message: 'Internal server error.' });
   }
 });
-
-
 
 
 

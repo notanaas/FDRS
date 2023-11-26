@@ -3,7 +3,7 @@ const UserFavs = require('../models/UserFavRes')
 const Resource = require('../models/Resources')
 const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
-const fs = require("fs")
+const fsPromises = require("fs").promises
 const path = require("path");
 
 
@@ -32,33 +32,38 @@ exports.resource_authorize = asyncHandler(async(req,res,next)=>
     }
     return res.status(200).json({resource:resource})
 })
+
+
 exports.admin_acceptance = asyncHandler(async (req, res, next) => {
-    let flag = false;
-    const btnAccept = req.body.accept;
+    try {
+        let flag = false;
+        const btnAccept = req.body.accept;
 
-    if (flag !== btnAccept) {
-        flag = true;
-        const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
-        res.status(200).json({ accepted:"resource accepeted" , data: resource });
+        if (flag !== btnAccept) {
+            flag = true;
+            const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
+            return res.status(200).json({ accepted: "resource accepted", data: resource });
+        }
 
+        const resource = await Resource.findByIdAndDelete(req.params.id).exec();
+
+        if (!resource) {
+            return res.status(404).json({ message: "Resource not found" });
+        }
+
+        await fsPromises.unlink(resource.file_path);
+
+        // Assuming resource.Cover contains the full path
+        await fsPromises.unlink(resource.Cover);
+
+        res.status(200).json({ declined: "resource declined" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-    const uploadDir = path.join(__dirname, '..', 'uploads'); // Adjust the path as necessary
-    console.log(uploadDir)
-    const resource = await Resource.findByIdAndDelete(req.params.id).exec()
-    fs.unlink(`${uploadDir}/${resource.file_path}`,(err)=>{
-        if(err)
-        {
-            res.status(404).json({message:"file not found"})
-        }
-    })
-    fs.unlink(`${uploadDir}/${resource.file_path}`,(err)=>{
-        if(err)
-        {
-            res.status(404).json({message:"file not found"})
-        }
-    })
-    res.status(200).json({declined:"resource declined"})
-})
+});
+
+
 exports.updateProfile = [
     body('newUsername', 'New Username must be required')
         .trim()

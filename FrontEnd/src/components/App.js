@@ -3,6 +3,8 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import ResourcePage from './ResourcePage';
+import FacultyPage from './FacultyPage';
+
 import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile'; 
 import { AuthProvider } from './context/AuthContext';
@@ -45,6 +47,8 @@ function App() {
               <Route path="/reset-password" component={PasswordReset} />
               <Route path="/my-profile" component={MyProfile} />
               <Route path="/faculty/:facultyId" component={Header} />
+              <Route path="/faculty/:facultyId" component={FacultyPage} />
+
               <Route path="/resource/:resourceId" render={(props) => <ResourcePage {...props} resources={resources} />} />
 
             </Switch>

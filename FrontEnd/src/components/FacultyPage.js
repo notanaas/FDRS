@@ -1,64 +1,47 @@
 import React, { useState, useEffect } from 'react';
+import DocumentCard from './DocumentCard'; 
 import axios from 'axios';
 
 const FacultyPage = ({ match }) => {
-  const [facultyData, setFacultyData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [resources, setResources] = useState([]);
   const [error, setError] = useState(null);
-  const backendURL = 'http://localhost:3002';
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const backendURL = 'http://localhost:3002'; 
 
   useEffect(() => {
-    const fetchFacultyData = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/api/faculty/${match.params.facultyId}`);
-        setFacultyData(response.data);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setIsLoading(false);
-      }
-    };
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(prefersDarkMode);
-  
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const darkModeChangeListener = (e) => {
-      setIsDarkMode(e.matches);
-      if (e.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
-    darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
-  
-    
-      return () => {
-      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-    };
-    
-  }, []);
+    const fetchResources = async () => {
+      const url = `${backendURL}/api_resource/faculty/${match.params.facultyId}`;
+      console.log('Requesting URL:', url); // Log the URL being requested
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+      try {
+        const response = await axios.get(url);
+        console.log('Resources fetched:', response.data); // Log the response data
+        setResources(response.data.Resource_list);
+      } catch (error) {
+        console.error('Error fetching resources:', error);
+        setError(error.message);
+      }
+    };
+
+    fetchResources();
+  }, [match.params.facultyId]);
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-    <div>
-      {facultyData && (
-        <div>
-          <h2>{facultyData.name}</h2>
-        </div>
-      )}
+    <div className="faculty-page">
+      <h1>Faculty Resources</h1>
+      <div className="resources-container">
+        {resources.length > 0 ? (
+          resources.map((resource) => (
+            <DocumentCard key={resource._id} document={resource} />
+          ))
+        ) : (
+          <p>No resources found.</p>
+        )}
+      </div>
     </div>
-    </div>
-
   );
 };
 

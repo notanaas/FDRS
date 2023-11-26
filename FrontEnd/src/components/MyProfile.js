@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
+import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
 import './App.css';
 
 const MyProfile = () => {
@@ -139,6 +140,7 @@ const MyProfile = () => {
     }
   };
 
+
   const authorizeResource = async (resourceId) => {
     try {
       const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`, 
@@ -156,69 +158,18 @@ const MyProfile = () => {
   const unauthorizeResource = async (resourceId) => {
     try {
       const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`, 
-        { accept: false }, // Set to false to decline the resource
+        { accept: false }, 
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       if (response.status === 200) {
-        // Update the UI to reflect that the resource has been unauthorized
         setDocuments(prevDocuments => prevDocuments.filter(doc => doc._id !== resourceId));
-        // Add any success message or UI update here if needed
       }
     } catch (error) {
       console.error('Error unauthorizing the resource:', error);
-      // Handle error, show message to user
     }
   };
   
-  
-  const DocumentCard = ({ document }) => {
-    const coverImageUrl = `${backendURL}/uploads/${encodeURIComponent(document.Cover)}`;
-  const fileDownloadUrl = `${backendURL}/uploads/${encodeURIComponent(document.file_path)}`;
-
-
-    
-  const handleDownload = async (documentId) => {
-    try {
-      const url = `${backendURL}/api_resource/download/${documentId}`;
-      const response = await axios.get(url, {
-        responseType: 'blob',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-  
-      const file = new Blob([response.data], { type: 'application/pdf' });
-      const downloadFileName = document.Title ? `${document.Title}.pdf` : 'document.pdf';
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(file);
-      link.download = downloadFileName;
-      document.body.appendChild(link); 
-      link.click();
-      document.body.removeChild(link); 
-      window.URL.revokeObjectURL(link.href);
-    } catch (error) {
-      console.error('Download error:', error);
-    }
-  };
-  
-    return (
-      <div className="document-card">
-  <img src={coverImageUrl} alt="Document cover" className="document-cover" />
-  <div className="document-info">
-    <h3 className="document-title">{document.Title}</h3>
-    <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
-    <p className="document-description">Desciprtion:{document.Description}</p>
-    <p>Faculty: {document.Faculty && document.Faculty.FacultyName ? document.Faculty.FacultyName : 'N/A'}</p>
-  </div>
-  <div className="document-actions">
-    <button onClick={() => handleDownload(document._id)} className="authButton">Download</button>
-    <button onClick={() => authorizeResource(document._id)} className="authButton">Authorize</button>
-    <button onClick={() => unauthorizeResource(document._id)} className="authButton">Unauthorize</button>
-  </div>
-</div>
-  );
-};
-
+ 
   if (!profile.username) {
     return <div>Loading...</div>;
   }

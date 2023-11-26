@@ -26,15 +26,12 @@ const FacultyButtons = () => {
       {faculties.length > 0 ? (
         faculties.map((faculty) => (
           <Link 
-            key={faculty._id} // Make sure each faculty has a unique _id
-            to={{
-              pathname: `/faculty/${faculty._id}`,
-              state: { token: userToken }
-            }}
+            key={faculty._id} // Ensure '_id' is the correct property name
+            to={`/faculty/${faculty._id}`} // Simplified pathname for clarity
             className="facultyauthButtonLink" 
           >
             <button className="facultyauthButton">
-              {faculty.FacultyName}
+              {faculty.FacultyName} 
             </button>
           </Link>
         ))

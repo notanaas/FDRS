@@ -16,7 +16,6 @@ const MyProfile = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   
-
   const fetchUnauthorizedResources = async () => {
     try {
       const response = await axios.get(`${backendURL}/api_user/resource/authorize`, {
@@ -176,37 +175,47 @@ const MyProfile = () => {
     const coverImageUrl = `${backendURL}/uploads/${encodeURIComponent(document.Cover)}`;
   const fileDownloadUrl = `${backendURL}/uploads/${encodeURIComponent(document.file_path)}`;
 
-    const handleDownload = async (documentId) => {
-      try {
-        const url = `${backendURL}/api_resource/download/${documentId}`;
-        const response = await axios.get(url, {
-          responseType: 'blob', 
-          headers: {
-            Authorization: `Bearer ${authToken}`, 
-          },
-        });
-        const file = new Blob(
-          [response.data], 
-          { type: 'application/pdf' } 
-        );
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(file);
-        link.download = 'document.pdf'; 
-        link.click();
-        window.URL.revokeObjectURL(link.href);
-      } catch (error) {
-        console.error('Download error:', error);
-      }
-    };
+
+    
+  const handleDownload = async (documentId) => {
+    try {
+      const url = `${backendURL}/api_resource/download/${documentId}`;
+      const response = await axios.get(url, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+  
+      const file = new Blob([response.data], { type: 'application/pdf' });
+      const downloadFileName = document.Title ? `${document.Title}.pdf` : 'document.pdf';
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(file);
+      link.download = downloadFileName;
+      document.body.appendChild(link); 
+      link.click();
+      document.body.removeChild(link); 
+      window.URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
+  
     return (
       <div className="document-card">
-        <h3>{document.Title}</h3>
-      <p>Author: {document.Author_first_name} {document.Author_last_name}</p>
-      <img src={coverImageUrl} alt="Document cover" />
-      <button onClick={() => handleDownload(document._id)}className="authButton">Download</button>
-      <button onClick={() => authorizeResource(document._id)}className="authButton">Authorize</button>
-      <button onClick={() => unauthorizeResource(document._id)}className="authButton">Unauthorize</button>
-    </div>
+  <img src={coverImageUrl} alt="Document cover" className="document-cover" />
+  <div className="document-info">
+    <h3 className="document-title">{document.Title}</h3>
+    <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
+    <p className="document-description">Desciprtion:{document.Description}</p>
+    <p>Faculty: {document.Faculty && document.Faculty.FacultyName ? document.Faculty.FacultyName : 'N/A'}</p>
+  </div>
+  <div className="document-actions">
+    <button onClick={() => handleDownload(document._id)} className="authButton">Download</button>
+    <button onClick={() => authorizeResource(document._id)} className="authButton">Authorize</button>
+    <button onClick={() => unauthorizeResource(document._id)} className="authButton">Unauthorize</button>
+  </div>
+</div>
   );
 };
 
@@ -251,8 +260,8 @@ const MyProfile = () => {
         <DocumentCard 
           key={doc._id} 
           document={doc}
-          onAuthorize={authorizeResource} // Pass the authorizeResource function
-          onUnauthorize={unauthorizeResource} // Pass the unauthorizeResource function
+          onAuthorize={authorizeResource} 
+          onUnauthorize={unauthorizeResource} 
         />
       ))}
     </div>

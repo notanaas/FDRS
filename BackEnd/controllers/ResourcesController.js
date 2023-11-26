@@ -7,6 +7,7 @@ const {body,validationResult} = require("express-validator")
 const path  = require("path")
 const { upload } = require('../multerconfig');
 const { comment } = require("./CommentController")
+const fs = require('fs')
 
 
 // Get all resources
@@ -122,19 +123,50 @@ exports.Resource_create_post = [
 ];
 
 
-exports.pdf_download = asyncHandler(async(req,res,next)=>
-{
-  const UPLOADS_DIR = path.join(__dirname, '../uploads');
-  const ResourceId = req.params.id
+exports.pdf_download = asyncHandler(async (req, res, next) => {
+  const UPLOADS_DIR = path.join(__dirname, '..', 'uploads'); // Adjust the path as necessary
+  const ResourceId = req.params.id;
 
-    const resource  = await Resource.findById(ResourceId)
-    if(!resource)
-    {
+  try {
+    const resource = await Resource.findById(ResourceId);
+
+    if (!resource) {
+      console.error('PDF not found. Resource ID:', ResourceId);
       return res.status(404).json({ message: 'PDF not found.' });
     }
-    const filePath = path.join(UPLOADS_DIR, path.basename(resource.file_path));
-    res.download(filePath)
-})
+
+    const fileName = path.basename(resource.file_path);
+    const filePath = path.join(UPLOADS_DIR, fileName);
+
+    // Set Content-Disposition header
+    res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+
+    // Log the file path for debugging purposes
+    console.log('File Path:', filePath);
+
+    // Check if the file exists before attempting to download
+    if (fs.existsSync(filePath)) {
+      res.download(filePath);
+    } else {
+      console.error('PDF file not found:', filePath);
+      // Use the 'next' function to pass the error to the error-handling middleware
+      return next({ status: 404, message: 'PDF file not found.' });
+    }
+  } catch (err) {
+    console.error('Error downloading PDF:', err);
+    // Use the 'next' function to pass the error to the error-handling middleware
+    return next({ status: 500, message: 'Internal server error.' });
+  }
+});
+
+
+
+
+
+
+
+
+
   
 exports.search_resource = asyncHandler(async (req, res, next) => {
   const searchTerm = req.query.term;

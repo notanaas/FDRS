@@ -4,6 +4,8 @@ const Resource = require('../models/Resources')
 const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const fs = require("fs")
+const path = require("path");
+
 
 
 exports.profile = asyncHandler(async (req, res, next) => {
@@ -41,6 +43,7 @@ exports.admin_acceptance = asyncHandler(async (req, res, next) => {
 
     }
     const uploadDir = path.join(__dirname, '..', 'uploads'); // Adjust the path as necessary
+    console.log(uploadDir)
     const resource = await Resource.findByIdAndDelete(req.params.id).exec()
     fs.unlink(`${uploadDir}/${resource.file_path}`,(err)=>{
         if(err)

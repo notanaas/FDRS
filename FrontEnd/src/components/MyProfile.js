@@ -5,7 +5,7 @@ import './App.css';
 
 const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
-  const [documents, setDocuments] = useState([]); // State to store documents
+  const [documents, setDocuments] = useState([]); 
   const { authToken } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isEditMode, setIsEditMode] = useState(false);
@@ -14,15 +14,8 @@ const MyProfile = () => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [editedProfile, setEditedProfile] = useState({ username: '', email: '' });
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   
-
-
-  useEffect(() => {
-    if (profile.isAdmin) {
-      
-      fetchUnauthorizedResources();
-    }
-  }, [profile.isAdmin, authToken, backendURL]);
 
   const fetchUnauthorizedResources = async () => {
     try {
@@ -37,6 +30,7 @@ const MyProfile = () => {
       setTimeout(() => setShowErrorMessage(false), 5000);
     }
   };
+  
   const handlePasswordResetRequest = async () => {
     try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`, { email: profile.email }, {
@@ -149,17 +143,14 @@ const MyProfile = () => {
   const authorizeResource = async (resourceId) => {
     try {
       const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`, 
-        { accept: true }, // Set to true to accept the resource
+        { accept: true }, 
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       if (response.status === 200) {
-        // Update the UI to reflect that the resource has been authorized
         setDocuments(prevDocuments => prevDocuments.filter(doc => doc._id !== resourceId));
-        // Add any success message or UI update here if needed
       }
     } catch (error) {
       console.error('Error authorizing the resource:', error);
-      // Handle error, show message to user
     }
   };
   
@@ -182,6 +173,8 @@ const MyProfile = () => {
   
   
   const DocumentCard = ({ document }) => {
+    const coverImageUrl = `${backendURL}/uploads/${encodeURIComponent(document.Cover)}`;
+  const fileDownloadUrl = `${backendURL}/uploads/${encodeURIComponent(document.file_path)}`;
 
     const handleDownload = async (documentId) => {
       try {
@@ -207,12 +200,12 @@ const MyProfile = () => {
     };
     return (
       <div className="document-card">
-      <h3>{document.ResourceTitle}</h3>
-      <p>Author: {document.ResourceAuthorFirstName} {document.ResourceAuthorLastName}</p>
-      <img src={`${backendURL}/${document.Cover}`} alt="Document cover" />
-      <button onClick={() => handleDownload(document._id)}>Download</button>
-      <button onClick={() => authorizeResource(document._id)}>Authorize</button>
-      <button onClick={() => unauthorizeResource(document._id)}>Unauthorize</button>
+        <h3>{document.Title}</h3>
+      <p>Author: {document.Author_first_name} {document.Author_last_name}</p>
+      <img src={coverImageUrl} alt="Document cover" />
+      <button onClick={() => handleDownload(document._id)}className="authButton">Download</button>
+      <button onClick={() => authorizeResource(document._id)}className="authButton">Authorize</button>
+      <button onClick={() => unauthorizeResource(document._id)}className="authButton">Unauthorize</button>
     </div>
   );
 };

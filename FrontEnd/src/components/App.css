@@ -138,23 +138,7 @@
   align-items: center;
 }
 
-.approve-button, .disapprove-button {
-  margin-top: 10px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
 
-.approve-button {
-  background-color: #28a745;
-  color: white;
-}
-
-.disapprove-button {
-  background-color: #dc3545;
-  color: white;
-}
 
 .success-message {
   padding: 10px;

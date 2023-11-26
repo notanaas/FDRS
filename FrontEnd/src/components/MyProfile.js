@@ -178,7 +178,7 @@ const MyProfile = () => {
 
     const handleDownload = async (documentId) => {
       try {
-        const url = `${backendURL}/api_resource/pdf_download/${documentId}`;
+        const url = `${backendURL}/api_resource/download/${documentId}`;
         const response = await axios.get(url, {
           responseType: 'blob', 
           headers: {

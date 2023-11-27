@@ -1,6 +1,6 @@
 const Resource = require("../models/Resources")
 const Faculty = require("../models/Faculty")
-const comments = require("../models/Comment")
+const Comment = require("../models/Comment")
 const Favorite = require("../models/UserFavRes")
 const asyncHandler = require("express-async-handler")
 const {body,validationResult} = require("express-validator")
@@ -39,11 +39,9 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
 // Display detail page for a specific Resource.
 exports.Resource_detail = asyncHandler(async (req, res, next) => {
   // Get details of books, book instances for specific Resource
-  const [resource,comments] = await Promise.all([
-    Resource.findById(req.params.id).populate("Faculty").populate("User").exec(),
-    comments.find({Resource : req.params.id}).populate("User").exec()
-  ])
-  const numComments = await Comment.countDocuments({ Resource: req.params.id });
+    const resource = await Resource.findById(req.params.id).populate("Faculty").populate("User").exec()
+    const comments =  await Comment.find({Resource : resource._id}).populate("User").exec()
+    const numComments = await Comment.countDocuments({ Resource: resource._id });
   if(resource == null)
   {
     // no Results

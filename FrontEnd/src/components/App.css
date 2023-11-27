@@ -22,6 +22,51 @@
   }
 
 }
+.resource-page {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  max-width: 800px;
+}
+
+.resource-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.cover-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.download-button {
+  padding: 10px;
+  background-color: #0044cc;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.comments-container {
+  margin-top: 20px;
+}
+
+.add-comment textarea {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.add-comment button {
+  margin-top: 10px;
+}
+
+@media (min-width: 600px) {
+  .resource-header {
+    flex-direction: row;
+  }
+}
+
 .login-prompt {
   position: absolute;
   top: 10px;

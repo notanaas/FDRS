@@ -36,75 +36,39 @@ const ResourcePage = () => {
   if (!resourceDetails) {
     return <div>Loading resource...</div>;
   }
-  const addComment = async (newComment) => {
-    if (!isLoggedIn) {
-      alert('You need to log in to add a comment.');
-      return;
-    }
-
-    try {
-      const response = await axios.post(`${backendURL}/api_comment/comments/${resourceId}`, {
-        comment: newComment
-      }, {
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
-      setComments(prevComments => [response.data.comment, ...prevComments]);
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    }
-  };
-
-  const deleteComment = async (commentId, commentUserId) => {
-    if (userId === commentUserId || isAdmin) {
-      try {
-        // Removed 'const response =' as it's not being used.
-        await axios.delete(`${backendURL}/api_comment/delete/${commentId}`, {
-          headers: { Authorization: `Bearer ${authToken}` }
-        });
-        setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
-      } catch (error) {
-        console.error('Error deleting comment:', error);
-      }
-    } else {
-      alert('You are not authorized to delete this comment.');
-    }
-  };
-
-
-  const updateComment = async (commentId, updatedCommentText) => {
-    if (!isLoggedIn) {
-      alert('You need to log in to update a comment.');
-      return;
-    }
-
-    try {
-      const response= await axios.put(`${backendURL}/api_comment/update/${commentId}`, {
-        NewComment: updatedCommentText
-      }, {
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
-      // Assuming the updated comment is returned in the response. Adjust as needed.
-      setComments(prevComments => prevComments.map(comment => comment.id === commentId ? response.data.comment : comment));
-    } catch (error) {
-      console.error('Error updating comment:', error);
-    }
-  };
-
+  
   
   return (
     <div className="resource-page">
-    <Header />
-    <div className="resource-content">
+      <div className="resource-header">
+        {resourceDetails.coverImageUrl && (
+          <div className="resource-cover">
+            <img src={resourceDetails.coverImageUrl} alt="Resource Cover" className="cover-image"/>
+          </div>
+        )}
+        <div className="resource-details">
       <h1>{resourceDetails.Title}</h1>
       <p><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
       <p><strong>Description:</strong> {resourceDetails.Description}</p>
       <p><strong>Faculty:</strong> {resourceDetails.Faculty.name}</p>
       <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
       <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
+      {resourceDetails.fileUrl && (
+            <a href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
+              Download
+            </a>
+          )}
+        </div>
+      </div>
+      <Comments
+        resourceDetails={resourceDetails}
+        authToken={authToken}
+        isLoggedIn={isLoggedIn}
+        isAdmin={isAdmin}
+        backendURL={backendURL}
+      />
     </div>
-    <Comments comments={comments} />
-  </div>
-);
+  );
 };
 
 export default ResourcePage;

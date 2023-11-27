@@ -27,8 +27,6 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
       .populate("Faculty")
       .populate("User")
       .exec();
-
-    console.log('Resources found:', allResources);
     return res.status(200).json({ resource_list: allResources });
   } catch (error) {
     console.error('Error fetching resources:', error);
@@ -135,9 +133,6 @@ exports.pdf_download = asyncHandler(async (req, res, next) => {
       return res.status(404).json({ message: 'PDF not found.' });
     }
 
-
-    // Set Content-Disposition header
-    res.setHeader('Content-Disposition', 'attachment; filename=' + resource.file_path);
 
     // Log the file path for debugging purposes
     console.log('File Path:', resource.file_path);

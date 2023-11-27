@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import ResourcePage from './ResourcePage';
 import FacultyPage from './FacultyPage';
-
+import Header from './Header';
 import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile'; 
 import { AuthProvider } from './context/AuthContext';
@@ -36,6 +36,8 @@ function App() {
               <Route path="/welcomingpage" exact component={WelcomingPage} />
               <Route path="/reset-password" component={PasswordReset} />
               <Route path="/my-profile" component={MyProfile} />
+              <Route path="/faculty/:facultyId" component={Header} />
+
               <Route path="/faculty/:facultyId" component={FacultyPage} />
               <Route path="/resource/:resourceId" component={ResourcePage} />
 

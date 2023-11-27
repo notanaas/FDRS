@@ -277,6 +277,9 @@ useEffect(() => {
       localStorage.removeItem('refreshToken');
       setIsLoggedIn(false);
       setIsAdmin(false);
+  
+      // Redirect to the welcome page
+      history.push('/welcomingpage'); // Replace '/welcome' with the path to your welcome page
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -412,7 +415,7 @@ useEffect(() => {
       <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
         <div>
           <div className="logoContainer">
-        <Link to="/">
+        <Link to="/welcomingpage">
           <img src="/logo.png" alt="Logo" className="logo" />
         </Link>
       </div>

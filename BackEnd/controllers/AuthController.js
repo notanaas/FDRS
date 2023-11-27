@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs")
 const Users = require("../models/Users")
 const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
-const crypto = require('crypto');  // for refreshTokens
 const nodemailer = require('nodemailer');
 exports.register = [
     body('username' , "Username Must be required")

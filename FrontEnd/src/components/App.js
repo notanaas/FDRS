@@ -24,16 +24,7 @@ function App() {
     configureAxios();
   }, []);
 
-  // Define your resources here
-  const resources = [
-    {
-      id: 1,
-      title: 'Resource 1',
-      author: 'Author 1',
-      imageUrl: 'resource1.jpg',
-      documentUrl: 'resource1.pdf',
-    },
-  ];
+ 
 
   return (
     <Router>
@@ -43,14 +34,10 @@ function App() {
           <div className="contentContainer">
             <Switch>
               <Route path="/welcomingpage" exact component={WelcomingPage} />
-
               <Route path="/reset-password" component={PasswordReset} />
               <Route path="/my-profile" component={MyProfile} />
               <Route path="/faculty/:facultyId" component={Header} />
               <Route path="/faculty/:facultyId" component={FacultyPage} />
-
-              <Route path="/resource/:resourceId" render={(props) => <ResourcePage {...props} resources={resources} />} />
-
             </Switch>
           </div>
         </div>

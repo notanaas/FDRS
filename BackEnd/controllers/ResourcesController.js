@@ -23,15 +23,14 @@ exports.resource_list = asyncHandler(async (req, res, next) => {
     }
 
     // Use the faculty's unique ID to query resources
-    const allResources = await Resource.find({ Faculty: faculty._id, isAuthorized : true }, 
-      "ResourceTitle ResourceAuthor Description ResourceCover file_path Cover")
+    const allResources = await Resource.find({ Faculty: faculty._id, isAuthorized : true },)
       .sort({ title: 1 })
       .populate("Faculty")
       .populate("User")
       .exec();
   
     // Now 'allResources' will have the 'file_path' and 'Cover' fields included
-    res.status(200).json({ Resource_list: allResources });
+    return res.status(200).json({ Resource_list: allResources });
 
   });
 // Display detail page for a specific Resource.
@@ -135,20 +134,18 @@ exports.pdf_download = asyncHandler(async (req, res, next) => {
       return res.status(404).json({ message: 'PDF not found.' });
     }
 
-    const fileName = path.basename(resource.file_path);
-    const filePath = path.join(UPLOADS_DIR, fileName);
 
     // Set Content-Disposition header
-    res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+    res.setHeader('Content-Disposition', 'attachment; filename=' + resource.file_path);
 
     // Log the file path for debugging purposes
-    console.log('File Path:', filePath);
+    console.log('File Path:', resource.file_path);
 
     // Check if the file exists before attempting to download
-    if (fs.existsSync(filePath)) {
-      res.download(filePath);
+    if (fs.existsSync(resource.file_path)) {
+      res.download(resource.file_path);
     } else {
-      console.error('PDF file not found:', filePath);
+      console.error('PDF file not found:', resource.file_path);
       // Use the 'next' function to pass the error to the error-handling middleware
       return next({ status: 404, message: 'PDF file not found.' });
     }

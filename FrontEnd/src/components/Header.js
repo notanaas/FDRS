@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link, useHistory,useLocation } from 'react-router-dom';
+import {  Link, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
+import { RouteParamsContext } from './context/RouteParamsContext'; // Import the provider
+
 const Sidebar = ({ onClose }) => {
   const { isLoggedIn } = useContext(AuthContext); 
   const history = useHistory();
@@ -83,7 +85,6 @@ const Header = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [setForgotPasswordErrorMessage] = useState(''); 
-  const { facultyId } = useParams();
   const history = useHistory();
   const { setAuthToken} = useContext(AuthContext);
   const [title, setTitle] = useState('');
@@ -99,9 +100,11 @@ const Header = ({
   const [alertMessage] = useState({ message: '', type: 'success' });
   const location = useLocation();
   const userToken = localStorage.getItem('token');
-  const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const tokenFromLink = location.state?.token;
+  const { routeParams } = useContext(RouteParamsContext);
+  const facultyId = routeParams ? routeParams.facultyId : null;
+  const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
 
 const promptLogin = () => {
   setShowLoginPrompt(true);
@@ -368,6 +371,9 @@ useEffect(() => {
     formData.append('description', description);
     formData.append('file', file);
     formData.append('img', img);
+
+    // Append facultyId to the formData
+    
   
     if (isAdmin) {
       formData.append('isApproved', true);

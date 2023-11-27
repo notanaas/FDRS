@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import DocumentCard from './DocumentCard'; 
 import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
+import { RouteParamsContext } from './context/RouteParamsContext'; // Import the provider
 
 const FacultyPage = () => {
   const [resources, setResources] = useState([]);
   const [error, setError] = useState('');
-  const { facultyId } = useParams();
   const history = useHistory();
   const backendURL = 'http://localhost:3002';
+  const { facultyId } = useParams();
+  const { setRouteParams } = useContext(RouteParamsContext);
 
+  useEffect(() => {
+    setRouteParams({ facultyId });
+  }, [facultyId, setRouteParams]);
   useEffect(() => {
     const fetchResources = async () => {
       try {
@@ -35,6 +40,7 @@ const FacultyPage = () => {
   return (
     <div>
       <h1>Resources for Faculty</h1>
+
       {resources.length > 0 ? (
         resources.map((resource) => (
           <DocumentCard key={resource._id} document={resource} onClick={() => handleCardClick(resource._id)} />

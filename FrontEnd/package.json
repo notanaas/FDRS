@@ -11,6 +11,7 @@
     "cors": "^2.8.5",
     "font-awesome": "^4.7.0",
     "jwt-decode": "^4.0.0",
+    "luxon": "^3.4.4",
     "mongoose": "^X.X.X",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",

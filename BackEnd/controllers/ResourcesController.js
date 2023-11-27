@@ -12,27 +12,30 @@ const fs = require('fs')
 
 // Get all resources
 exports.resource_list = asyncHandler(async (req, res, next) => {
-    // Extract the faculty name from the URL parameter
-    const FacultyID = req.params.id;
-  
-    // Find the faculty based on the name (you may need to adjust this based on your data model)
-    const faculty = await Faculty.findById( FacultyID);
-    console.log(faculty)
+  const FacultyID = req.params.id;
+  console.log('Faculty ID received:', FacultyID);
+
+  try {
+    const faculty = await Faculty.findById(FacultyID);
     if (!faculty) {
+      console.log('Faculty not found');
       return res.status(404).json({ error: 'Faculty not found' });
     }
 
-    // Use the faculty's unique ID to query resources
-    const allResources = await Resource.find({ Faculty: faculty._id, isAuthorized : true },)
-      .sort({ title: 1 })
+    const allResources = await Resource.find({ Faculty: faculty._id, isAuthorized: true })
+      .sort({ Title: 1 }) // Changed 'title' to 'Title' to match your schema
       .populate("Faculty")
       .populate("User")
       .exec();
-  
-    // Now 'allResources' will have the 'file_path' and 'Cover' fields included
-    return res.status(200).json({ Resource_list: allResources });
 
-  });
+    console.log('Resources found:', allResources);
+    return res.status(200).json({ resource_list: allResources });
+  } catch (error) {
+    console.error('Error fetching resources:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Display detail page for a specific Resource.
 exports.Resource_detail = asyncHandler(async (req, res, next) => {
   // Get details of books, book instances for specific Resource
@@ -46,7 +49,7 @@ exports.Resource_detail = asyncHandler(async (req, res, next) => {
     // no Results
     return res.status(404).json({ error: 'Resource not found' });
   }
-  res.status(200).json({Resource_details : resource , comments : comments , numcomment : numComments})
+  return res.status(200).json({Resource_details : resource , comments : comments , numcomment : numComments})
 });
 
 

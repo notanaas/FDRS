@@ -7,12 +7,13 @@ import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 const ResourcePage = () => {
-  const { resourceId } = useParams();
+  const { resourceId } = useParams(); 
   const [resource, setResource] = useState(null);
   const [comments, setComments] = useState([]);
   const { authToken, isLoggedIn, isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const { userId } = useContext(AuthContext);
+  const [resourceDetails, setResourceDetails] = useState(null);
 
   useEffect(() => {
     const fetchResourceDetails = async () => {
@@ -20,15 +21,21 @@ const ResourcePage = () => {
         const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
-        setResource(response.data);
-        setComments(response.data.comments || []);
+        setResourceDetails(response.data.Resource_details);
+        setComments(response.data.comments);
       } catch (error) {
         console.error('Error fetching resource details:', error);
       }
     };
-    fetchResourceDetails();
+
+    if (resourceId) {
+      fetchResourceDetails();
+    }
   }, [resourceId, authToken, backendURL]);
 
+  if (!resourceDetails) {
+    return <div>Loading resource...</div>;
+  }
   const addComment = async (newComment) => {
     if (!isLoggedIn) {
       alert('You need to log in to add a comment.');
@@ -83,32 +90,21 @@ const ResourcePage = () => {
     }
   };
 
-  if (!resource) {
-    return <div>Loading resource...</div>;
-  }
-
+  
   return (
     <div className="resource-page">
-      <Header />
-      <div className="resource-content">
-        <h1>{resource.title}</h1>
-        <p><strong>Author:</strong> {resource.author}</p>
-        <p><strong>Description:</strong> {resource.description}</p>
-        {/* Add additional resource details here */}
-      </div>
-      <div className="comments-container">
-      <Comments 
-      comments={comments} 
-      addComment={addComment} 
-      deleteComment={deleteComment}
-      updateComment={updateComment}
-      userAuthenticated={isLoggedIn}
-      isAdmin={isAdmin}
-      currentUserId={userId} 
-    />
-      </div>
+    <Header />
+    <div className="resource-content">
+      <h1>{resourceDetails.Title}</h1>
+      <p><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
+      <p><strong>Description:</strong> {resourceDetails.Description}</p>
+      <p><strong>Faculty:</strong> {resourceDetails.Faculty.name}</p>
+      <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
+      <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
     </div>
-  );
+    <Comments comments={comments} />
+  </div>
+);
 };
 
 export default ResourcePage;

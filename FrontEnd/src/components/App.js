@@ -36,8 +36,9 @@ function App() {
               <Route path="/welcomingpage" exact component={WelcomingPage} />
               <Route path="/reset-password" component={PasswordReset} />
               <Route path="/my-profile" component={MyProfile} />
-              <Route path="/faculty/:facultyId" component={Header} />
               <Route path="/faculty/:facultyId" component={FacultyPage} />
+              <Route path="/resource/:resourceId" component={ResourcePage} />
+
             </Switch>
           </div>
         </div>

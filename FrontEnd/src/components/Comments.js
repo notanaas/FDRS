@@ -1,43 +1,41 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { AuthContext } from './context/AuthContext';
-import { useParams } from 'react-router-dom';
 import './App.css';
 
-const Comments = ({ resourceDetails, authToken, isLoggedIn, isAdmin, backendURL }) => {
-  const [newComment, setNewComment] = useState('');
-  const [comments, setComments] = useState(resourceDetails.comments || []);
-  const { userId } = useContext(AuthContext);
-  const { resourceId } = useParams();
+const Comments = ({ resourceDetails,resourceId, userId, isLoggedIn, authToken ,isAdmin}) => {
+  const [comments, setComments] = useState(resourceDetails ? resourceDetails.comments : []);
   const [editing, setEditing] = useState({ id: null, text: "" });
-
+  const [newComment, setNewComment] = useState('');
+  const backendURL = 'http://localhost:3002';
   const handleTextChange = (e) => {
     setNewComment(e.target.value);
   };
 
   const addComment = async () => {
     if (!isLoggedIn) {
-      alert('You need to log in to add a comment.');
+      alert('Please log in to add a comment');
       return;
     }
+
     if (!newComment.trim()) {
-      alert('Comment cannot be empty.');
+      alert('Comment cannot be empty');
       return;
     }
 
     try {
-      const response = await axios.post(`${backendURL}/api_comment/comments`, {
-        comment: newComment
+      await axios.post(`${backendURL}/api_comment/comments`, {
+        text: newComment,
+        userId, // Adding userId to the request
+        resourceId
       }, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
-      setComments(prevComments => [response.data.comment, ...prevComments]);
-      setNewComment(''); // Clear the input after adding
+      setNewComment('');
+      // You might want to fetch and update the comments list here
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error('Error posting comment:', error);
     }
   };
-
   const deleteComment = async (commentId) => {
     // Additional logic to confirm deletion could be added here
     if (!isAdmin) {

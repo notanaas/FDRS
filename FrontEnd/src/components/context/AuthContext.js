@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(`${backendURL}/api_auth/forgot-password`, { email });
     } catch (error) {
-      // Consider logging the error or setting an error state
     }
   };
 

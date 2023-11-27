@@ -1,28 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Header from './Header';
 import Comments from './Comments';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 const ResourcePage = () => {
   const { resourceId } = useParams(); 
-  const [resource, setResource] = useState(null);
-  const [comments, setComments] = useState([]);
-  const { authToken, isLoggedIn, isAdmin } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002';
-  const { userId } = useContext(AuthContext);
   const [resourceDetails, setResourceDetails] = useState(null);
+  const { authToken, isLoggedIn, userId } = useContext(AuthContext);
+  const backendURL = 'http://localhost:3002';
 
   useEffect(() => {
     const fetchResourceDetails = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
+        const response = await axios.get(`http://localhost:3002/api_resource/resource-detail/${resourceId}`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
         setResourceDetails(response.data.Resource_details);
-        setComments(response.data.comments);
       } catch (error) {
         console.error('Error fetching resource details:', error);
       }
@@ -31,12 +26,11 @@ const ResourcePage = () => {
     if (resourceId) {
       fetchResourceDetails();
     }
-  }, [resourceId, authToken, backendURL]);
+  }, [resourceId, authToken]);
 
   if (!resourceDetails) {
     return <div>Loading resource...</div>;
   }
-  
   
   return (
     <div className="resource-page">
@@ -60,13 +54,7 @@ const ResourcePage = () => {
           )}
         </div>
       </div>
-      <Comments
-        resourceDetails={resourceDetails}
-        authToken={authToken}
-        isLoggedIn={isLoggedIn}
-        isAdmin={isAdmin}
-        backendURL={backendURL}
-      />
+      {resourceDetails &&<Comments resourceId={resourceId} userId={userId} isLoggedIn={isLoggedIn} authToken={authToken} />}
     </div>
   );
 };

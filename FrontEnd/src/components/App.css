@@ -37,7 +37,29 @@
   font-size: 24px; /* adjust size as needed */
   color: #f0ad4e; /* gold color, change as needed */
 }
-
+.comment {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+.comment-header {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.comment-author {
+  margin-right: 10px;
+}
+.comment-date {
+  color: #777;
+  font-size: 0.8em;
+}
+.comment-body {
+  margin-top: 10px;
+}
+.comment-actions {
+  margin-top: 10px;
+}
 .favorite-button.favorited {
   color: #d9534f; /* change color when favorited, e.g., to a red color */
 }

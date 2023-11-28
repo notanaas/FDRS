@@ -8,6 +8,7 @@ import './App.css';
 const ResourcePage = () => {
   const { resourceId } = useParams(); 
   const [resourceDetails, setResourceDetails] = useState(null);
+  const [comments, setComments] = useState([]);
   const { authToken, isLoggedIn, userId } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
 
@@ -18,6 +19,9 @@ const ResourcePage = () => {
           headers: { Authorization: `Bearer ${authToken}` }
         });
         setResourceDetails(response.data.Resource_details);
+        if (response.data.comments) {
+          setComments(response.data.comments);
+        }
       } catch (error) {
         console.error('Error fetching resource details:', error);
       }
@@ -26,6 +30,7 @@ const ResourcePage = () => {
     if (resourceId) {
       fetchResourceDetails();
     }
+    
   }, [resourceId, authToken]);
 
   if (!resourceDetails) {
@@ -48,13 +53,14 @@ const ResourcePage = () => {
       <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
       <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
       {resourceDetails.fileUrl && (
-            <a href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
+            <button href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
               Download
-            </a>
+            </button>
           )}
         </div>
       </div>
-      {resourceDetails &&<Comments resourceId={resourceId} userId={userId} isLoggedIn={isLoggedIn} authToken={authToken} />}
+      {resourceDetails && <Comments resourceId={resourceId} userId={userId} isLoggedIn={isLoggedIn} authToken={authToken} comments={comments} />}
+
     </div>
   );
 };

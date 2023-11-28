@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const Comments = ({ resourceDetails,resourceId, userId, isLoggedIn, authToken ,isAdmin}) => {
-  const [comments, setComments] = useState(resourceDetails ? resourceDetails.comments : []);
+const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
+  const [comments, setComments] = useState([]);
   const [editing, setEditing] = useState({ id: null, text: "" });
   const [newComment, setNewComment] = useState('');
   const backendURL = 'http://localhost:3002';
+
+ 
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      setComments(response.data.comments || []);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+  useEffect(() => {
+    fetchComments();
+  }, [resourceId]);
+
   const handleTextChange = (e) => {
     setNewComment(e.target.value);
   };
@@ -23,7 +39,7 @@ const Comments = ({ resourceDetails,resourceId, userId, isLoggedIn, authToken ,i
     }
 
     try {
-      await axios.post(`${backendURL}/api_comment/add/${userId}`, {
+      await axios.post(`${backendURL}/api_comment/add/${resourceId}`, {
         text: newComment,
         userId, 
         resourceId
@@ -85,16 +101,15 @@ const Comments = ({ resourceDetails,resourceId, userId, isLoggedIn, authToken ,i
       <h2>Comments</h2>
       <div className="comments-list">
       {comments.map((comment) => (
-  <div key={comment.id} className="comment">
-    {editing.id === comment.id ? (
-      <textarea
-        value={editing.text}
-        onChange={(e) => setEditing({ ...editing, text: e.target.value })}
-      />
-    ) : (
-      <p>{comment.text}</p>
-    )}
-    <div className="comment-actions">
+        <div key={comment._id} className="comment">
+          <div className="comment-header">
+            <span className="comment-author">{comment.user?.name || 'Anonymous'}</span>
+            <span className="comment-date">{new Date(comment.createdAt).toLocaleString()}</span>
+          </div>
+          <div className="comment-body">
+            <p>{comment.text}</p>
+          </div>
+          <div className="comment-actions">
       {isLoggedIn && comment.userId === userId && (
         <>
           {editing.id === comment.id ? (

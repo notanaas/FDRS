@@ -17,7 +17,6 @@ const MyProfile = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userFavorites, setUserFavorites] = useState([]);
   const [userResources, setUserResources] = useState([]);
-
   
   const fetchUnauthorizedResources = async () => {
     try {
@@ -86,7 +85,6 @@ const MyProfile = () => {
       }
     } catch (error) {
       console.error('Error fetching profile data:', error);
-      // Optionally set an error message to display
     }
   };
 

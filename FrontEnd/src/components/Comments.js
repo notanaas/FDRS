@@ -23,9 +23,9 @@ const Comments = ({ resourceDetails,resourceId, userId, isLoggedIn, authToken ,i
     }
 
     try {
-      await axios.post(`${backendURL}/api_comment/comments`, {
+      await axios.post(`${backendURL}/api_comment/add/${userId}`, {
         text: newComment,
-        userId, // Adding userId to the request
+        userId, 
         resourceId
       }, {
         headers: { Authorization: `Bearer ${authToken}` }

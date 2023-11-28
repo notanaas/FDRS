@@ -14,7 +14,7 @@ const ResourcePage = () => {
   useEffect(() => {
     const fetchResourceDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3002/api_resource/resource-detail/${resourceId}`, {
+        const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
         setResourceDetails(response.data.Resource_details);

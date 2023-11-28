@@ -22,6 +22,170 @@
   }
 
 }
+/* For Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .header {
+    background: linear-gradient(to right, #0a3d62, #1e272e);
+    color: #f5f5f5;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .header a, .header button {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .header a:hover, .header button:hover {
+    color: #ff4757;
+    text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* For Light Mode */
+@media (prefers-color-scheme: light) {
+  .header {
+    background: linear-gradient(to right, #d6eaf8, #d5d8dc);
+    color: #2f3640;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .header a, .header button {
+    color: #2f3640;
+    text-decoration: none;
+  }
+
+  .header a:hover, .header button:hover {
+    color: #ff6b81;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Sidebar Styles for Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .sidebar {
+    background-color: #2f3640;
+    color: #dcdde1;
+    font-family: 'Arial', sans-serif;
+    padding: 15px;
+  }
+
+  .sidebar a, .sidebar button {
+    color: #f5f5f5;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+  }
+
+  .sidebar a:hover, .sidebar button:hover {
+    background-color: #353b48;
+    color: #00a8ff;
+  }
+}
+
+/* Sidebar Styles for Light Mode */
+@media (prefers-color-scheme: light) {
+  .sidebar {
+    background-color: #dfe6e9;
+    color: #2f3640;
+    font-family: 'Arial', sans-serif;
+    padding: 15px;
+  }
+
+  .sidebar a, .sidebar button {
+    color: #2f3640;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+  }
+
+  .sidebar a:hover, .sidebar button:hover {
+    background-color: #b2bec3;
+    color: #0984e3;
+  }
+}
+
+
+
+
+
+
+
+/* Ensures the whole page is scrollable if content overflows */
+body, html {
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Main profile container */
+.my-profile {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Grid layout for the cards within their containers */
+.resources-list, .favorites-list, .documents-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Individual card styling */
+.document-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 5px;
+  background-color: #fff;
+  align-items: center;
+}
+
+
+/* Card components styling */
+.document-cover {
+  width: 100%;
+  object-fit: cover;
+}
+
+.document-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.document-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.authButton, .favorite-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Handling clicks on the entire card for navigation */
+.clickable {
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .document-card {
+    grid-template-columns: 1fr;
+  }
+
+  .document-actions {
+    justify-content: center;
+  }
+}
+
 .resource-page {
   display: flex;
   flex-direction: column;

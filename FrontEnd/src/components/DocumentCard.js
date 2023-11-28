@@ -18,11 +18,9 @@ const DocumentCard = ({ document,onClick }) => {
     const fetchUserEmail = async () => {
       if (document._id) {
         try {
-          // Assuming `/api_user/${userId}` is the correct endpoint to fetch user details
           const response = await axios.get(`${backendURL}/api_user/resource-detail/${document._id}`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
-          // Adjust the property access according to your API response structure
           setUserEmail(response.data.email);
         } catch (error) {
           console.error('Error fetching user email:', error);

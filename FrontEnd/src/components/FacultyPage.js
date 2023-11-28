@@ -38,7 +38,7 @@ const FacultyPage = () => {
   }
 
   return (
-    <div>
+    <div className="faculty-container">
       <h1>Resources for Faculty</h1>
 
       {resources.length > 0 ? (

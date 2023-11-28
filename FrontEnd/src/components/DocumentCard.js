@@ -8,6 +8,7 @@ import './App.css';
 
 
 const DocumentCard = ({ document,onClick }) => {
+  const [isFavorited, setIsFavorited] = useState(document.isFavorited);
   const { authToken } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [documents, setDocuments] = useState([]); 
@@ -17,6 +18,18 @@ const DocumentCard = ({ document,onClick }) => {
   const goToResourceDetail = () => {
     history.push(`/resource/${document._id}`);
   };
+  const toggleFavorite = async () => {
+    const action = isFavorited ? 'unfavorite' : 'favorite';
+    try {
+      await axios.post(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setIsFavorited(!isFavorited); // Toggle the state on successful response
+    } catch (error) {
+      console.error(`Error toggling favorite status: ${error}`);
+    }
+  };
+  
   const authorizeResource = async (resourceId) => {
     try {
       const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`, 
@@ -95,6 +108,21 @@ const DocumentCard = ({ document,onClick }) => {
       </div>
       <div className="document-actions">
         <button onClick={(e) => {e.stopPropagation(); handleDownload(document._id);}} className="authButton">Download</button>
+        {isFacultyPage && (
+          <div>
+ <button 
+  className="favorite-button"
+  onClick={(e) => {
+    e.stopPropagation(); // This stops the click event from propagating up
+    toggleFavorite();
+  }}
+>
+  {isFavorited ? '\u2605' : '\u2606'}
+</button>
+
+  </div>
+        )}
+
         {!isFacultyPage && (
           <div>
             <button onClick={(e) => {e.stopPropagation(); authorizeResource(document._id);}} className="authButton">Authorize</button>

@@ -27,6 +27,19 @@
   flex-direction: column;
   margin: auto;
   max-width: 800px;
+  max-height: 90vh; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+.favorite-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* adjust size as needed */
+  color: #f0ad4e; /* gold color, change as needed */
+}
+
+.favorite-button.favorited {
+  color: #d9534f; /* change color when favorited, e.g., to a red color */
 }
 
 .resource-header {
@@ -50,6 +63,10 @@
 
 .comments-container {
   margin-top: 20px;
+}
+.faculty-container {
+  max-height: 90vh; /* Adjust the height as needed */
+  overflow-y: auto; /* This will create a vertical scrollbar if the content exceeds the max-height */
 }
 
 .add-comment textarea {

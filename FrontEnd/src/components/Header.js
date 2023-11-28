@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext,useCallback } from 'react';
 import {  Link, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
 import { RouteParamsContext } from './context/RouteParamsContext'; // Import the provider
+import { debounce } from 'lodash';
 
 const Sidebar = ({ onClose }) => {
   const { isLoggedIn } = useContext(AuthContext); 
@@ -59,9 +60,7 @@ const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
     
   );
 };
-const Header = ({
-  onSearchChange,
-}) => {
+const Header = ({}) => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
@@ -103,8 +102,83 @@ const Header = ({
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const tokenFromLink = location.state?.token;
   const { routeParams } = useContext(RouteParamsContext);
+  const [searchTerm, setSearchTerm] = useState('');
   const facultyId = routeParams ? routeParams.facultyId : null;
   const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
+  const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [noResults, setNoResults] = useState(false);
+  const { user } = useContext(AuthContext);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const fetchSearchResults = async (query) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${backendURL}/api_resource/search`, {
+        params: { term: query },
+      });
+      setSearchResults(response.data); // Assuming the response data is the array of search results
+    } catch (error) {
+      console.error('Error during search:', error);
+      setSearchResults([]); // Reset results on error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Debounced function
+  const debouncedSearch = useCallback(debounce(fetchSearchResults, 300), []);
+  const handleSearchSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${backendURL}/api_resource/search`, {
+        params: { term: searchTerm },
+      });
+      setSearchResults(response.data);
+      console.log('Search Results:', response.data); // For debugging
+      setNoResults(response.data.length === 0);
+    } catch (error) {
+      console.error('Error during search:', error);
+      setNoResults(true); // Set noResults to true if there is an error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleFeedbackSubmit = async () => {
+    if (!isLoggedIn) {
+      promptLogin();
+      return;
+    }
+  
+    try {
+      const response = await axiosInstance.post(`${backendURL}/FeedBack-post`, {
+        User: user._id, 
+        SearchText: searchTerm,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${userToken}`
+        }
+      });
+  
+      if (response.data) {
+        console.log('Feedback submitted successfully');
+      }
+    } catch (error) {
+      console.error('Error submitting feedback', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (searchTerm) {
+      debouncedSearch(searchTerm);
+    } else {
+      setSearchResults([]); 
+    }
+  }, [searchTerm, debouncedSearch]);
 
 const promptLogin = () => {
   setShowLoginPrompt(true);
@@ -417,45 +491,71 @@ useEffect(() => {
   };
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
-      <div className='left'>
-      <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
+  <div className='left'>
+    <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
+    <div className="logoContainer">
+      <Link to="/welcomingpage">
+        <img src="/logo.png" alt="Logo" className="logo" />
+      </Link>
+    </div>
+    {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
+  </div>
+    {showLoginPrompt && (
+      <div className="login-prompt">You need to be logged in to upload files.</div>
+    )}
+    
+   {isFacultyPage && (
+  <div>
+    <div className="search-container">
+      <input
+        type="text"
+        placeholder="Search resources..."
+        className="inputBar"
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
+      {isLoading && <div>Loading...</div>}
+    </div>
+    <div className="search-results">
+      {searchResults.length > 0 ? (
+        searchResults.map((result) => (
+          <div key={result.id}>{result.title}</div>
+        ))
+      ) : isLoading ? (
+        <div>Loading...</div>
+      ) : noResults ? (
         <div>
-          <div className="logoContainer">
-        <Link to="/welcomingpage">
-          <img src="/logo.png" alt="Logo" className="logo" />
-        </Link>
+          <p>No results found for "{searchTerm}".</p>
+          <button onClick={handleFeedbackSubmit} className="authButton">
+            Send Feedback
+          </button>
+        </div>    
+      ) : null } {/* This closing parenthesis and colon were missing */}
+      <div className="action-buttons">
+        <button onClick={handleSearchSubmit} className="authButton" disabled={isLoading}>
+          Search
+        </button>
+        <button onClick={handleUploadClick} className="authButton">
+          Upload
+        </button>
       </div>
-        </div>
-        {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
-
-      </div>
-      <div>
-      {showLoginPrompt && (
-        <div className="login-prompt">You need to be logged in to upload files.</div>
-      )}
-        {isFacultyPage && (
-          
-          <div>
-            <input type="text" className="inputBar" placeholder={`Search in `} onChange={onSearchChange} />
-            <button className="authButton">Search</button>
-            <button onClick={handleUploadClick} className="authButton">Upload</button>
-          </div>
-        )}
-
-      </div>
-      <div className="authButtons">
-  {isLoggedIn ? (
-    <div className='button'>
-      <button className="authButton" onClick={handleLogout}>Logout</button>
-     
     </div>
-      ) : (
-        <div className='logoReg'>
-          <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
-          <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
-        </div>
-      )}
-    </div>
+  </div>
+)}
+
+  <div className="authButtons">
+    {isLoggedIn ? (
+      <div className='button'>
+        <button className="authButton" onClick={handleLogout}>Logout</button>
+      </div>
+    ) : (
+      <div className='logoReg'>
+        <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
+        <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
+      </div>
+    )}
+  </div>
+
 
 <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>

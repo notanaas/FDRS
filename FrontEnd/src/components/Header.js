@@ -4,7 +4,7 @@ import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import axios from 'axios';
 import './App.css';
-import { RouteParamsContext } from './context/RouteParamsContext'; // Import the provider
+import { RouteParamsContext } from './context/RouteParamsContext'; 
 import { debounce } from 'lodash';
 
 const Sidebar = ({ onClose }) => {
@@ -18,7 +18,7 @@ const Sidebar = ({ onClose }) => {
       {isLoggedIn && (
   <button onClick={goToUserProfile} className="facultyauthButton">My Profile</button>
 )}
-    <FacultyButtons />
+    <FacultyButtons/>
     </div>
   );
 }
@@ -138,11 +138,11 @@ const Header = ({}) => {
         params: { term: searchTerm },
       });
       setSearchResults(response.data);
-      console.log('Search Results:', response.data); // For debugging
+      console.log('Search Results:', response.data); 
       setNoResults(response.data.length === 0);
     } catch (error) {
       console.error('Error during search:', error);
-      setNoResults(true); // Set noResults to true if there is an error
+      setNoResults(true); 
     } finally {
       setIsLoading(false);
     }
@@ -348,15 +348,12 @@ useEffect(() => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-  
-      // Clear local storage and reset state
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       setIsLoggedIn(false);
       setIsAdmin(false);
   
-      // Redirect to the welcome page
-      history.push('/welcomingpage'); // Replace '/welcome' with the path to your welcome page
+      history.push('/welcomingpage'); 
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -530,7 +527,7 @@ useEffect(() => {
             Send Feedback
           </button>
         </div>    
-      ) : null } {/* This closing parenthesis and colon were missing */}
+      ) : null } 
       <div className="action-buttons">
         <button onClick={handleSearchSubmit} className="authButton" disabled={isLoading}>
           Search

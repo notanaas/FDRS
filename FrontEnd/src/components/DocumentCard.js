@@ -1,8 +1,6 @@
 import React, { useState,useContext } from 'react';
 import { useHistory,useLocation } from 'react-router-dom';
-
 import axios from 'axios';
-
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
@@ -24,7 +22,7 @@ const DocumentCard = ({ document,onClick }) => {
       await axios.post(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setIsFavorited(!isFavorited); // Toggle the state on successful response
+      setIsFavorited(!isFavorited); 
     } catch (error) {
       console.error(`Error toggling favorite status: ${error}`);
     }
@@ -61,8 +59,7 @@ const DocumentCard = ({ document,onClick }) => {
   const handleDownload = async () => {
     try {
       const url = `${backendURL}/api_resource/download/${document._id}`;
-      console.log('Downloading file from URL:', url); // Debugging line
-  
+      console.log('Downloading file from URL:', url); 
       const response = await axios.get(url, {
         responseType: 'blob',
         headers: {
@@ -72,17 +69,15 @@ const DocumentCard = ({ document,onClick }) => {
   
       if (response.status === 200 && response.data) {
         const fileBlob = new Blob([response.data], { type: 'application/pdf' });
-  
-        // Make sure the Blob is created correctly
-        if (fileBlob.size > 0) {
+          if (fileBlob.size > 0) {
           const downloadUrl = window.URL.createObjectURL(fileBlob);
           const link = document.createElement('a');
           link.href = downloadUrl;
           link.download = document.Title ? `${document.Title}.pdf` : 'document.pdf';
           document.body.appendChild(link);
           link.click();
-          link.remove(); // Remove the link when done
-          window.URL.revokeObjectURL(downloadUrl); // Clean up the object URL
+          link.remove(); 
+          window.URL.revokeObjectURL(downloadUrl); 
         } else {
           console.error('Received empty Blob');
         }
@@ -113,7 +108,7 @@ const DocumentCard = ({ document,onClick }) => {
  <button 
   className="favorite-button"
   onClick={(e) => {
-    e.stopPropagation(); // This stops the click event from propagating up
+    e.stopPropagation(); 
     toggleFavorite();
   }}
 >

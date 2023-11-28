@@ -15,6 +15,8 @@ const MyProfile = () => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [editedProfile, setEditedProfile] = useState({ username: '', email: '' });
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [userFavorites, setUserFavorites] = useState([]);
+  const [userResources, setUserResources] = useState([]);
 
   
   const fetchUnauthorizedResources = async () => {
@@ -53,7 +55,11 @@ const MyProfile = () => {
     if (authToken) {
       fetchProfileData();
     }
-  }, [authToken, backendURL]);
+  }, [authToken]); 
+  useEffect(() => {
+    console.log('User Resources:', userResources);
+    console.log('User Favorites:', userFavorites);
+  }, [userResources, userFavorites]);
 
   useEffect(() => {
     if (profile.isAdmin) {
@@ -73,13 +79,18 @@ const MyProfile = () => {
           email: response.data.profile.Email,
           isAdmin: response.data.profile.isAdmin,
         });
+        setUserResources(Array.isArray(response.data.UserResources) ? response.data.UserResources : []);
+        setUserFavorites(Array.isArray(response.data.userFavorites) ? response.data.userFavorites : []);
       } else {
         console.error('Unexpected response format:', response.data);
       }
     } catch (error) {
       console.error('Error fetching profile data:', error);
+      // Optionally set an error message to display
     }
   };
+
+  
 
   const handleEditToggle = () => {
     setIsEditMode(!isEditMode);
@@ -203,6 +214,38 @@ const MyProfile = () => {
       <div className="user-actions">
         <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
       </div>
+      <div className="user-resources">
+        <h2>Your Resources</h2>
+        <div className="resources-list">
+          {userResources.length > 0 ? (
+            userResources.map((resource) => (
+              <DocumentCard 
+                key={resource._id} 
+                document={resource}
+              />
+            ))
+          ) : (
+            <p>No resources available.</p>
+          )}
+        </div>
+      </div>
+
+      <div className="user-favorites">
+        <h2>Your Favorites</h2>
+        <div className="favorites-list">
+          {userFavorites.length > 0 ? (
+            userFavorites.map((fav) => (
+              <DocumentCard 
+                key={fav._id} 
+                document={fav}
+              />
+            ))
+          ) : (
+            <p>No favorites available.</p>
+          )}
+        </div>
+      </div>
+
       {profile.isAdmin && (
   <div className="admin-section">
     <h2>Unauthorized Documents</h2>

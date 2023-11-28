@@ -8,7 +8,7 @@ exports.comment =[
   asyncHandler(async (req, res, next) => {
   const errors = validationResult(req)
   const  {text}  = req.body;
-  const resourceId = req.params.resourceId; // Retrieve resourceId from route parameters
+  const resourceId = req.params.id; // Retrieve resourceId from route parameters
   
   if(!errors.isEmpty())
   {

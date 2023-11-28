@@ -1,9 +1,8 @@
-import React, { useState,useContext } from 'react';
+import React, { useState,useContext,useEffect } from 'react';
 import { useHistory,useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
-
 
 const DocumentCard = ({ document,onClick }) => {
   const [isFavorited, setIsFavorited] = useState(document.isFavorited);
@@ -13,6 +12,27 @@ const DocumentCard = ({ document,onClick }) => {
   const location = useLocation();
   const history = useHistory();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      if (document._id) {
+        try {
+          // Assuming `/api_user/${userId}` is the correct endpoint to fetch user details
+          const response = await axios.get(`${backendURL}/api_user/resource-detail/${document._id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          // Adjust the property access according to your API response structure
+          setUserEmail(response.data.email);
+        } catch (error) {
+          console.error('Error fetching user email:', error);
+        }
+      }
+    };
+  
+    fetchUserEmail();
+  }, [document._id, authToken, backendURL]);
+  
   const goToResourceDetail = () => {
     history.push(`/resource/${document._id}`);
   };
@@ -100,24 +120,16 @@ const DocumentCard = ({ document,onClick }) => {
         <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
         <p className="document-description">Description: {document.Description}</p>
         <p>Faculty: {document.Faculty && document.Faculty.FacultyName ? document.Faculty.FacultyName : 'N/A'}</p>
+        <p className="document-author">Uploader: {userEmail || 'Fetching author...'}</p>
+
       </div>
       <div className="document-actions">
         <button onClick={(e) => {e.stopPropagation(); handleDownload(document._id);}} className="authButton">Download</button>
         {isFacultyPage && (
           <div>
- <button 
-  className="favorite-button"
-  onClick={(e) => {
-    e.stopPropagation(); 
-    toggleFavorite();
-  }}
->
-  {isFavorited ? '\u2605' : '\u2606'}
-</button>
-
+      <button className="favorite-button"onClick={(e) => {e.stopPropagation();toggleFavorite();}}>{isFavorited ? '\u2605' : '\u2606'}</button>
   </div>
         )}
-
         {!isFacultyPage && (
           <div>
             <button onClick={(e) => {e.stopPropagation(); authorizeResource(document._id);}} className="authButton">Authorize</button>

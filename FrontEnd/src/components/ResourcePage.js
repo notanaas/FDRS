@@ -52,6 +52,8 @@ const ResourcePage = () => {
       <p><strong>Faculty:</strong> {resourceDetails.Faculty.name}</p>
       <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
       <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
+      <h3 className="document-title">{resourceDetails._id}</h3>
+
       {resourceDetails.fileUrl && (
             <button href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
               Download

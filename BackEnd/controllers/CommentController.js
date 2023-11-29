@@ -1,10 +1,9 @@
 const Comment = require('../models/Comment');
+const Resource = require("../models/Resources")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const asyncHandler = require("express-async-handler")
 exports.comment =[
   body("text" , "Required text to post").trim().isLength({min:1}).escape(),
-
-
   asyncHandler(async (req, res, next) => {
   const errors = validationResult(req)
   const  {text}  = req.body;
@@ -32,7 +31,7 @@ exports.comment =[
 exports.Delete_comment = asyncHandler(async(req,res,next)=>
 {
     const resourceId = req.params.id; // finding the comment by the resource id
-    const comment = await Comment.findById({Resource:id}).exec();
+    const comment = await Comment.findOne({Resource:resourceId}).exec();
 
     if (!comment) {
       return res.status(404).json({ message: "Resource does not exist" });
@@ -50,7 +49,7 @@ exports.Update_Comment =[
     asyncHandler(async (req, res, next) => {
     const errors = validationResult(req)
     const resourceId = req.params.id;    // finding the comment by the resource id
-    const comment = await Comment.findById({Resource : id}).exec()
+    const comment = await Comment.findOne({Resource : resourceId}).exec()
     if(comment.User._id.toString() === req.user._id.toString())
     {
         //if user then delete

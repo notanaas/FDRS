@@ -50,9 +50,9 @@ exports.admin_acceptance = asyncHandler(async (req, res, next) => {
         if (!resource) {
             return res.status(404).json({ message: "Resource not found" });
         }
-
+        console.log(resource.file_path)
         await fsPromises.unlink(resource.file_path);
-
+        console.log(resource.Cover)
         // Assuming resource.Cover contains the full path
         await fsPromises.unlink(resource.Cover);
 

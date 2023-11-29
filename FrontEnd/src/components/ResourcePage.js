@@ -9,7 +9,7 @@ const ResourcePage = () => {
   const { resourceId } = useParams(); 
   const [resourceDetails, setResourceDetails] = useState(null);
   const [comments, setComments] = useState([]);
-  const { authToken, isLoggedIn, userId } = useContext(AuthContext);
+  const { authToken, isLoggedIn, userId,isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const ResourcePage = () => {
       <p><strong>Faculty:</strong> {resourceDetails.Faculty.name}</p>
       <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
       <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
-      <h3 className="document-title">{resourceDetails._id}</h3>
+      <h3 className="document-title">{resourceDetails.User.Email}</h3>
 
       {resourceDetails.fileUrl && (
             <button href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
@@ -61,7 +61,7 @@ const ResourcePage = () => {
           )}
         </div>
       </div>
-      {resourceDetails && <Comments resourceId={resourceId} userId={userId} isLoggedIn={isLoggedIn} authToken={authToken} comments={comments} />}
+      {resourceDetails && <Comments resourceId={resourceId} userId={userId} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} comments={comments} />}
 
     </div>
   );

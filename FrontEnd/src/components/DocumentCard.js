@@ -18,7 +18,7 @@ const DocumentCard = ({ document,onClick }) => {
     const fetchUserEmail = async () => {
       if (document._id) {
         try {
-          const response = await axios.get(`${backendURL}/api_user/resource-detail/${document._id}`, {
+          const response = await axios.get(`${backendURL}/api_resource/resource-detail/${document._id}`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
           setUserEmail(response.data.email);
@@ -118,7 +118,7 @@ const DocumentCard = ({ document,onClick }) => {
         <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
         <p className="document-description">Description: {document.Description}</p>
         <p>Faculty: {document.Faculty && document.Faculty.FacultyName ? document.Faculty.FacultyName : 'N/A'}</p>
-        <p className="document-author">Uploader: {userEmail || 'Fetching author...'}</p>
+        <p className="document-author">Uploader: {document.User.Email || 'Fetching author...'}</p>
 
       </div>
       <div className="document-actions">

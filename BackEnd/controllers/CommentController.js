@@ -53,7 +53,7 @@ exports.Update_Comment =[
     if(comment.User._id.toString() === req.user._id.toString())
     {
         //if user then delete
-        await Comment.findByIdAndDelete({Resource:resourceId}).exec()
+        await Comment.findByIdAndUpdate(comment._id).exec()
         return res.status(200).json({ message: "Comment Updated successfully" });
     }
     // Return a success response

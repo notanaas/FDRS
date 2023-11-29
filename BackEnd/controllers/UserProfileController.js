@@ -10,9 +10,9 @@ const path = require("path");
 
 exports.profile = asyncHandler(async (req, res, next) => {
     try {
-      const user = await Users.findById(req.user._id);
-      const resources = await Resource.find({ User: req.user._id }); // Assuming 'User' is the referencing field in the Resource schema
-      const favorites = await UserFavs.find({ User: req.user._id }); // Assuming 'User' is the referencing field in the UserFavs schema
+      const user = await Users.findById(req.user._id).exec();
+      const resources = await Resource.find({ User: req.user._id }).populate("User").exec(); 
+      const favorites = await UserFavs.find({ User: req.user._id }).populate("Resource").exec(); 
   
       const profileData = {
         profile: user,

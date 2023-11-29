@@ -74,28 +74,40 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
       alert('You need to log in to update a comment.');
       return;
     }
-
+  
     if (editing.text.trim() === '') {
       alert('Comment cannot be empty');
       return;
     }
-
+  
     try {
-      await axios.put(`${backendURL}/api_comment/update/${resourceId}`, {
-        text: editing.text // Make sure this matches your backend's expected field
+      const response = await axios.put(`${backendURL}/api_comment/update/${commentId}`, { // Make sure the URL is correct
+        NewComment: editing.text // Confirm that this is the expected key by the backend
       }, {
-        headers: { Authorization: `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` } // Ensure that the authToken is correct and has not expired
       });
-      setComments(prevComments =>
-        prevComments.map(comment =>
-          comment._id === commentId ? { ...comment, Comment: editing.text } : comment
-        )
-      );
-      setEditing({ id: null, text: "" }); // Reset editing state
+  
+      if (response.status === 200) {
+        console.log('Backend update successful', response.data); // Check the backend response
+        setComments(prevComments => {
+          const updatedComments = prevComments.map(comment => {
+            if (comment._id === commentId) {
+              return { ...comment, Comment: editing.text }; // Make sure the property name matches the backend model
+            }
+            return comment;
+          });
+          console.log('Updated comments array', updatedComments); // Log the updated comments array
+          return updatedComments;
+        });
+        setEditing({ id: null, text: "" }); // Reset editing state
+      } else {
+        throw new Error('Failed to update comment');
+      }
     } catch (error) {
       console.error('Error updating comment:', error);
     }
   };
+  
   const canDeleteComment = (commentUserId) => {
     return isAdmin || userId === commentUserId;
   };

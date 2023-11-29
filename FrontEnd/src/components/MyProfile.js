@@ -16,7 +16,41 @@ const MyProfile = () => {
   const [editedProfile, setEditedProfile] = useState({ username: '', email: '' });
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userFavorites, setUserFavorites] = useState([]);
-  const [userResources, setUserResources] = useState([]);
+  const [userResources, setUserUploadedResources] = useState([]);
+
+  // Function to fetch user's profile, uploaded resources, and favorites
+  const fetchProfileData = async () => {
+    try {
+      const response = await axios.get(`${backendURL}/api_user/profile`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.data) {
+        setProfile({
+          username: response.data.profile.Username,
+          email: response.data.profile.Email,
+          isAdmin: response.data.profile.isAdmin,
+        });
+        setUserUploadedResources(Array.isArray(response.data.userResources) ? response.data.userResources : []);
+        setUserFavorites(Array.isArray(response.data.userFavorites) ? response.data.userFavorites : []);
+      } else {
+        console.error('Unexpected response format:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (authToken) {
+      fetchProfileData();
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (profile.isAdmin) {
+      fetchUnauthorizedResources();
+    }
+  }, [profile.isAdmin, authToken, backendURL]);
   
   const fetchUnauthorizedResources = async () => {
     try {
@@ -50,45 +84,13 @@ const MyProfile = () => {
       setTimeout(() => setShowErrorMessage(false), 5000);
     }
   };
-  useEffect(() => {
-    if (authToken) {
-      fetchProfileData();
-    }
-  }, [authToken]); 
-  useEffect(() => {
-    console.log('User Resources:', userResources);
-    console.log('User Favorites:', userFavorites);
-  }, [userResources, userFavorites]);
+ 
 
   useEffect(() => {
     if (profile.isAdmin) {
       fetchUnauthorizedResources();
     }
   }, [profile.isAdmin, authToken, backendURL]);
-
-  
-  const fetchProfileData = async () => {
-    try {
-      const response = await axios.get(`${backendURL}/api_user/profile`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.data) {
-        setProfile({
-          username: response.data.profile.Username,
-          email: response.data.profile.Email,
-          isAdmin: response.data.profile.isAdmin,
-        });
-        setUserResources(Array.isArray(response.data.UserResources) ? response.data.UserResources : []);
-        setUserFavorites(Array.isArray(response.data.userFavorites) ? response.data.userFavorites : []);
-      } else {
-        console.error('Unexpected response format:', response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
-
-  
 
   const handleEditToggle = () => {
     setIsEditMode(!isEditMode);
@@ -227,15 +229,14 @@ const MyProfile = () => {
           )}
         </div>
       </div>
-
       <div className="user-favorites">
         <h2>Your Favorites</h2>
         <div className="favorites-list">
           {userFavorites.length > 0 ? (
-            userFavorites.map((fav) => (
+            userFavorites.map((favorite) => (
               <DocumentCard 
-                key={fav._id} 
-                document={fav}
+                key={favorite._id} 
+                document={favorite.resource} 
               />
             ))
           ) : (

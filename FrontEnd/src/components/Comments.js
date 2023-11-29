@@ -60,7 +60,7 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
     }
 
     try {
-      await axios.delete(`${backendURL}/api_comment/delete/${commentId}`, {
+      await axios.delete(`${backendURL}/api_comment/delete/${resourceId}`, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
       setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
@@ -81,7 +81,7 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
     }
 
     try {
-      await axios.put(`${backendURL}/api_comment/update/${commentId}`, {
+      await axios.put(`${backendURL}/api_comment/update/${resourceId}`, {
         text: editing.Comment // Make sure this matches your backend's expected field
       }, {
         headers: { Authorization: `Bearer ${authToken}` }
@@ -112,6 +112,7 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
             <div className="comment-body">
               {editing.id === comment._id ? (
                 <textarea
+                className="inputBar"
                   value={editing.text}
                   onChange={(e) => setEditing({ ...editing, text: e.target.value })}
                 />
@@ -123,13 +124,13 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
               {isLoggedIn && canDeleteComment(comment.userId) && (
                 <>
                   {editing.id === comment._id ? (
-                    <button onClick={() => saveUpdatedComment(comment._id)}>Save</button>
+                    <button className="authButton"onClick={() => saveUpdatedComment(comment._id)}>Save</button>
                   ) : (
-                    <button onClick={() => setEditing({ id: comment._id, text: comment.Comment })}>
+                    <button className="authButton"onClick={() => setEditing({ id: comment._id, text: comment.Comment })}>
                       Edit
                     </button>
                   )}
-                  <button onClick={() => deleteComment(comment._id)}>Delete</button>
+                  <button className="authButton"onClick={() => deleteComment(comment._id)}>Delete</button>
                 </>
               )}
             </div>
@@ -140,10 +141,11 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
         <div className="add-comment">
           <textarea
             value={newComment}
+            className="inputBar"
             onChange={handleTextChange}
             placeholder="Write your comment..."
           />
-          <button onClick={addComment}>Post Comment</button>
+          <button download className="authButton"onClick={addComment}>Post Comment</button>
         </div>
       ) : (
         <p>Please log in to add a comment.</p>

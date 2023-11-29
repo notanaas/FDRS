@@ -39,7 +39,7 @@ exports.Delete_comment = asyncHandler(async(req,res,next)=>
 
     // Check if the user is an admin or if the resource belongs to the user
     if (req.user.isAdmin || comment.User._id.toString() === req.user._id.toString()) {
-      await Resource.findByIdAndUpdate(resourceId);
+      await Comment.findByIdAndUpdate(comment._id);
       return res.status(200).json({ message: "Comment deleted successfully" });
     }
       return res.status(403).json({ message: "Unauthorized to delete this comment" });

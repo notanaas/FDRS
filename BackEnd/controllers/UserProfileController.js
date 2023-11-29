@@ -9,19 +9,23 @@ const path = require("path");
 
 
 exports.profile = asyncHandler(async (req, res, next) => {
-    
-      const profile = await Users.findById(req.user._id).exec();
-      const resource = await Resource.findById(req.user._id).exec();
-      const favorites = await UserFavs.findById(req.user._id).exec();
-      const ProfileData = {
-        profile: profile,
-        UserResources: resource ? resource : { message: 'uploaded resources not found' },
-        userFavorites: favorites ? favorites : { message: 'Favorites not found' }
-      };    
+    try {
+      const user = await Users.findById(req.user._id);
+      const resources = await Resource.find({ User: req.user._id }); // Assuming 'User' is the referencing field in the Resource schema
+      const favorites = await UserFavs.find({ User: req.user._id }); // Assuming 'User' is the referencing field in the UserFavs schema
   
-      return res.status(200).json(ProfileData);
-    
+      const profileData = {
+        profile: user,
+        UserResources: resources,
+        userFavorites: favorites
+      };
+  
+      res.status(200).json(profileData);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   });
+  
   
 exports.resource_authorize = asyncHandler(async(req,res,next)=>
 {

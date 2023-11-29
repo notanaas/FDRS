@@ -82,7 +82,7 @@ const Comments = ({ resourceId, userId, isLoggedIn, authToken, isAdmin }) => {
 
     try {
       await axios.put(`${backendURL}/api_comment/update/${resourceId}`, {
-        text: editing.Comment // Make sure this matches your backend's expected field
+        text: editing.text // Make sure this matches your backend's expected field
       }, {
         headers: { Authorization: `Bearer ${authToken}` }
       });

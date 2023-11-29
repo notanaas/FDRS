@@ -16,7 +16,7 @@ const MyProfile = () => {
   const [editedProfile, setEditedProfile] = useState({ username: '', email: '' });
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userFavorites, setUserFavorites] = useState([]);
-  const [userResources, setUserUploadedResources] = useState([]);
+  const [userResources, setUserResources] = useState([]);
 
   // Function to fetch user's profile, uploaded resources, and favorites
   const fetchProfileData = async () => {
@@ -30,9 +30,10 @@ const MyProfile = () => {
           email: response.data.profile.Email,
           isAdmin: response.data.profile.isAdmin,
         });
-        setUserUploadedResources(Array.isArray(response.data.userResources) ? response.data.userResources : []);
-        setUserFavorites(Array.isArray(response.data.userFavorites) ? response.data.userFavorites : []);
-      } else {
+        setUserResources(response.data.UserResources);
+        setUserFavorites(response.data.userFavorites);
+        
+   } else {
         console.error('Unexpected response format:', response.data);
       }
     } catch (error) {
@@ -217,31 +218,25 @@ const MyProfile = () => {
       <div className="user-resources">
         <h2>Your Resources</h2>
         <div className="resources-list">
-          {userResources.length > 0 ? (
-            userResources.map((resource) => (
-              <DocumentCard 
-                key={resource._id} 
-                document={resource}
-              />
-            ))
-          ) : (
-            <p>No resources available.</p>
-          )}
+        {userResources.length > 0 ? (
+  userResources.map((resource) => (
+    <DocumentCard key={resource._id} document={resource} />
+  ))
+) : (
+  <p>No resources available.</p>
+)}
         </div>
       </div>
       <div className="user-favorites">
         <h2>Your Favorites</h2>
         <div className="favorites-list">
-          {userFavorites.length > 0 ? (
-            userFavorites.map((favorite) => (
-              <DocumentCard 
-                key={favorite._id} 
-                document={favorite.resource} 
-              />
-            ))
-          ) : (
-            <p>No favorites available.</p>
-          )}
+        {userFavorites.length > 0 ? (
+  userFavorites.map((favorite) => (
+    <DocumentCard key={favorite._id} document={favorite} />
+  ))
+) : (
+  <p>No favorites available.</p>
+)}
         </div>
       </div>
 

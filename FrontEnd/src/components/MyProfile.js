@@ -239,13 +239,23 @@ const MyProfile = () => {
         <div className="user-favorites section">
           <h2>Your Favorites</h2>
           <div className="favorites-list">
-            {userFavorites.length > 0 ? (
-              userFavorites.map((favorites) => (
-                <DocumentCard key={favorites._id} document={favorites} showAdminActions={false} onClick={() => handleCardClick(favorites._id)}/>
-              ))
-            ) : (
-              <p>No favorites available.</p>
-            )}
+    {userFavorites.length > 0 ? (
+      userFavorites.map((favorite) => {
+        const resourceData = favorite.Resource; 
+        return resourceData ? (
+          <DocumentCard 
+            key={resourceData._id} 
+            document={resourceData}
+            showAdminActions={false}
+            onClick={() => handleCardClick(resourceData._id)}
+          />
+        ) : (
+          <p key={`favorite-error-${favorite._id}`}>This favorite resource is not available.</p>
+        );
+      })
+    ) : (
+      <p>No favorites available.</p>
+    )}
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import React, { useState,useContext,useEffect } from 'react';
-import { useHistory,useLocation } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
@@ -12,8 +12,7 @@ const DocumentCard = ({ document, onClick, showAdminActions }) => {
   const location = useLocation();
   const history = useHistory();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
-  const uploaderEmail = document.User && document.User.Email ? document.User.Email : 'Unknown';
-
+  
   const goToResourceDetail = () => {
     history.push(`/resource/${document._id}`);
   };
@@ -91,19 +90,21 @@ const DocumentCard = ({ document, onClick, showAdminActions }) => {
   };
   
   
-  
+  if (!document || !document._id) {
+    // Handle the case where the document data is not available
+    return <div className="document-card">This favorite resource is not available.</div>;
+  }
   
   const CardContent = () => (
     <div onClick={onClick}>
-      <img src={document.Cover} alt="Document cover" className="document-cover" />
+      <img src={document.Cover} alt={document.Title || "Document cover"} className="document-cover" />
       <div className="document-info">
-        <h3 className="document-title">{document.Title}</h3>
-        <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
-        <p className="document-description">Description: {document.Description}</p>
-        <p>Faculty: {document.Faculty ? document.Faculty.FacultyName : 'N/A'}</p>
-        <p className="document-author">Uploader: {uploaderEmail}</p>
-
-        </div>
+        <h3 className="document-title">{document.Title || "Untitled"}</h3>
+        <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+        <p className="document-description">Description: {document.Description || "No description provided."}</p>
+        <p>Faculty: {document.Faculty.FacultyName}</p>
+        <p className="document-uploader">Uploader: {document.User.Email}</p>
+      </div>
       <div className="document-actions">
         <button onClick={(e) => {e.stopPropagation(); handleDownload(document._id);}} className="authButton">Download</button>
         {isFacultyPage && (

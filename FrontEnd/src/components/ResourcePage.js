@@ -49,7 +49,7 @@ const ResourcePage = () => {
       <h1>{resourceDetails.Title}</h1>
       <p><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
       <p><strong>Description:</strong> {resourceDetails.Description}</p>
-      <p><strong>Faculty:</strong> {resourceDetails.Faculty.name}</p>
+      <p><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
       <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
       <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
       <h3 className="document-title">{resourceDetails.User.Email}</h3>

@@ -9,7 +9,7 @@ const ResourcePage = () => {
   const { resourceId } = useParams(); 
   const [resourceDetails, setResourceDetails] = useState(null);
   const [comments, setComments] = useState([]);
-  const { authToken, isLoggedIn, userId,isAdmin } = useContext(AuthContext);
+  const { authToken, isLoggedIn, user,isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const ResourcePage = () => {
           )}
         </div>
       </div>
-      {resourceDetails && <Comments resourceId={resourceId} userId={userId} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} comments={comments} />}
+      <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
 
     </div>
   );

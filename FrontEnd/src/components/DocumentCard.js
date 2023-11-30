@@ -4,7 +4,7 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
-const DocumentCard = ({ document,onClick }) => {
+const DocumentCard = ({ document, onClick, showAdminActions }) => {
   const [isFavorited, setIsFavorited] = useState(document.isFavorited);
   const { authToken } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
@@ -117,26 +117,29 @@ const DocumentCard = ({ document,onClick }) => {
         <h3 className="document-title">{document.Title}</h3>
         <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
         <p className="document-description">Description: {document.Description}</p>
-        <p>Faculty: {document.Faculty && document.Faculty.FacultyName ? document.Faculty.FacultyName : 'N/A'}</p>
+        <p>Faculty: {document.Faculty ? document.Faculty.FacultyName : 'N/A'}</p>
         <p className="document-author">Uploader: {document.User.Email || 'Fetching author...'}</p>
 
-      </div>
+        </div>
       <div className="document-actions">
         <button onClick={(e) => {e.stopPropagation(); handleDownload(document._id);}} className="authButton">Download</button>
+        {/* Show favorite button only on faculty pages */}
         {isFacultyPage && (
-          <div>
-      <button className="favorite-button"onClick={(e) => {e.stopPropagation();toggleFavorite();}}>{isFavorited ? '\u2605' : '\u2606'}</button>
-  </div>
+          <button className="favorite-button"onClick={(e) => {e.stopPropagation();toggleFavorite();}}>
+            {isFavorited ? '\u2605' : '\u2606'}
+          </button>
         )}
-        {!isFacultyPage && (
-          <div>
+        {/* Show admin actions only if showAdminActions prop is true */}
+        {showAdminActions && (
+          <>
             <button onClick={(e) => {e.stopPropagation(); authorizeResource(document._id);}} className="authButton">Authorize</button>
             <button onClick={(e) => {e.stopPropagation(); unauthorizeResource(document._id);}} className="authButton">Unauthorize</button>
-          </div>
+          </>
         )}
       </div>
     </div>
   );
+
 
   return (
     <div className={`document-card ${isFacultyPage ? 'clickable' : ''}`} onClick={isFacultyPage ? goToResourceDetail : undefined}>

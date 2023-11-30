@@ -3,6 +3,8 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
 import './App.css';
+import { useHistory } from 'react-router-dom';
+
 
 const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
@@ -17,8 +19,8 @@ const MyProfile = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userFavorites, setUserFavorites] = useState([]);
   const [userResources, setUserResources] = useState([]);
-
-  // Function to fetch user's profile, uploaded resources, and favorites
+  const history = useHistory();
+  
   const fetchProfileData = async () => {
     try {
       const response = await axios.get(`${backendURL}/api_user/profile`, {
@@ -31,7 +33,7 @@ const MyProfile = () => {
           isAdmin: response.data.profile.isAdmin,
         });
         setUserResources(response.data.UserResources);
-        setUserFavorites(response.data.userFavorites);
+        setUserFavorites(response.data.UserFavorites);
         
    } else {
         console.error('Unexpected response format:', response.data);
@@ -181,7 +183,10 @@ const MyProfile = () => {
     }
   };
   
- 
+  const handleCardClick = (resourceId) => {
+    history.push(`/resource/${resourceId}`);
+  };
+
   if (!profile.username) {
     return <div>Loading...</div>;
   }
@@ -215,46 +220,53 @@ const MyProfile = () => {
       <div className="user-actions">
         <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
       </div>
-      <div className="user-resources">
-        <h2>Your Resources</h2>
-        <div className="resources-list">
-        {userResources.length > 0 ? (
-  userResources.map((resource) => (
-    <DocumentCard key={resource._id} document={resource} />
-  ))
-) : (
-  <p>No resources available.</p>
-)}
+      <div className="profile-sections">
+        <div className="user-resources section">
+          <h2>Your Resources</h2>
+          <div className="resources-list">
+            {userResources.length > 0 ? (
+              userResources.map((resource) => (
+              
+                <DocumentCard key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
+
+              ))
+            ) : (
+              <p>No resources available.</p>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="user-favorites">
-        <h2>Your Favorites</h2>
-        <div className="favorites-list">
-        {userFavorites.length > 0 ? (
-  userFavorites.map((favorite) => (
-    <DocumentCard key={favorite._id} document={favorite} />
-  ))
-) : (
-  <p>No favorites available.</p>
-)}
+        
+        <div className="user-favorites section">
+          <h2>Your Favorites</h2>
+          <div className="favorites-list">
+            {userFavorites.length > 0 ? (
+              userFavorites.map((favorites) => (
+                <DocumentCard key={favorites._id} document={favorites} showAdminActions={false} onClick={() => handleCardClick(favorites._id)}/>
+              ))
+            ) : (
+              <p>No favorites available.</p>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Section for Unauthorized Documents */}
       {profile.isAdmin && (
-  <div className="admin-section">
-    <h2>Unauthorized Documents</h2>
-    <div className="documents-list">
-      {documents.map((doc) => (
-        <DocumentCard 
-          key={doc._id} 
-          document={doc}
-          onAuthorize={authorizeResource} 
-          onUnauthorize={unauthorizeResource} 
-        />
-      ))}
-    </div>
-  </div>
-)}
+        <div className="admin-section">
+          <h2>Unauthorized Documents</h2>
+          <div className="documents-list">
+            {documents.map((doc) => (
+              <DocumentCard 
+                key={doc._id} 
+                document={doc}
+                onAuthorize={authorizeResource} 
+                onUnauthorize={unauthorizeResource} 
+                showAdminActions={true} // Show admin actions only here
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -12,6 +12,23 @@
   }
 }
 
+.profile-sections {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* If you want them to wrap when the screen size is small */
+@media (max-width: 768px) {
+  .profile-sections {
+    flex-wrap: wrap;
+  }
+}
+
+/* Style for individual sections */
+.section {
+  flex: 1; /* This makes each section take up equal space */
+  margin: 10px; /* Add some space between the sections */
+}
 
 /* Existing Light Mode Styles for Body */
 @media (prefers-color-scheme: light) {

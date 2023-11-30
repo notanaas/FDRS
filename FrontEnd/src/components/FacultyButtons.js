@@ -30,9 +30,9 @@ const FacultyButtons = () => {
             to={`/faculty/${faculty._id}`} // Simplified pathname for clarity
             className="facultyauthButtonLink" 
           >
-            <button className="facultyauthButton">
+            {/* <button className="facultyauthButton"> */}
               {faculty.FacultyName} 
-            </button>
+            {/* </button> */}
           </Link>
         ))
       ) : (

@@ -94,7 +94,7 @@ const DocumentCard = ({ document, onClick, showAdminActions }) => {
   
   
   const CardContent = () => (
-    <div className="document-card" onClick={onClick}>
+    <div onClick={onClick}>
       <img src={document.Cover} alt="Document cover" className="document-cover" />
       <div className="document-info">
         <h3 className="document-title">{document.Title}</h3>

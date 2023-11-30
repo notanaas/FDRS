@@ -4,6 +4,7 @@ import { AuthContext } from './context/AuthContext';
 import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
 import './App.css';
 import { useHistory } from 'react-router-dom';
+import Accordion from './Accordion'; // Make sure to create this component
 
 
 const MyProfile = () => {
@@ -200,6 +201,7 @@ const MyProfile = () => {
         <div className="error-message-header">{errorMessage}</div>
       )}
       <h1>User Profile</h1>
+      <Accordion title="User Profile Information">
       {isEditMode ? (
         <div className="edit-profile">
           <label htmlFor="username">Username:</label>
@@ -220,7 +222,10 @@ const MyProfile = () => {
       <div className="user-actions">
         <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
       </div>
+      </Accordion>
       <div className="profile-sections">
+      <Accordion title="Your Resources">
+
         <div className="user-resources section">
           <h2>Your Resources</h2>
           <div className="resources-list">
@@ -235,13 +240,16 @@ const MyProfile = () => {
             )}
           </div>
         </div>
-        
+        </Accordion>
+
         <div className="user-favorites section">
+        <Accordion title="Your Favorites">
+
           <h2>Your Favorites</h2>
           <div className="favorites-list">
     {userFavorites.length > 0 ? (
-      userFavorites.map((favorite) => {
-        const resourceData = favorite.Resource; 
+      userFavorites.map((resource) => {
+        const resourceData = resource.Resource; 
         return resourceData ? (
           <DocumentCard 
             key={resourceData._id} 
@@ -250,18 +258,21 @@ const MyProfile = () => {
             onClick={() => handleCardClick(resourceData._id)}
           />
         ) : (
-          <p key={`favorite-error-${favorite._id}`}>This favorite resource is not available.</p>
+          <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
         );
       })
     ) : (
       <p>No favorites available.</p>
     )}
           </div>
+          </Accordion>
+
         </div>
       </div>
 
-      {/* Section for Unauthorized Documents */}
       {profile.isAdmin && (
+      <Accordion title="Admin Actions">
+
         <div className="admin-section">
           <h2>Unauthorized Documents</h2>
           <div className="documents-list">
@@ -276,6 +287,7 @@ const MyProfile = () => {
             ))}
           </div>
         </div>
+        </Accordion>
       )}
 
     </div>

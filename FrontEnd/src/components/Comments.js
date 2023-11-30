@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import './App.css';
+import './Comments.css';
 
 const Comments = ({ resourceId }) => {
     const { user, authToken, isLoggedIn, isAdmin } = useContext(AuthContext);

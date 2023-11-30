@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Comments from './Comments';
 import { AuthContext } from './context/AuthContext';
-import './App.css';
+import './ResourcePage.css';
 
 const ResourcePage = () => {
   const { resourceId } = useParams(); 
@@ -39,31 +39,30 @@ const ResourcePage = () => {
   
   return (
     <div className="resource-page">
-      <div className="resource-header">
-        {resourceDetails.coverImageUrl && (
-          <div className="resource-cover">
-            <img src={resourceDetails.coverImageUrl} alt="Resource Cover" className="cover-image"/>
-          </div>
-        )}
-        <div className="resource-details">
-      <h1>{resourceDetails.Title}</h1>
-      <p><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
-      <p><strong>Description:</strong> {resourceDetails.Description}</p>
-      <p><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
-      <p><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
-      <p><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
-      <h3 className="document-title">{resourceDetails.User.Email}</h3>
-
-      {resourceDetails.fileUrl && (
-            <button href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
-              Download
-            </button>
-          )}
-        </div>
+  <section className="resource-header">
+    {resourceDetails.coverImageUrl && (
+      <div className="resource-cover">
+        <img src={resourceDetails.coverImageUrl} alt="Resource Cover" className="cover-image" />
       </div>
-      <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
-
+    )}
+    <div className="resource-details">
+      <h1 className="resource-title">{resourceDetails.Title}</h1>
+      <p className="author"><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
+      <p className="description"><strong>Description:</strong> {resourceDetails.Description}</p>
+      <p className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
+      <p className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
+      <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
+      <p className="user-email">{resourceDetails.User.Email}</p>
+      {resourceDetails.fileUrl && (
+        <a href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
+          Download
+        </a>
+      )}
     </div>
+  </section>
+  <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
+</div>
+
   );
 };
 

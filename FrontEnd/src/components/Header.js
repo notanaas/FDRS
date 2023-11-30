@@ -6,18 +6,11 @@ import axios from 'axios';
 import './App.css';
 import { RouteParamsContext } from './context/RouteParamsContext'; 
 import { debounce } from 'lodash';
+import './Sidebar.css'; // Ensure you have a CSS file for styles
 
-const Sidebar = ({ onClose }) => {
-  const { isLoggedIn } = useContext(AuthContext); 
-  const history = useHistory();
-  const goToUserProfile = () => {
-    history.push('/my-profile');
-  };
+const Sidebar = ({ }) => {
   return (
-    <div className="sidebar" >
-      {isLoggedIn && (
-  <button onClick={goToUserProfile} className="facultyauthButton">My Profile</button>
-)}
+    <div className="sidebar">
     <FacultyButtons/>
     </div>
   );
@@ -109,7 +102,9 @@ const Header = ({}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const { user } = useContext(AuthContext);
-
+  const goToUserProfile = () => {
+    history.push('/my-profile');
+  };
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -543,7 +538,11 @@ useEffect(() => {
   <div className="authButtons">
     {isLoggedIn ? (
       <div className='button'>
-        <button className="authButton" onClick={handleLogout}>Logout</button>
+        <button className="authButton" onClick={handleLogout}>Logout
+        </button>
+        <button onClick={goToUserProfile} className="profile-button">
+        <img src={`${process.env.PUBLIC_URL}/picon.png`} alt="Profile" /> 
+        </button>
       </div>
     ) : (
       <div className='logoReg'>

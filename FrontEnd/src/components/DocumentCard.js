@@ -91,7 +91,6 @@ const DocumentCard = ({ document, onClick, showAdminActions }) => {
   
   
   if (!document || !document._id) {
-    // Handle the case where the document data is not available
     return <div className="document-card">This favorite resource is not available.</div>;
   }
   

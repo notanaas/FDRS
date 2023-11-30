@@ -1,0 +1,27 @@
+/* Sidebar.css */
+.profile-button {
+  background-color: transparent; 
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.button {
+  display: flex; 
+  align-items: center; 
+  justify-content: space-around; 
+}
+
+.profile-button img {
+  margin-right: 10px;
+  height: 24px; 
+}
+
+.profile-button:hover {
+  background-color: #333; 
+}

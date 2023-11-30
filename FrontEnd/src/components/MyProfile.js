@@ -33,7 +33,7 @@ const MyProfile = () => {
           isAdmin: response.data.profile.isAdmin,
         });
         setUserResources(response.data.UserResources);
-        setUserFavorites(response.data.UserFavorites);
+        setUserFavorites(response.data.userFavorites);
         
    } else {
         console.error('Unexpected response format:', response.data);

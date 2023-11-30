@@ -12,35 +12,18 @@ const DocumentCard = ({ document, onClick, showAdminActions }) => {
   const location = useLocation();
   const history = useHistory();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
-  const [userEmail, setUserEmail] = useState('');
+  const uploaderEmail = document.User && document.User.Email ? document.User.Email : 'Unknown';
 
-  useEffect(() => {
-    const fetchUserEmail = async () => {
-      if (document._id) {
-        try {
-          const response = await axios.get(`${backendURL}/api_resource/resource-detail/${document._id}`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
-          setUserEmail(response.data.email);
-        } catch (error) {
-          console.error('Error fetching user email:', error);
-        }
-      }
-    };
-  
-    fetchUserEmail();
-  }, [document._id, authToken, backendURL]);
-  
   const goToResourceDetail = () => {
     history.push(`/resource/${document._id}`);
   };
   const toggleFavorite = async () => {
     const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
-      await axios.post(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
+      await axios.post(`http://localhost:3002/api_favorite/resources/${document._id}/${action}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setIsFavorited(!isFavorited); 
+      setIsFavorited(!isFavorited);
     } catch (error) {
       console.error(`Error toggling favorite status: ${error}`);
     }
@@ -118,18 +101,16 @@ const DocumentCard = ({ document, onClick, showAdminActions }) => {
         <p className="document-author">Author: {document.Author_first_name} {document.Author_last_name}</p>
         <p className="document-description">Description: {document.Description}</p>
         <p>Faculty: {document.Faculty ? document.Faculty.FacultyName : 'N/A'}</p>
-        <p className="document-author">Uploader: {document.User.Email || 'Fetching author...'}</p>
+        <p className="document-author">Uploader: {uploaderEmail}</p>
 
         </div>
       <div className="document-actions">
         <button onClick={(e) => {e.stopPropagation(); handleDownload(document._id);}} className="authButton">Download</button>
-        {/* Show favorite button only on faculty pages */}
         {isFacultyPage && (
           <button className="favorite-button"onClick={(e) => {e.stopPropagation();toggleFavorite();}}>
             {isFavorited ? '\u2605' : '\u2606'}
           </button>
         )}
-        {/* Show admin actions only if showAdminActions prop is true */}
         {showAdminActions && (
           <>
             <button onClick={(e) => {e.stopPropagation(); authorizeResource(document._id);}} className="authButton">Authorize</button>

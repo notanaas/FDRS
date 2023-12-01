@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
-import './App.css';
+import './MyProfile.css';
 import { useHistory } from 'react-router-dom';
 import Accordion from './Accordion'; // Make sure to create this component
 

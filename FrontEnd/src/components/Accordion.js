@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import './Accordion.css'; // Your CSS file to style the accordion
-
+import './MyProfile.css';
 const Accordion = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
 

@@ -1,10 +1,16 @@
 .resource-page {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px); /* Adjust 60px to the height of your header/footer */
+  width: calc(100vh - 60px); /* Adjust 60px to the height of your header/footer */
   background-color: #121212;
   color: #ffffff;
-  min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  overflow-y: auto; /* Enable scrolling */
+  margin: auto;
+  max-width: 800px;
+  max-height: 90vh;
 }
 
 .resource-header {

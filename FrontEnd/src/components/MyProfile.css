@@ -1,0 +1,134 @@
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #ffffff;
+  }
+
+  .sidebar {
+    background-color: #121212;
+    /* Dark background for sidebar */
+    color: #f5f5f5;
+    /* Light text for sidebar */
+  }
+}
+
+.profile-sections {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* If you want them to wrap when the screen size is small */
+@media (max-width: 768px) {
+  .profile-sections {
+    flex-wrap: wrap;
+  }
+}
+
+/* Style for individual sections */
+.section {
+  margin: 10px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+/* Styling for buttons */
+.authButton {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.authButton:hover {
+  background-color: #45a049;
+}
+
+/* Success and error message styling */
+.success-message-header, .error-message-header {
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.success-message-header {
+  background-color: #4CAF50; /* Green */
+}
+
+.error-message-header {
+  background-color: #f44336; /* Red */
+}
+
+.inputBar {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+body {
+  margin-top: 7rem; 
+  padding: 0 10rem;
+  display: flex;
+  font-size: 16px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+}
+.accordion-title {
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+  height: 50px; /* Increased button height */
+  padding: 10px 20px; /* Add padding for bigger button size */
+  margin: 10px auto; /* Center your button with automatic horizontal margins */
+  margin-bottom: 15px; /* Increased bottom margin for better spacing between buttons */
+  font-size: large;
+  display: block; /* Make the buttons stack vertically */
+  width: 90%; /* Set width to a percentage of the container for consistent sizing */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  text-align: center; /* Center the text inside the button */
+}
+
+.accordion-content {
+  /* Styles for the accordion content */
+  max-height: 0; /* Use max-height for a smooth animation */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  width: 90%; /* Match the width to the accordion title */
+  margin: 0 auto; /* Center the content */
+}
+
+.accordion-content.open {
+  max-height: 1000px; /* Use a large max-height value to accommodate varying content sizes */
+}
+
+/* Style for the content inside the accordion */
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+/* Additional styles may follow */

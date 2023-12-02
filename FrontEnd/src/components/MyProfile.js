@@ -20,8 +20,19 @@ const MyProfile = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userFavorites, setUserFavorites] = useState([]);
   const [userResources, setUserResources] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
   const history = useHistory();
-  
+  const fetchFeedbacks = async () => {
+    try {
+      const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setFeedbacks(response.data.feedbacks);
+    } catch (error) {
+      console.error('Error fetching feedbacks:', error);
+    }
+  };
+
   const fetchProfileData = async () => {
     try {
       const response = await axios.get(`${backendURL}/api_user/profile`, {
@@ -53,6 +64,7 @@ const MyProfile = () => {
   useEffect(() => {
     if (profile.isAdmin) {
       fetchUnauthorizedResources();
+      fetchFeedbacks();
     }
   }, [profile.isAdmin, authToken, backendURL]);
   
@@ -282,11 +294,27 @@ const MyProfile = () => {
                 document={doc}
                 onAuthorize={authorizeResource} 
                 onUnauthorize={unauthorizeResource} 
-                showAdminActions={true} // Show admin actions only here
+                showAdminActions={true} 
               />
             ))}
           </div>
         </div>
+        <div className="feedbacks-section">
+              <h2>Feedbacks</h2>
+              <div className="feedbacks-list">
+                {feedbacks.length > 0 ? (
+                  feedbacks.map(feedback => (
+                    <div key={feedback._id} className="feedback-card">
+                      <p>User ID: {feedback.User}</p>
+                      <p>Search Text: {feedback.SearchText}</p>
+                      {/* Add more details as needed */}
+                    </div>
+                  ))
+                ) : (
+                  <p>No feedbacks available.</p>
+                )}
+              </div>
+            </div>
         </Accordion>
       )}
 

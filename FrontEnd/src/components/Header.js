@@ -102,6 +102,7 @@ const Header = ({}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const { user } = useContext(AuthContext);
+  
   const goToUserProfile = () => {
     history.push('/my-profile');
   };
@@ -149,23 +150,29 @@ const Header = ({}) => {
       return;
     }
   
+    if (!user || !user._id) {
+      console.error('User data is not available for feedback submission.');
+      return;
+    }
+  
     try {
-      const response = await axiosInstance.post(`${backendURL}/FeedBack-post`, {
+      const response = await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
         User: user._id, 
         SearchText: searchTerm,
       }, {
         headers: {
-          'Authorization': `Bearer ${userToken}`
+          'Authorization': `Bearer ${userToken}` 
         }
       });
   
       if (response.data) {
-        console.log('Feedback submitted successfully');
+        console.log('Feedback submitted successfully:', response.data);
       }
     } catch (error) {
-      console.error('Error submitting feedback', error);
+      console.error('Error submitting feedback:', error);
     }
   };
+  
   
   useEffect(() => {
     if (searchTerm) {

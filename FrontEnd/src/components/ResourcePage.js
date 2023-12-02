@@ -39,7 +39,7 @@ const ResourcePage = () => {
   
   return (
     <div className="resource-page">
-  <section className="resource-header">
+    <section className="resource-header">
     {resourceDetails.Cover && (
       <div className="resource-cover">
       <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="document-cover" />

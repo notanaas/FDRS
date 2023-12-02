@@ -11,6 +11,6 @@ const isAdmin = (req, res, next) => {
 };
 
 router.post("/FeedBack-post" , passport.authenticate('jwt', { session: false }) ,FeedBack.feedback)
-router.get("/feedbacks" , passport.authenticate('jwt', { session: false }) , isAdmin , )
+router.get("/feedbacks" , passport.authenticate('jwt', { session: false }) , isAdmin , FeedBack.get_feedbacks)
 
 module.exports = router;

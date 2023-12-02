@@ -76,7 +76,7 @@ const Header = ({}) => {
   const [passwordResetEmail, setPasswordResetEmail] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
-  const [setForgotPasswordErrorMessage] = useState(''); 
+  const [ForgotPasswordErrorMessage,setForgotPasswordErrorMessage] = useState(''); 
   const history = useHistory();
   const { setAuthToken} = useContext(AuthContext);
   const [title, setTitle] = useState('');

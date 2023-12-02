@@ -37,7 +37,6 @@ const FacultyPage = () => {
     };
 
     if (authToken) {
-      fetchUserProfile();
       fetchResources();
     }
   }, [facultyId, authToken, backendURL]);

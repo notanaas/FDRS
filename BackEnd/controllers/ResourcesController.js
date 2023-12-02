@@ -151,7 +151,36 @@ exports.pdf_download = asyncHandler(async (req, res, next) => {
     return next({ status: 500, message: 'Internal server error.' });
   }
 });
+exports.cover_download = asyncHandler(async (req, res, next) => {
+  const UPLOADS_DIR = path.join(__dirname,'..', 'uploads'); // Adjust the path as necessary
+  const ResourceId = req.params.id;
 
+  try {
+    const resource = await Resource.findById(ResourceId);
+
+    if (!resource) {
+      console.error('PDF not found. Resource ID:', ResourceId);
+      return res.status(404).json({ message: 'PDF not found.' });
+    }
+
+
+    // Log the file path for debugging purposes
+    console.log('File Path:', resource.Cover);
+
+    // Check if the file exists before attempting to download
+    if (fs.existsSync(resource.Cover)) {
+      res.download(resource.Cover);
+    } else {
+      console.error('PDF file not found:', resource.Cover);
+      // Use the 'next' function to pass the error to the error-handling middleware
+      return next({ status: 404, message: 'PDF file not found.' });
+    }
+  } catch (err) {
+    console.error('Error downloading PDF:', err);
+    // Use the 'next' function to pass the error to the error-handling middleware
+    return next({ status: 500, message: 'Internal server error.' });
+  }
+});
 
 
 

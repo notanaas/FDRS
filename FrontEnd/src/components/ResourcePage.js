@@ -40,9 +40,9 @@ const ResourcePage = () => {
   return (
     <div className="resource-page">
   <section className="resource-header">
-    {resourceDetails.coverImageUrl && (
+    {resourceDetails.Cover && (
       <div className="resource-cover">
-        <img src={resourceDetails.coverImageUrl} alt="Resource Cover" className="cover-image" />
+      <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="document-cover" />
       </div>
     )}
     <div className="resource-details">
@@ -54,9 +54,8 @@ const ResourcePage = () => {
       <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
       <p className="user-email">{resourceDetails.User.Email}</p>
       {resourceDetails.fileUrl && (
-        <a href={`${backendURL}/download/${resourceDetails.id}`} download className="download-button">
-          Download
-        </a>
+        <a onClick={(e) => {e.stopPropagation();}} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank'  className="authButton">Download</a>
+       
       )}
     </div>
   </section>

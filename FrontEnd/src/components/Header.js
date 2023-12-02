@@ -97,12 +97,12 @@ const Header = ({}) => {
   const { routeParams } = useContext(RouteParamsContext);
   const [searchTerm, setSearchTerm] = useState('');
   const facultyId = routeParams ? routeParams.facultyId : null;
-  const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const { user } = useContext(AuthContext);
-  
+  const { authToken } = useContext(AuthContext);
+
   const goToUserProfile = () => {
     history.push('/my-profile');
   };
@@ -161,7 +161,7 @@ const Header = ({}) => {
         SearchText: searchTerm,
       }, {
         headers: {
-          'Authorization': `Bearer ${userToken}` 
+          'Authorization': `Bearer ${authToken}` 
         }
       });
   
@@ -427,16 +427,15 @@ useEffect(() => {
     }
     setIsModalOpen(true);
   };
-  const handleUpload = async () => {
+  const handleUpload = async (facultyId) => {
     if (!isLoggedIn) {
       promptLogin();
       return;
     }
-    if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
+      if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
       setError('Please fill in all required fields.');
       return;
     }
-  
     const formData = new FormData();
     formData.append('title', title);
     formData.append('firstname', authorFirstName);
@@ -444,42 +443,24 @@ useEffect(() => {
     formData.append('description', description);
     formData.append('file', file);
     formData.append('img', img);
-
-    // Append facultyId to the formData
-    
   
     if (isAdmin) {
       formData.append('isApproved', true);
     }
   
     try {
-      const response = await axios.post(uploadURL, formData, {
+      const response = await axiosInstance.post(`${backendURL}/api_resource/create/${facultyId}`, formData, {
         headers: {
-          'Authorization': `Bearer ${userToken}` 
-        },
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}` 
+        }
       });
   
       if (response.status === 201) {
         setSuccessMessage('Document uploaded successfully');
-        if (isAdmin) {
-          setSuccessMessage('Document uploaded and automatically approved');
-        }
-        setTitle('');
-        setAuthorFirstName('');
-        setAuthorLastName('');
-        setDescription('');
-        setFile(null);
-        setImg(null);
-        setImgUrl('');
-        setError(null);
-        setIsModalOpen(false); // Close modal after successful upload
-      }
-      else {
-        console.log(response.data);
       }
     } catch (error) {
-      const message = error.response?.data?.message || 'An error occurred while uploading the document. Please try again later.';
-      setError(message);
+      setError(error.response?.data?.message || 'An error occurred while uploading the document.');
     }
   };
   

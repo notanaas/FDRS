@@ -38,6 +38,7 @@ const FacultyPage = () => {
 
     if (authToken) {
       fetchResources();
+      fetchUserProfile();
     }
   }, [facultyId, authToken, backendURL]);
  

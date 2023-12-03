@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
@@ -7,11 +7,14 @@ import FacultyPage from './FacultyPage';
 import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile';
 import { AuthProvider } from './context/AuthContext';
+import FileUpload from './FileUpload';
 import Header from './Header';
-import { RouteParamsProvider } from './context/RouteParamsContext'; // Import the provider
+import { RouteParamsProvider } from './context/RouteParamsContext';
 import './App.css';
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     const configureAxios = () => {
       const token = localStorage.getItem('token');
@@ -24,10 +27,15 @@ function App() {
 
   return (
     <Router>
-      <RouteParamsProvider> {/* Wrap your app with RouteParamsProvider */}
+      <RouteParamsProvider>
         <AuthProvider>
           <div className="App">
-            <Header />
+          <Header setIsModalOpen={setIsModalOpen} />
+
+            {isModalOpen && (
+              <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            )}
+
             <div className="contentContainer">
               <Switch>
                 <Route path="/welcomingpage" exact component={WelcomingPage} />

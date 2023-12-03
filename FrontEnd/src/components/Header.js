@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext,useCallback } from 'react';
 import {  Link, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
+import FileUpload from './FileUpload';
+import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
 import { RouteParamsContext } from './context/RouteParamsContext'; 
 import { debounce } from 'lodash';
-import './Sidebar.css'; // Ensure you have a CSS file for styles
+import './Sidebar.css'; 
 
 const Sidebar = ({ }) => {
   return (
@@ -24,36 +26,9 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
   </div>
 );
 
-const Modal = ({ isOpen, onClose, children, isDarkMode }) => {
-  const modalContentStyle = { backgroundColor: isDarkMode ? '#333' : 'white',color: isDarkMode ? 'white' : 'black',};
 
-  return (
-    <div className="upload-modal" style={{ display: isOpen ? 'flex' : 'none' }} onClick={onClose}>
-      <div className="upload-modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header" style={{ backgroundColor: '#8b0000' }}></div>
-        <div className="modal-body">{children}</div>
-        <div className="modal-footer"></div>
-      </div>
-      <div 
-      className="upload-modal" 
-      style={{ display: isOpen ? 'flex' : 'none' }} 
-      onClick={onClose}
-    >
-      <div 
-        className="upload-modal-content" 
-        style={modalContentStyle} 
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-header" style={{ backgroundColor: '#8b0000' }} />
-        <div className="modal-body">{children}</div>
-        <div className="modal-footer" />
-      </div>
-    </div>
-    </div>
-    
-  );
-};
-const Header = ({}) => {
+const Header = ({ setIsModalOpen }) => {
+  const [isFileUploadOpen, setIsFileUploadOpen] = useState(false); // State for FileUpload modal visibility
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
@@ -79,31 +54,19 @@ const Header = ({}) => {
   const [ForgotPasswordErrorMessage,setForgotPasswordErrorMessage] = useState(''); 
   const history = useHistory();
   const { setAuthToken} = useContext(AuthContext);
-  const [title, setTitle] = useState('');
-  const [authorFirstName, setAuthorFirstName] = useState('');
-  const [authorLastName, setAuthorLastName] = useState('');
-  const [description, setDescription] = useState('');
-  const [file, setFile] = useState(null);
-  const [img, setImg] = useState(null);
-  const [imgUrl, setImgUrl] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [alertMessage] = useState({ message: '', type: 'success' });
   const location = useLocation();
-  const userToken = localStorage.getItem('token');
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const tokenFromLink = location.state?.token;
-  const { routeParams } = useContext(RouteParamsContext);
   const [searchTerm, setSearchTerm] = useState('');
-  const facultyId = routeParams ? routeParams.facultyId : null;
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const { user } = useContext(AuthContext);
   const { authToken } = useContext(AuthContext);
-
-  const goToUserProfile = () => {
+  const { routeParams } = useContext(RouteParamsContext);
+  const facultyId = routeParams ? routeParams.facultyId : null;
+    const goToUserProfile = () => {
     history.push('/my-profile');
   };
   const handleSearchChange = (e) => {
@@ -226,53 +189,6 @@ useEffect(() => {
   
 }, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL,isFacultyPage,location]);
   
-  const closeForgotPasswordModal = () => {
-    setIsForgotPasswordOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-  };
-
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-    setLoginError('');
-  };
-
-  const handleForgotPasswordInputChange = (e) => {
-    setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
-  };
-  
-  const closeSignupModal = () => {
-    setIsSignupOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-  };
-  
-  const handleForgotPassword = () => {
-    setPasswordResetEmail(email);
-    setPassword('');
-    setIsLoginModalOpen(false);
-    setIsForgotPasswordOpen(true);
-  };
-
-  const handleAPIError = (error) => {
-    if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
-        setErrorMessage('Operation failed: ' + error.response.data.errors[0].msg);
-        console.error('Operation failed:', error.response.data.errors);
-    } else {
-        setErrorMessage('Operation failed. Please try again later.');
-        console.error('Operation failed:', error);
-    }
-  };
-  const handleBackToLogin = () => {
-    setPasswordResetEmail(false); 
-    setPassword(''); 
-    setIsForgotPasswordOpen(false);
-    setIsLoginModalOpen(true);
-  };
- 
-  
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     if (passwordConfirm !== signupData.password) {
@@ -288,14 +204,6 @@ useEffect(() => {
       handleAPIError(error);
     }
   };
-
-  const handleSignupInputChange = (e) => {
-    const { name, value } = e.target;
-    setSignupData({
-      ...signupData,
-      [name]: value,
-    });
-  };  
   
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -385,90 +293,75 @@ useEffect(() => {
       setForgotPasswordData({ email: '' });
     }
   };
-  
+  const handleAPIError = (error) => {
+    if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+        setErrorMessage('Operation failed: ' + error.response.data.errors[0].msg);
+        console.error('Operation failed:', error.response.data.errors);
+    } else {
+        setErrorMessage('Operation failed. Please try again later.');
+        console.error('Operation failed:', error);
+    }
+  };
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
   };
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
+  const handleSignupInputChange = (e) => {
+    const { name, value } = e.target;
+    setSignupData({
+      ...signupData,
+      [name]: value,
+    });
+  };  
+  const closeForgotPasswordModal = () => {
+    setIsForgotPasswordOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
+  };
+  const handleBackToLogin = () => {
+    setPasswordResetEmail(false); 
+    setPassword(''); 
+    setIsForgotPasswordOpen(false);
+    setIsLoginModalOpen(true);
+  };
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
+    setLoginError('');
   };
 
-  const handleAuthorFirstNameChange = (e) => {
-    setAuthorFirstName(e.target.value);
+  const handleForgotPasswordInputChange = (e) => {
+    setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
+  };
+  
+  const closeSignupModal = () => {
+    setIsSignupOpen(false);
+    setSuccessMessage('');
+    setErrorMessage('');
+  };
+  
+  const handleForgotPassword = () => {
+    setPasswordResetEmail(email);
+    setPassword('');
+    setIsLoginModalOpen(false);
+    setIsForgotPasswordOpen(true);
+  };
+  
+
+  const closeFileUpload = () => {
+    setIsFileUploadOpen(false); // Close FileUpload
   };
 
-  const handleAuthorLastNameChange = (e) => {
-    setAuthorLastName(e.target.value);
-  };
-
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-        const selectedFile = e.target.files[0];
-        setFile(selectedFile);
-        const fileUrl = URL.createObjectURL(selectedFile);
-        setImgUrl(fileUrl);
-    }
-};
-
-  const handleImgChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setImg(e.target.files[0]);
-    }
-  };
-  const handleUploadClick = () => {
+  const handleUploadButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
       setTimeout(() => setShowLoginPrompt(false), 4000);
       return;
     }
-    setIsModalOpen(true);
+    setIsModalOpen(true); // This should match the prop name passed to Header
   };
-  const handleUpload = async (facultyId) => {
-    if (!isLoggedIn) {
-      promptLogin();
-      return;
-    }
-      if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('firstname', authorFirstName);
-    formData.append('lastname', authorLastName);
-    formData.append('description', description);
-    formData.append('file', file);
-    formData.append('img', img);
+
   
-    if (isAdmin) {
-      formData.append('isApproved', true);
-    }
-  
-    try {
-      const response = await axiosInstance.post(`${backendURL}/api_resource/create/${facultyId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${authToken}` 
-        }
-      });
-  
-      if (response.status === 201) {
-        setSuccessMessage('Document uploaded successfully');
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred while uploading the document.');
-    }
-  };
-  
-  
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setError(null);
-  };
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
   <div className='left'>
@@ -515,9 +408,14 @@ useEffect(() => {
         <button onClick={handleSearchSubmit} className="authButton" disabled={isLoading}>
           Search
         </button>
-        <button onClick={handleUploadClick} className="authButton">
-          Upload
-        </button>
+        <button onClick={handleUploadButtonClick} className="authButton">
+  Upload
+</button>
+
+{isFileUploadOpen && (
+  <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />
+)}
+
       </div>
     </div>
   </div>
@@ -539,7 +437,9 @@ useEffect(() => {
       </div>
     )}
   </div>
-
+  {isFileUploadOpen && (
+        <FileUpload facultyId={facultyId} />
+      )}
 
 <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>
@@ -552,8 +452,7 @@ useEffect(() => {
           <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
           <button type="submit" className="authButton">Submit</button>
         </form>
-      </Modal>
-
+</Modal>
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>Forget Password</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
@@ -576,8 +475,7 @@ useEffect(() => {
             <button className="authButton" onClick={handleBackToLogin}> Back to Login </button>
           )}
         </form>
-      </Modal>
-
+</Modal>
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
         <h1>Login</h1>
         {successMessage && <div className="success-message">{successMessage}</div>}
@@ -616,109 +514,7 @@ useEffect(() => {
 </Modal>
 
 
-{isModalOpen && (
-  <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
-      <div className="custom-upload-modal">
-    {error && (
-      <div className="error-message">
-        <p className="error-text">{error}</p>
-      </div>
-    )}
-    {successMessage && (
-      <div className="success-message">
-        <p className="success-text">{successMessage}</p>
-      </div>
-    )}
 
-    <div className="form-container">
-    <label htmlFor="username"><h1>Upload File</h1></label>
-
-<div className="form-group">
-<label>Title:</label>
-<input
-type="text"
-name="title"
-value={title}
-onChange={handleTitleChange}
-className="inputBar"
-/>
-</div>
-<div className="form-group">
-<label>Author First Name:</label>
-<input
-type="text"
-name="authorFirstName"
-value={authorFirstName}
-onChange={handleAuthorFirstNameChange}
-className="inputBar"
-/>
-</div>
-<div className="form-group">
-<label>Author Last Name:</label>
-<input
-type="text"
-name="authorLastName"
-value={authorLastName}
-onChange={handleAuthorLastNameChange}
-className="inputBar"
-/>
-</div>
-<div className="form-group">
-<label>Description:</label>
-<textarea
-name="description"
-value={description}
-onChange={handleDescriptionChange}
-className="inputBar"
-></textarea>
-</div>
-<div className="form-group">
-<label>Choose Document (PDF):</label>
-<input
-type="file"
-accept="application/pdf"
-onChange={handleFileChange}
-className="inputBar"
-/>
-</div>
-<div className="form-group">
-<label>Choose Photo for Document (JPEG, JPG, PNG):</label>
-<input
-type="file"
-accept="image/jpeg, image/jpg, image/png"
-onChange={handleImgChange}
-className="inputBar"
-/>
-</div>
-</div>
-
-{imgUrl && (
-<div className="card">
-<img className="uploaded-photo" src={imgUrl} alt="Document" />
-<div className="card-body">
-  <p className="card-title">{title}</p>
-  <p className="card-text">Author First Name: {authorFirstName}</p>
-  <p className="card-text">Author Last Name: {authorLastName}</p>
-</div>
-</div>
-)}
-
-  <div className="modal-footer">
-          <button onClick={closeModal} className="authButton">
-            Close
-          </button>
-          <button onClick={handleUpload} className="authButton">
-            Upload
-          </button>
-        </div>
-        {alertMessage.message && (
-          <div className={`alert-message ${alertMessage.type}`}>
-            {alertMessage.message}
-          </div>
-        )}
-      </div>
-  </Modal>
-)}
     </header>
 
   );

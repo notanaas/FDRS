@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [authToken, setAuthToken] = useState(localStorage.getItem('token')); 
+  const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null); // State to store logged-in user's data
   const backendURL = 'http://localhost:3002';
 
@@ -55,33 +55,37 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuthStatus();
-  }, [backendURL]);
-
-  const triggerForgotPassword = async (email) => {
-    try {
-      await axios.post(`${backendURL}/api_auth/forgot-password`, { email });
-    } catch (error) {
-      console.error('Error in forgot password request:', error);
-    }
-  };
+  }, []);
 
   const updateLoginStatus = (status, adminStatus = false, userDetails = null) => {
     setIsLoggedIn(status);
     setIsAdmin(adminStatus);
-    setUser(userDetails); 
+    setUser(userDetails); // Set user details when logging in
   };
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('isAdmin');
+    setAuthToken(null);
+    setIsLoggedIn(false);
+    setIsAdmin(false);
+    setUser(null); // Clear user data on logout
+  };
+
+  // Provide context values and functions to the children
   return (
     <AuthContext.Provider value={{
-      updateLoginStatus,
-      authToken,
-      setAuthToken,
       isLoggedIn,
       setIsLoggedIn,
       isAdmin,
       setIsAdmin,
-      triggerForgotPassword,
-      user
+      authToken,
+      setAuthToken,
+      user,
+      setUser,
+      updateLoginStatus,
+      logout
     }}>
       {children}
     </AuthContext.Provider>

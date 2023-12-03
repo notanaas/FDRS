@@ -3,6 +3,7 @@ import {  Link, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import FileUpload from './FileUpload';
+import FeedbackForm from './FeedbackForm';
 import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
@@ -17,8 +18,7 @@ const Sidebar = ({ }) => {
     </div>
   );
 }
-const backendURL = 'http://localhost:3002';
-const axiosInstance = axios.create({ baseURL: backendURL });
+
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">
     <label htmlFor={id}>{placeholder}</label>
@@ -28,7 +28,9 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 
 
 const Header = ({ setIsModalOpen }) => {
-  const [isFileUploadOpen, setIsFileUploadOpen] = useState(false); // State for FileUpload modal visibility
+  const backendURL = 'http://localhost:3002';
+  const axiosInstance = axios.create({ baseURL: backendURL });
+  const [isFileUploadOpen, setIsFileUploadOpen] = useState(false); 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
@@ -53,7 +55,7 @@ const Header = ({ setIsModalOpen }) => {
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [ForgotPasswordErrorMessage,setForgotPasswordErrorMessage] = useState(''); 
   const history = useHistory();
-  const { setAuthToken} = useContext(AuthContext);
+  const { user,authToken,setAuthToken} = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState(null);
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
@@ -62,10 +64,11 @@ const Header = ({ setIsModalOpen }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
-  const { user } = useContext(AuthContext);
-  const { authToken } = useContext(AuthContext);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
+  const userId = user?._id; 
+
     const goToUserProfile = () => {
     history.push('/my-profile');
   };
@@ -87,8 +90,6 @@ const Header = ({ setIsModalOpen }) => {
       setIsLoading(false);
     }
   };
-
-  // Debounced function
   const debouncedSearch = useCallback(debounce(fetchSearchResults, 300), []);
   const handleSearchSubmit = async () => {
     setIsLoading(true);
@@ -106,36 +107,6 @@ const Header = ({ setIsModalOpen }) => {
       setIsLoading(false);
     }
   };
-  
-  const handleFeedbackSubmit = async () => {
-    if (!isLoggedIn) {
-      promptLogin();
-      return;
-    }
-  
-    if (!user || !user._id) {
-      console.error('User data is not available for feedback submission.');
-      return;
-    }
-  
-    try {
-      const response = await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
-        User: user._id, 
-        SearchText: searchTerm,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${authToken}` 
-        }
-      });
-  
-      if (response.data) {
-        console.log('Feedback submitted successfully:', response.data);
-      }
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-    }
-  };
-  
   
   useEffect(() => {
     if (searchTerm) {
@@ -347,7 +318,6 @@ useEffect(() => {
     setIsForgotPasswordOpen(true);
   };
   
-
   const closeFileUpload = () => {
     setIsFileUploadOpen(false); // Close FileUpload
   };
@@ -360,8 +330,10 @@ useEffect(() => {
     }
     setIsModalOpen(true); // This should match the prop name passed to Header
   };
-
   
+  const toggleFeedbackForm = () => {
+    setShowFeedbackForm(!showFeedbackForm);
+  };
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
   <div className='left'>
@@ -399,9 +371,8 @@ useEffect(() => {
       ) : noResults ? (
         <div>
           <p>No results found for "{searchTerm}".</p>
-          <button onClick={handleFeedbackSubmit} className="authButton">
-            Send Feedback
-          </button>
+           <button onClick={toggleFeedbackForm}>Give Feedback</button>
+           {showFeedbackForm && <FeedbackForm />}
         </div>    
       ) : null } 
       <div className="action-buttons">

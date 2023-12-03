@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
+import DocumentCard  from './DocumentCard';
+import FeedbackForm  from './FeedbackForm'; 
 import './MyProfile.css';
 import { useHistory } from 'react-router-dom';
-import Accordion from './Accordion'; // Make sure to create this component
-
-
+import Accordion from './Accordion'; 
 const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
   const [documents, setDocuments] = useState([]); 

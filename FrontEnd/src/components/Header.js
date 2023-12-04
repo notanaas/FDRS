@@ -33,7 +33,7 @@ const Header = ({ setIsModalOpen }) => {
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false); 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
+  const { updateLoginStatus,isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -55,7 +55,6 @@ const Header = ({ setIsModalOpen }) => {
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [ForgotPasswordErrorMessage,setForgotPasswordErrorMessage] = useState(''); 
   const history = useHistory();
-  const { user,authToken,setAuthToken} = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState(null);
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
@@ -117,10 +116,7 @@ const Header = ({ setIsModalOpen }) => {
     }
   }, [searchTerm, debouncedSearch]);
 
-const promptLogin = () => {
-  setShowLoginPrompt(true);
-  setTimeout(() => setShowLoginPrompt(false), 4000); 
-};
+
 useEffect(() => {
   if (location.pathname.includes('/faculty')) {
     setIsSidebarOpen(false);
@@ -181,35 +177,43 @@ useEffect(() => {
     e.preventDefault();
     setSuccessMessage(''); 
     setLoginErrorMessage('');
-  
+    
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
     }
-  
+    
     const loginData = {
       email: email,
       password: password,
     };
-  
+    
     try {
       const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
       const { token, refreshToken, user } = response.data; 
-  
+    
       if (token) {
+        // Store the token, refresh token, and isAdmin status in localStorage
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isAdmin', user.isAdmin.toString());
-  
+    
+        // Update the AuthContext with the new user information
         setAuthToken(token); 
         setIsLoggedIn(true); 
-        setIsAdmin(user.isAdmin); 
+        setIsAdmin(user.isAdmin);
+        setUser(user); // This updates the user information in the context
+        
+        // Close the modal and clear form fields
         setIsLoginModalOpen(false); 
-  
         setEmail('');
         setPassword('');
-        updateLoginStatus(true); 
-  
+        
+        // If you have a function that updates the login status in the context, use it
+        // Otherwise, you can directly set the states as shown above
+        if (updateLoginStatus) {
+          updateLoginStatus(true, user.isAdmin, user); 
+        }
       } else {
         setLoginErrorMessage('Login response did not include the token.');
       }
@@ -221,6 +225,7 @@ useEffect(() => {
       setLoginErrorMessage(errorMessage);
     }
   };
+  
 
   const handleLogout = async () => {  
     try {

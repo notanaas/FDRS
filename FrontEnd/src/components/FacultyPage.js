@@ -15,25 +15,9 @@ const FacultyPage = () => {
   const { authToken } = useContext(AuthContext);
   const { setRouteParams } = useContext(RouteParamsContext);
 
-  useEffect(() => {
-    // Ensure facultyId is set in the RouteParamsContext
-    setRouteParams({ facultyId });
-  }, [facultyId, setRouteParams]);
+  
 
   useEffect(() => {
-    // Function to fetch user profile and update favorites
-    const fetchUserProfile = async () => {
-      try {
-        const profileResponse = await axios.get(`${backendURL}/api_user/profile`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        setUserFavorites(profileResponse.data.UserFavorites.map(fav => fav.Resource._id));
-      } catch (err) {
-        console.error('Error fetching user profile:', err);
-      }
-    };
-
-    // Function to fetch resources for the faculty
     const fetchResources = async () => {
       try {
         if (facultyId) {
@@ -46,29 +30,16 @@ const FacultyPage = () => {
         console.error('Error fetching resources:', err);
         setError(err.response?.data?.error || 'An error occurred while fetching resources.');
       }
-    };
+    };    
+    fetchResources();
+  }, [facultyId, backendURL]);
 
-    // Only fetch data if authToken is available
-    if (authToken) {
-      fetchResources();
-      fetchUserProfile();
-    }
-  }, [facultyId, authToken, backendURL]);
-
-  // Function to check if a resource is favorited
   const isResourceFavorited = resourceId => userFavorites.includes(resourceId);
 
-  // Function to handle click on a document card
   const handleCardClick = resourceId => {
     history.push(`/resource/${resourceId}`);
   };
-
-  // Render error message if there is an error
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  // Main render
+  
   return (
     <div>
       <h1>Resources for Faculty</h1>

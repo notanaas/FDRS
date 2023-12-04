@@ -4,14 +4,14 @@ import axios from 'axios';
 import './App.css';
 
 const FeedbackForm = ({searchTerm}) => {
-  const { user, authToken,isLoggedIn } = useContext(AuthContext);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbacks, setFeedbacks] = useState([]);
   const [error, setError] = useState('');
+  const { user, authToken, isLoggedIn } = useContext(AuthContext);
 
   const backendURL = 'http://localhost:3002';
-
+  
   const handleFeedbackChange = (e) => {
     setFeedbackText(e.target.value);
   };
@@ -37,12 +37,7 @@ const FeedbackForm = ({searchTerm}) => {
       return;
     }
     
-    if (!user || !user._id) {
-      // If the user data is not available, log an error or set an error state
-      console.error('User data is not available for feedback submission.');
-      setError('User data is not available. Please log in again.');
-      return;
-    }
+    
     try {
       const response = await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
         User: user._id,
@@ -61,12 +56,12 @@ const FeedbackForm = ({searchTerm}) => {
   };
   useEffect(() => {
     if (isLoggedIn && user && user._id) {
-      // Trigger the feedback submission
       submitFeedback();
     } else {
       console.error('You must be logged in to submit feedback.');
     }
-  }, [searchTerm,isLoggedIn, user]);
+  }, [isLoggedIn, user, searchTerm]);
+  
   
   return (
     <div>

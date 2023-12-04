@@ -27,15 +27,13 @@ function App() {
 
   return (
     <Router>
+      <AuthProvider>
       <RouteParamsProvider>
-        <AuthProvider>
           <div className="App">
           <Header setIsModalOpen={setIsModalOpen} />
-
             {isModalOpen && (
               <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
             )}
-
             <div className="contentContainer">
               <Switch>
                 <Route path="/welcomingpage" exact component={WelcomingPage} />
@@ -46,8 +44,9 @@ function App() {
               </Switch>
             </div>
           </div>
-        </AuthProvider>
       </RouteParamsProvider>
+      </AuthProvider>
+
     </Router>
   );
 }

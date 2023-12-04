@@ -10,6 +10,7 @@ const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
   const [documents, setDocuments] = useState([]); 
   const { authToken } = useContext(AuthContext);
+  const {isLoggedIn, updateLoginStatus, setIsLoggedIn, isAdmin, setIsAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isEditMode, setIsEditMode] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

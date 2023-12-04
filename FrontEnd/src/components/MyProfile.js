@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import DocumentCard  from './DocumentCard';
-import FeedbackForm  from './FeedbackForm'; 
+import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
 import './MyProfile.css';
 import { useHistory } from 'react-router-dom';
-import Accordion from './Accordion'; 
+import Accordion from './Accordion'; // Make sure to create this component
+
+
 const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
   const [documents, setDocuments] = useState([]); 
-  const { authToken } = useContext(AuthContext);
-  const {isAdmin } = useContext(AuthContext);
+  const { authToken, isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isEditMode, setIsEditMode] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -20,8 +20,19 @@ const MyProfile = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userFavorites, setUserFavorites] = useState([]);
   const [userResources, setUserResources] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
   const history = useHistory();
-  
+
+  const fetchFeedbacks = async () => {
+    try {
+      const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setFeedbacks(response.data.feedbacks);
+    } catch (error) {
+      console.error('Error fetching feedbacks:', error);
+    }
+  };
 
   const fetchProfileData = async () => {
     try {
@@ -54,6 +65,7 @@ const MyProfile = () => {
   useEffect(() => {
     if (profile.isAdmin) {
       fetchUnauthorizedResources();
+      fetchFeedbacks();
     }
   }, [profile.isAdmin, authToken, backendURL]);
   
@@ -288,8 +300,25 @@ const MyProfile = () => {
             ))}
           </div>
         </div>
-        {isAdmin && <FeedbackForm />}
-
+        <div className="feedbacks-section">
+        <h2>Feedbacks</h2>
+          <div className="feedbacks-container">
+            {feedbacks.length > 0 ? (
+              feedbacks.map(feedback => (
+                <DocumentCard
+                  key={feedback._id}
+                  item={{
+                    userEmail: feedback.User.Email, 
+                    searchText: feedback.SearchText,
+                  }}
+                  isFeedback={true}
+                />
+              ))
+            ) : (
+              <p>No feedbacks to display.</p>
+            )}
+          </div>
+            </div>
         </Accordion>
       )}
 

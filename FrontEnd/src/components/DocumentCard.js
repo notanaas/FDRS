@@ -5,7 +5,7 @@ import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 const DocumentCard = ({ item,document, onClick, showAdminActions,isFeedback }) => {
-  const [isFavorited, setIsFavorited] = useState(document.isFavorited);
+  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
   const { authToken } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [documents, setDocuments] = useState([]); 
@@ -61,7 +61,7 @@ const DocumentCard = ({ item,document, onClick, showAdminActions,isFeedback }) =
   }
   const FeedbackCardContent = () => (
     <div className="feedback-card-content">
-      <p><strong>Email:</strong> {item.User.Email}</p>
+      <p><strong>Email:</strong> {item.User}</p>
       <p><strong>Feedback:</strong> {item.searchText}</p>
     </div>
   );

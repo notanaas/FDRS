@@ -14,25 +14,23 @@ const FeedbackForm = () => {
   const isFacultyPage = location.pathname.includes(`/faculty/`); // Determine if it's the faculty page
   const backendURL = 'http://localhost:3002';
 
-  useEffect(() => {
-    if (isAdmin) {
-      const fetchFeedbacks = async () => {
-        try {
-          const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
-          // Safely set feedbacks if the response is an array, otherwise set an empty array
-          setFeedbacks(Array.isArray(response.data.feedbacks) ? response.data.feedbacks : []);
-        } catch (error) {
-          console.error('Error fetching feedbacks:', error);
-          setFeedbacks([]); // Set an empty array on error
-        }
-      };
-
-      fetchFeedbacks();
+  // In the MyProfile component or wherever you're listing feedbacks
+useEffect(() => {
+  const fetchFeedbacks = async () => {
+    if (isAdmin) { // Only fetch if the user is an admin
+      try {
+        const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        setFeedbacks(response.data.feedbacks); // Set feedbacks in state
+      } catch (error) {
+        console.error('Error fetching feedbacks:', error);
+      }
     }
-  }, [authToken, isAdmin, backendURL]);
+  };
 
+  fetchFeedbacks();
+}, [authToken, isAdmin, backendURL]);
   const handleInputChange = (e) => {
     setsearchTerm(e.target.value);
   };
@@ -72,16 +70,7 @@ const FeedbackForm = () => {
       console.error('Feedback submission error:', error);
     }
   };
-  const renderFeedbacks = () => {
-    return feedbacks.map(feedback => (
-      <DocumentCard
-        key={feedback._id}
-        document={feedback}
-        showAdminActions={true} // Assuming DocumentCard takes a prop to show admin actions
-      />
-    ));
-  };
-
+ 
   const submitFeedbackSection = isFacultyPage && (
     <>
       <input
@@ -107,18 +96,17 @@ const FeedbackForm = () => {
     {isAdmin && (
      <div>
        <h2>Feedbacks</h2>
-       {feedbacks.length > 0 ? (
-         feedbacks.map(feedback => (
-           <DocumentCard
-             key={feedback._id}
-             document={feedback}
-             showAdminActions={true}
-             isFeedback={true} // Indicate this is a feedback card
-           />
-         ))
-       ) : (
-         <p>No feedbacks to display.</p>
-       )}
+       {feedbacks.map(feedback => (
+  <DocumentCard
+    key={feedback._id}
+    item={{
+      username: feedback.User.username, 
+      userEmail: feedback.User.email,   
+      searchText: feedback.SearchText
+    }}
+    isFeedback={true}
+  />
+))}
      </div>
    )}
 

@@ -1,73 +1,137 @@
-import React, { useState, useContext,useEffect } from 'react';
-import { AuthContext } from './context/AuthContext';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import './App.css';
+import { AuthContext } from './context/AuthContext';
+import DocumentCard from './DocumentCard';
+import { useLocation } from 'react-router-dom';
 
-const FeedbackForm = ({searchTerm}) => {
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [feedbackText, setFeedbackText] = useState('');
+const FeedbackForm = () => {
+  const [searchTerm, setsearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const [feedbacks, setFeedbacks] = useState([]);
-  const [error, setError] = useState('');
-  const { user, authToken, isLoggedIn } = useContext(AuthContext);
-
+  const { user, authToken, isAdmin } = useContext(AuthContext);
+  const location = useLocation();
+  const isFacultyPage = location.pathname.includes(`/faculty/`); // Determine if it's the faculty page
   const backendURL = 'http://localhost:3002';
-  
-  const handleFeedbackChange = (e) => {
-    setFeedbackText(e.target.value);
+
+  useEffect(() => {
+    if (isAdmin) {
+      const fetchFeedbacks = async () => {
+        try {
+          const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          // Safely set feedbacks if the response is an array, otherwise set an empty array
+          setFeedbacks(Array.isArray(response.data.feedbacks) ? response.data.feedbacks : []);
+        } catch (error) {
+          console.error('Error fetching feedbacks:', error);
+          setFeedbacks([]); // Set an empty array on error
+        }
+      };
+
+      fetchFeedbacks();
+    }
+  }, [authToken, isAdmin, backendURL]);
+
+  const handleInputChange = (e) => {
+    setsearchTerm(e.target.value);
   };
-  const promptLogin = () => {
-    setShowLoginPrompt(true);
-    setTimeout(() => setShowLoginPrompt(false), 4000); 
-  };
-  const fetchFeedbacks = async () => {
+
+  const handleSearch = async () => {
+    setSearchPerformed(true);
     try {
-      const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+      const response = await axios.get(`${backendURL}/api_resource/search`, {
+        params: { term: searchTerm },
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setFeedbacks(response.data.feedbacks);
+      setSearchResults(response.data);
     } catch (error) {
-      console.error('Error fetching feedbacks:', error);
+      console.error('Search error:', error);
     }
   };
 
   const submitFeedback = async () => {
-    if (!isLoggedIn) {
-      // Handle the case where the user is not logged in
-      console.log('User must be logged in to submit feedback.');
+    if (!user) {
+      console.error('User is not logged in.');
       return;
     }
-    
-    
+
     try {
-      const response = await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
+      await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
         User: user._id,
-        SearchText: searchTerm,
+        SearchText: searchTerm, 
       }, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`
-                },
+        },
       });
 
-      console.log('Feedback submitted successfully:', response.data);
+      setsearchTerm(''); 
     } catch (error) {
-      console.error('Error submitting feedback:', error);
+      console.error('Feedback submission error:', error);
     }
   };
-  useEffect(() => {
-    if (isLoggedIn && user && user._id) {
-      submitFeedback();
-    } else {
-      console.error('You must be logged in to submit feedback.');
-    }
-  }, [isLoggedIn, user, searchTerm]);
-  
-  
+  const renderFeedbacks = () => {
+    return feedbacks.map(feedback => (
+      <DocumentCard
+        key={feedback._id}
+        document={feedback}
+        showAdminActions={true} // Assuming DocumentCard takes a prop to show admin actions
+      />
+    ));
+  };
+
+  const submitFeedbackSection = isFacultyPage && (
+    <>
+      <input
+        type="text"
+        value={searchTerm}
+        className='inputBar'
+        onChange={handleInputChange}
+        placeholder="Search or submit feedback"
+      />
+      <button className="authButton" onClick={handleSearch}>Search</button>
+
+      {searchPerformed && searchResults.length === 0 && (
+        <>
+          <p>No results found. Would you like to submit your search as feedback?</p>
+          <button className="authButton" onClick={submitFeedback}>Submit Feedback</button>
+        </>
+      )}
+    </>
+  );
+
   return (
     <div>
-      {error && <p className="error-message">{error}</p>}
-    </div>
-  );
+    {isAdmin && (
+     <div>
+       <h2>Feedbacks</h2>
+       {feedbacks.length > 0 ? (
+         feedbacks.map(feedback => (
+           <DocumentCard
+             key={feedback._id}
+             document={feedback}
+             showAdminActions={true}
+             isFeedback={true} // Indicate this is a feedback card
+           />
+         ))
+       ) : (
+         <p>No feedbacks to display.</p>
+       )}
+     </div>
+   )}
+
+   {submitFeedbackSection}
+
+   {searchPerformed && searchResults.length > 0 && (
+     searchResults.map(result => (
+       <div key={result.id}>{result.title}</div>
+     ))
+   )}
+ </div>
+);
 };
+
 
 export default FeedbackForm;

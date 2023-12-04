@@ -13,7 +13,6 @@ const FacultyPage = () => {
   const backendURL = 'http://localhost:3002';
   const { facultyId } = useParams();
   const { authToken } = useContext(AuthContext);
-  const { setRouteParams } = useContext(RouteParamsContext);
 
   
 
@@ -32,7 +31,7 @@ const FacultyPage = () => {
       }
     };    
     fetchResources();
-  }, [facultyId, backendURL]);
+  }, [facultyId, authToken,backendURL]);
 
   const isResourceFavorited = resourceId => userFavorites.includes(resourceId);
 

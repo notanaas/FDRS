@@ -59,64 +59,17 @@ const Header = ({ setIsModalOpen }) => {
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const tokenFromLink = location.state?.token;
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [noResults, setNoResults] = useState(false);
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
   const userId = user?._id; 
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
-  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
 
     const goToUserProfile = () => {
     history.push('/my-profile');
   };
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const fetchSearchResults = async (query) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(`${backendURL}/api_resource/search`, {
-        params: { term: query },
-      });
-      setSearchResults(response.data); // Assuming the response data is the array of search results
-    } catch (error) {
-      console.error('Error during search:', error);
-      setSearchResults([]); // Reset results on error
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const debouncedSearch = useCallback(debounce(fetchSearchResults, 300), []);
-  const handleSearchSubmit = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(`${backendURL}/api_resource/search`, {
-        params: { term: searchTerm },
-      });
-      setSearchResults(response.data);
-      console.log('Search Results:', response.data); 
-      setNoResults(response.data.length === 0);
-    } catch (error) {
-      console.error('Error during search:', error);
-      setNoResults(true); 
-    } finally {
-      setIsLoading(false);
-    }
-  };
   
-  useEffect(() => {
-    if (searchTerm) {
-      debouncedSearch(searchTerm);
-    } else {
-      setSearchResults([]); 
-    }
-  }, [searchTerm, debouncedSearch]);
 
-
+  
+   
 useEffect(() => {
   if (location.pathname.includes('/faculty')) {
     setIsSidebarOpen(false);
@@ -337,12 +290,7 @@ useEffect(() => {
     setIsModalOpen(true); // This should match the prop name passed to Header
   };
   
-  const handleGiveFeedback = () => {
-    if (!feedbackSubmitted && searchTerm) {
-      setShowFeedbackForm(true);
-      setFeedbackSubmitted(true); // Prevent multiple submissions
-    }
-  };
+
   
   
   return (
@@ -363,34 +311,9 @@ useEffect(() => {
     {isFacultyPage && (
       <div>
         <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search resources..."
-            className="inputBar"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          {isLoading && <div>Loading...</div>}
-        </div>
-        <div className="search-results">
-          {searchResults.length > 0 ? (
-            searchResults.map((result) => (
-              <div key={result.id}>{result.title}</div>
-            ))
-          ) : isLoading ? (
-            <div>Loading...</div>
-          ) : noResults ? (
-            <div>
-              <p>No results found for "{searchTerm}".</p>
-              <button className="authButton"onClick={handleGiveFeedback}>Give Feedback</button>
-
-              {showFeedbackForm && (<FeedbackForm searchTerm={searchTerm} />)}
-                          </div>
-          ) : null}
+         <FeedbackForm/>
           <div className="action-buttons">
-            <button onClick={handleSearchSubmit} className="authButton" disabled={isLoading}>
-              Search
-            </button>
+           
             <button onClick={handleUploadButtonClick} className="authButton">
               Upload
             </button>

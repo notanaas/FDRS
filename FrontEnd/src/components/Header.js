@@ -64,10 +64,11 @@ const Header = ({ setIsModalOpen }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
-  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
   const userId = user?._id; 
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
 
     const goToUserProfile = () => {
     history.push('/my-profile');
@@ -331,67 +332,68 @@ useEffect(() => {
     setIsModalOpen(true); // This should match the prop name passed to Header
   };
   
-  const toggleFeedbackForm = () => {
-    setShowFeedbackForm(!showFeedbackForm);
+  const handleGiveFeedback = () => {
+    if (!feedbackSubmitted && searchTerm) {
+      setShowFeedbackForm(true);
+      setFeedbackSubmitted(true); // Prevent multiple submissions
+    }
   };
+  
+  
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
-  <div className='left'>
-    <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
-    <div className="logoContainer">
-      <Link to="/welcomingpage">
-        <img src="/logo.png" alt="Logo" className="logo" />
-      </Link>
+    <div className='left'>
+      <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
+      <div className="logoContainer">
+        <Link to="/welcomingpage">
+          <img src="/logo.png" alt="Logo" className="logo" />
+        </Link>
+      </div>
+      {isSidebarOpen && <Sidebar />}
     </div>
-    {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
-  </div>
     {showLoginPrompt && (
       <div className="login-prompt">You need to be logged in to upload files.</div>
     )}
-    
-   {isFacultyPage && (
-  <div>
-    <div className="search-container">
-      <input
-        type="text"
-        placeholder="Search resources..."
-        className="inputBar"
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
-      {isLoading && <div>Loading...</div>}
-    </div>
-    <div className="search-results">
-      {searchResults.length > 0 ? (
-        searchResults.map((result) => (
-          <div key={result.id}>{result.title}</div>
-        ))
-      ) : isLoading ? (
-        <div>Loading...</div>
-      ) : noResults ? (
-        <div>
-          <p>No results found for "{searchTerm}".</p>
-           <button onClick={toggleFeedbackForm}>Give Feedback</button>
-           {showFeedbackForm && <FeedbackForm />}
-        </div>    
-      ) : null } 
-      <div className="action-buttons">
-        <button onClick={handleSearchSubmit} className="authButton" disabled={isLoading}>
-          Search
-        </button>
-        <button onClick={handleUploadButtonClick} className="authButton">
-  Upload
-</button>
 
-{isFileUploadOpen && (
-  <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />
-)}
+    {isFacultyPage && (
+      <div>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search resources..."
+            className="inputBar"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          {isLoading && <div>Loading...</div>}
+        </div>
+        <div className="search-results">
+          {searchResults.length > 0 ? (
+            searchResults.map((result) => (
+              <div key={result.id}>{result.title}</div>
+            ))
+          ) : isLoading ? (
+            <div>Loading...</div>
+          ) : noResults ? (
+            <div>
+              <p>No results found for "{searchTerm}".</p>
+              <button className="authButton"onClick={handleGiveFeedback}>Give Feedback</button>
 
+              {showFeedbackForm && (<FeedbackForm searchTerm={searchTerm} />)}
+                          </div>
+          ) : null}
+          <div className="action-buttons">
+            <button onClick={handleSearchSubmit} className="authButton" disabled={isLoading}>
+              Search
+            </button>
+            <button onClick={handleUploadButtonClick} className="authButton">
+              Upload
+            </button>
+            {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-)}
-
+    )}
   <div className="authButtons">
     {isLoggedIn ? (
       <div className='button'>

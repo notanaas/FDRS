@@ -9,6 +9,25 @@ export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null); // State to store logged-in user's data
   const backendURL = 'http://localhost:3002';
+  const fetchUserDetails = async (accessToken) => {
+    try {
+      const userInfoResponse = await axios.get(`${backendURL}/api_user/profile`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      if (userInfoResponse.data.user) {
+        setUser(userInfoResponse.data.user); // Set user data
+        setIsLoggedIn(true);
+        setIsAdmin(userInfoResponse.data.user.isAdmin); // Adjust based on your user object structure
+      } else {
+        throw new Error('User data is not available.');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      logout(); // Logout on error
+    }
+  };
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -43,6 +62,8 @@ export const AuthProvider = ({ children }) => {
         });
         setUser(userInfoResponse.data.user); // Assuming the endpoint returns user data
 
+        localStorage.setItem('token', response.data.accessToken);
+        setAuthToken(response.data.accessToken);
       } catch (error) {
         console.error('Error refreshing token:', error);
         setIsLoggedIn(false);
@@ -91,5 +112,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
 export default AuthProvider;

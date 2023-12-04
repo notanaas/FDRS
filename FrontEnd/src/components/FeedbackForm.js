@@ -1,15 +1,14 @@
 import React, { useState, useContext,useEffect } from 'react';
 import { AuthContext } from './context/AuthContext';
 import axios from 'axios';
+import './App.css';
 
-const FeedbackForm = () => {
+const FeedbackForm = ({searchTerm}) => {
   const { user, authToken,isLoggedIn } = useContext(AuthContext);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbacks, setFeedbacks] = useState([]);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const backendURL = 'http://localhost:3002';
 
@@ -32,61 +31,46 @@ const FeedbackForm = () => {
   };
 
   const submitFeedback = async () => {
-    console.log('Feedback submit button clicked'); // For debugging
-  
     if (!isLoggedIn) {
-      promptLogin();
+      // Handle the case where the user is not logged in
+      console.log('User must be logged in to submit feedback.');
       return;
     }
-  
+    
     if (!user || !user._id) {
+      // If the user data is not available, log an error or set an error state
       console.error('User data is not available for feedback submission.');
+      setError('User data is not available. Please log in again.');
       return;
     }
-  
     try {
       const response = await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
-        User: user._id, 
+        User: user._id,
         SearchText: searchTerm,
       }, {
         headers: {
-          'Authorization': `Bearer ${authToken}` 
-        }
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}`
+                },
       });
-  
+
       console.log('Feedback submitted successfully:', response.data);
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }
   };
-
-  // Call fetchFeedbacks when the component mounts
   useEffect(() => {
-    fetchFeedbacks();
-  }, []); // Empty dependency array ensures it runs once after the initial render
-
+    if (isLoggedIn && user && user._id) {
+      // Trigger the feedback submission
+      submitFeedback();
+    } else {
+      console.error('You must be logged in to submit feedback.');
+    }
+  }, [searchTerm,isLoggedIn, user]);
+  
   return (
     <div>
-      {isLoading ? (
-        <p>Loading feedbacks...</p>
-      ) : (
-        <div>
-          <ul>
-            {feedbacks.map((feedback) => (
-              <li key={feedback.id}>{feedback.text}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <div>
-        <textarea
-          value={feedbackText}
-          onChange={handleFeedbackChange}
-          placeholder="Write your feedback here..."
-        />
-        <button onClick={submitFeedback}>Submit Feedback</button>
-      </div>
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

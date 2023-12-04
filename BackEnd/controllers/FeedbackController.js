@@ -23,7 +23,7 @@ exports.feedback = asyncHandler(async (req, res, next) => {
   });
   
   exports.get_feedbacks = asyncHandler(async (req, res, next) => {
-    const feedbacks = await FeedBack.find({}).exec(); // Add 'await' to ensure asynchronous operation completes
+    const feedbacks = await FeedBack.find({}).populate("User").exec(); // Add 'await' to ensure asynchronous operation completes
     if (!feedbacks || feedbacks.length === 0) { // Check if feedbacks is empty
         return res.status(404).json({ message: "No feedbacks found" });
     }

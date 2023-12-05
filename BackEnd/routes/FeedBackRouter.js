@@ -12,7 +12,7 @@ const isAdmin = (req, res, next) => {
 
 router.post("/FeedBack-post" , passport.authenticate('jwt', { session: false }) ,FeedBack.feedback)
 router.get("/feedbacks" , passport.authenticate('jwt', { session: false }) , isAdmin , FeedBack.get_feedbacks)
-router.delete('/delete-feedback/:feedbackId', FeedBack.deleteFeedback);
+router.delete('/delete-feedback/:feedbackId',passport.authenticate('jwt', { session: false }) , isAdmin , FeedBack.deleteFeedback);
 
 
 module.exports = router;

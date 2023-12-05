@@ -29,3 +29,15 @@ exports.feedback = asyncHandler(async (req, res, next) => {
     }
     return res.status(200).json({ feedbacks: feedbacks });
 });
+exports.deleteFeedback = asyncHandler(async (req, res) => {
+  const { feedbackId } = req.params;
+
+  const feedback = await FeedBack.findByIdAndDelete(feedbackId);
+
+  if (!feedback) {
+    return res.status(404).json({ message: "Feedback not found" });
+  }
+
+  res.status(200).json({ message: "Feedback deleted successfully" });
+});
+

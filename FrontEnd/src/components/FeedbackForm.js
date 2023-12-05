@@ -14,23 +14,7 @@ const FeedbackForm = () => {
   const isFacultyPage = location.pathname.includes(`/faculty/`); // Determine if it's the faculty page
   const backendURL = 'http://localhost:3002';
 
-  // In the MyProfile component or wherever you're listing feedbacks
-useEffect(() => {
-  const fetchFeedbacks = async () => {
-    if (isAdmin) { // Only fetch if the user is an admin
-      try {
-        const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        setFeedbacks(response.data.feedbacks); // Set feedbacks in state
-      } catch (error) {
-        console.error('Error fetching feedbacks:', error);
-      }
-    }
-  };
 
-  fetchFeedbacks();
-}, [authToken, isAdmin, backendURL]);
   const handleInputChange = (e) => {
     setsearchTerm(e.target.value);
   };
@@ -93,22 +77,7 @@ useEffect(() => {
 
   return (
     <div>
-    {isAdmin && (
-     <div>
-       <h2>Feedbacks</h2>
-       {feedbacks.map(feedback => (
-  <DocumentCard
-    key={feedback._id}
-    item={{
-      username: feedback.User.username, 
-      userEmail: feedback.User.email,   
-      searchText: feedback.SearchText
-    }}
-    isFeedback={true}
-  />
-))}
-     </div>
-   )}
+    
 
    {submitFeedbackSection}
 

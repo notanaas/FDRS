@@ -3,7 +3,7 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
 import './MyProfile.css';
-import { useHistory } from 'react-router-dom';
+import { useHistory,useLocation } from 'react-router-dom';
 import Accordion from './Accordion'; // Make sure to create this component
 
 
@@ -21,18 +21,26 @@ const MyProfile = () => {
   const [userFavorites, setUserFavorites] = useState([]);
   const [userResources, setUserResources] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
+  const location = useLocation(); // This hook gets the current location object
   const history = useHistory();
+  const isProfilePage = location.pathname.includes(`/my-profile`);
 
-  const fetchFeedbacks = async () => {
-    try {
-      const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      setFeedbacks(response.data.feedbacks);
-    } catch (error) {
-      console.error('Error fetching feedbacks:', error);
-    }
-  };
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      if (isAdmin&&isProfilePage) { 
+        try {
+          const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          setFeedbacks(response.data.feedbacks); // Set feedbacks in state
+        } catch (error) {
+          console.error('Error fetching feedbacks:', error);
+        }
+      }
+    };
+  
+    fetchFeedbacks();
+  }, [authToken, isAdmin, backendURL]);
 
   const fetchProfileData = async () => {
     try {
@@ -56,19 +64,6 @@ const MyProfile = () => {
     }
   };
 
-  useEffect(() => {
-    if (authToken) {
-      fetchProfileData();
-    }
-  }, [authToken]);
-
-  useEffect(() => {
-    if (profile.isAdmin) {
-      fetchUnauthorizedResources();
-      fetchFeedbacks();
-    }
-  }, [profile.isAdmin, authToken, backendURL]);
-  
   const fetchUnauthorizedResources = async () => {
     try {
       const response = await axios.get(`${backendURL}/api_user/resource/authorize`, {
@@ -102,13 +97,6 @@ const MyProfile = () => {
     }
   };
  
-
-  useEffect(() => {
-    if (profile.isAdmin) {
-      fetchUnauthorizedResources();
-    }
-  }, [profile.isAdmin, authToken, backendURL]);
-
   const handleEditToggle = () => {
     setIsEditMode(!isEditMode);
     if (isEditMode) {
@@ -200,11 +188,41 @@ const MyProfile = () => {
   const handleCardClick = (resourceId) => {
     history.push(`/resource/${resourceId}`);
   };
-
+  useEffect(() => {
+    if (authToken) {
+      fetchProfileData();
+    }
+    if (profile.isAdmin ) {
+      fetchUnauthorizedResources();
+    }
+  }, [profile.isAdmin, authToken, backendURL]);
   if (!profile.username) {
     return <div>Loading...</div>;
   }
 
+  const deleteFeedback = async (feedbackId) => {
+    try {
+      const response = await axios.delete(`${backendURL}/api_feedback/delete-feedback/${feedbackId}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status === 200) {
+        // Update the state to reflect the deletion
+        setFeedbacks(currentFeedbacks => currentFeedbacks.filter(feedback => feedback._id !== feedbackId));
+      }
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      // Handle error (e.g., show error message)
+    }
+  };
+  const sendEmail = (emailAddress) => {
+    // Optionally, add subject and body to the email
+    const subject = encodeURIComponent("Your Feedback");
+    const body = encodeURIComponent("Thank you for your feedback!");
+  
+    // Construct the mailto link
+    window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+  };
+  
   return (
     <div className="my-profile">
       {showSuccessMessage && (
@@ -254,7 +272,6 @@ const MyProfile = () => {
           </div>
         </div>
         </Accordion>
-
         <div className="user-favorites section">
         <Accordion title="Your Favorites">
 
@@ -279,7 +296,6 @@ const MyProfile = () => {
     )}
           </div>
           </Accordion>
-
         </div>
       </div>
 
@@ -303,20 +319,24 @@ const MyProfile = () => {
         <div className="feedbacks-section">
         <h2>Feedbacks</h2>
           <div className="feedbacks-container">
-            {feedbacks.length > 0 ? (
-              feedbacks.map(feedback => (
-                <DocumentCard
-                  key={feedback._id}
-                  item={{
-                    userEmail: feedback.User.Email, 
-                    searchText: feedback.SearchText,
-                  }}
-                  isFeedback={true}
-                />
-              ))
-            ) : (
-              <p>No feedbacks to display.</p>
-            )}
+          {feedbacks.length > 0 ? (
+  feedbacks.map(feedback => (
+    <DocumentCard
+    key={feedback._id}
+    item={{
+      _id: feedback._id,
+      userEmail: feedback.User.Email,
+      searchText: feedback.SearchText,
+    }}
+    isFeedback={true}
+    deleteFeedback={deleteFeedback}
+    sendEmail={sendEmail}
+  />
+  
+  ))
+) : (
+  <p>No feedbacks to display.</p>
+)}
           </div>
             </div>
         </Accordion>
@@ -327,3 +347,4 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
+

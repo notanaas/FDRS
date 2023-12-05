@@ -290,8 +290,6 @@ useEffect(() => {
     setIsModalOpen(true); // This should match the prop name passed to Header
   };
   
-
-  
   
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>

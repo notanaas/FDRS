@@ -4,15 +4,18 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
-const DocumentCard = ({ item,document, onClick, showAdminActions,isFeedback }) => {
+const DocumentCard = ({ item,document, onClick, showAdminActions,isFeedback,deleteFeedback, sendEmail }) => {
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
   const { authToken } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
+  const [feedbacks, setFeedbacks] = useState([]); 
   const [documents, setDocuments] = useState([]); 
+
   const location = useLocation();
   const history = useHistory();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
-  
+  const isProfilePage = location.pathname.includes(`/my-profile`);
+
   const goToResourceDetail = () => {
     history.push(`/resource/${document._id}`);
   };
@@ -56,15 +59,30 @@ const DocumentCard = ({ item,document, onClick, showAdminActions,isFeedback }) =
     }
   };
     
-  if (!document || !document._id) {
-    return <div className="document-card">This favorite resource is not available.</div>;
-  }
-  const FeedbackCardContent = () => (
-    <div className="feedback-card-content">
-      <p><strong>Email:</strong> {item.User}</p>
-      <p><strong>Feedback:</strong> {item.searchText}</p>
-    </div>
-  );
+
+  
+  
+  const FeedbackCardContent = ({ item, isProfilePage, deleteFeedback, sendEmail }) => {
+    return (
+      isProfilePage && (
+        <div className="feedback-card-content">
+          <p><strong>Email:</strong> {item.userEmail}</p>
+          <p><strong>Feedback:</strong> {item.searchText}</p>
+          <div className="feedback-actions">
+          <button className="authButton"onClick={(e) => {e.stopPropagation(); deleteFeedback(item._id);}}>
+      Delete Feedback
+    </button>
+            <button onClick={() => sendEmail(item.userEmail)} className="authButton">
+              Send Email
+            </button>
+          </div>
+        </div>
+      )
+    );
+  };
+  
+  
+  
   const CardContent = () => (
     !isFeedback && (
 
@@ -100,9 +118,20 @@ const DocumentCard = ({ item,document, onClick, showAdminActions,isFeedback }) =
 
   return (
     <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? goToResourceDetail : undefined}>
-    {isFeedback ? <FeedbackCardContent /> : <CardContent />}
-  </div>
-);
+      {isFeedback ? 
+        <FeedbackCardContent 
+        item={item}
+        isProfilePage={isProfilePage}
+        deleteFeedback={deleteFeedback}
+        sendEmail={sendEmail}
+      />
+      
+        : 
+        <CardContent />
+      }
+    </div>
+  );
+  
 };
 
 

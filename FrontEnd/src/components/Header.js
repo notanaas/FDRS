@@ -65,10 +65,6 @@ const Header = ({ setIsModalOpen }) => {
     const goToUserProfile = () => {
     history.push('/my-profile');
   };
-  
-
-  
-   
 useEffect(() => {
   if (location.pathname.includes('/faculty')) {
     setIsSidebarOpen(false);
@@ -124,7 +120,6 @@ useEffect(() => {
       handleAPIError(error);
     }
   };
-  
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage(''); 
@@ -177,8 +172,6 @@ useEffect(() => {
       setLoginErrorMessage(errorMessage);
     }
   };
-  
-
   const handleLogout = async () => {  
     try {
       const refreshToken = localStorage.getItem('refreshToken');
@@ -197,7 +190,6 @@ useEffect(() => {
       console.error('Logout error:', error);
     }
   };
-  
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
     setForgotPasswordErrorMessage(''); 

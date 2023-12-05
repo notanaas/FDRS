@@ -262,8 +262,12 @@ const MyProfile = () => {
           <div className="resources-list">
             {userResources.length > 0 ? (
               userResources.map((resource) => (
-              
-                <DocumentCard key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
+                <DocumentCard
+                  key={`userResource-${resource._id}`} // Ensure the key is unique
+                  document={resource}
+                  showAdminActions={false}
+                  onClick={() => handleCardClick(resource._id)}
+                />
 
               ))
             ) : (
@@ -277,16 +281,16 @@ const MyProfile = () => {
 
           <h2>Your Favorites</h2>
           <div className="favorites-list">
-    {userFavorites.length > 0 ? (
-      userFavorites.map((resource) => {
-        const resourceData = resource.Resource; 
-        return resourceData ? (
-          <DocumentCard 
-            key={resourceData._id} 
-            document={resourceData}
-            showAdminActions={false}
-            onClick={() => handleCardClick(resourceData._id)}
-          />
+            {userFavorites.length > 0 ? (
+              userFavorites.map((resource) => {
+                const resourceData = resource.Resource;
+                return resourceData ? (
+                  <DocumentCard
+                    key={`userFavorite-${resourceData._id}`} // Ensure the key is unique
+                    document={resourceData}
+                    showAdminActions={false}
+                    onClick={() => handleCardClick(resourceData._id)}
+                  />
         ) : (
           <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
         );
@@ -305,33 +309,33 @@ const MyProfile = () => {
         <div className="admin-section">
           <h2>Unauthorized Documents</h2>
           <div className="documents-list">
-            {documents.map((doc) => (
-              <DocumentCard 
-                key={doc._id} 
-                document={doc}
-                onAuthorize={authorizeResource} 
-                onUnauthorize={unauthorizeResource} 
-                showAdminActions={true} 
-              />
+              {documents.map((doc) => (
+                <DocumentCard
+                  key={`adminDocument-${doc._id}`} // Ensure the key is unique
+                  document={doc}
+                  onAuthorize={authorizeResource}
+                  onUnauthorize={unauthorizeResource}
+                  showAdminActions={true}
+                />
             ))}
           </div>
         </div>
         <div className="feedbacks-section">
         <h2>Feedbacks</h2>
-          <div className="feedbacks-container">
-          {feedbacks.length > 0 ? (
-  feedbacks.map(feedback => (
-    <DocumentCard
-    key={feedback._id}
-    item={{
-      _id: feedback._id,
-      userEmail: feedback.User.Email,
-      searchText: feedback.SearchText,
-    }}
-    isFeedback={true}
-    deleteFeedback={deleteFeedback}
-    sendEmail={sendEmail}
-  />
+        <div className="feedbacks-container">
+              {feedbacks.length > 0 ? (
+                feedbacks.map((feedback) => (
+                  <DocumentCard
+                    key={`feedback-${feedback._id}`} // Ensure the key is unique
+                    item={{
+                      _id: feedback._id,
+                      userEmail: feedback.User.Email,
+                      searchText: feedback.SearchText,
+                    }}
+                    isFeedback={true}
+                    deleteFeedback={deleteFeedback}
+                    sendEmail={sendEmail}
+                  />
   
   ))
 ) : (

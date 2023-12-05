@@ -21,19 +21,17 @@ const FacultyPage = () => {
   }, [facultyId, setRouteParams]);
 
   useEffect(() => {
-    // Function to fetch user profile and update favorites
     const fetchUserProfile = async () => {
       try {
         const profileResponse = await axios.get(`${backendURL}/api_user/profile`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
-        setUserFavorites(profileResponse.data.UserFavorites.map(fav => fav.Resource._id));
+        const favoriteIds = profileResponse.data.userFavorites.map(fav => fav.Resource._id);
+        setUserFavorites(profileResponse.data.userFavorites);
       } catch (err) {
         console.error('Error fetching user profile:', err);
       }
     };
-
-    // Function to fetch resources for the faculty
     const fetchResources = async () => {
       try {
         if (facultyId) {
@@ -48,10 +46,10 @@ const FacultyPage = () => {
       }
     };
 
-    // Only fetch data if authToken is available
     if (authToken) {
       fetchResources();
       fetchUserProfile();
+
     }
   }, [facultyId, authToken, backendURL]);
 
@@ -63,6 +61,25 @@ const FacultyPage = () => {
     history.push(`/resource/${resourceId}`);
   };
 
+  const toggleFavorite = async (resourceId) => {
+    try {
+      // API call to backend to toggle favorite status
+      await axios.post(`${backendURL}/api_user/toggle_favorite/${resourceId}`, {}, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+  
+      // Update local state to reflect changes
+      setUserFavorites(currentFavorites => {
+        return currentFavorites.includes(resourceId)
+          ? currentFavorites.filter(id => id !== resourceId)
+          : [...currentFavorites, resourceId];
+      });
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+    }
+  };
+  
+  
   // Render error message if there is an error
   if (error) {
     return <div>Error: {error}</div>;
@@ -80,6 +97,8 @@ const FacultyPage = () => {
               document={resource} 
               onClick={() => handleCardClick(resource._id)} 
               isFavorited={isResourceFavorited(resource._id)}
+              onToggleFavorite={() => toggleFavorite(resource._id)}
+
             />
           ))
         ) : (

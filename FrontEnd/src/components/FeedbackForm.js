@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState ,useContext} from 'react';
 import axios from 'axios';
-import { AuthContext } from './context/AuthContext';
-import DocumentCard from './DocumentCard';
 import { useLocation } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
 
-const FeedbackForm = () => {
+const FeedbackForm = ({ authToken }) => {
   const [searchTerm, setsearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [feedbacks, setFeedbacks] = useState([]);
-  const { user, authToken, isAdmin } = useContext(AuthContext);
   const location = useLocation();
-  const isFacultyPage = location.pathname.includes(`/faculty/`); // Determine if it's the faculty page
+  const isFacultyPage = location.pathname.includes(`/faculty/`); 
   const backendURL = 'http://localhost:3002';
+  const { user } = useContext(AuthContext);
 
 
   const handleInputChange = (e) => {
@@ -46,6 +44,7 @@ const FeedbackForm = () => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`
+          
         },
       });
 

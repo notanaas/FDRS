@@ -32,7 +32,7 @@ const Header = ({ setIsModalOpen }) => {
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false); 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { updateLoginStatus,isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken } = useContext(AuthContext);
+  const { updateLoginStatus,isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken,refreshToken } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -60,7 +60,6 @@ const Header = ({ setIsModalOpen }) => {
   const tokenFromLink = location.state?.token;
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
-  const userId = user?._id; 
 
     const goToUserProfile = () => {
     history.push('/my-profile');
@@ -184,7 +183,7 @@ useEffect(() => {
       localStorage.removeItem('refreshToken');
       setIsLoggedIn(false);
       setIsAdmin(false);
-  
+
       history.push('/welcomingpage'); 
     } catch (error) {
       console.error('Logout error:', error);
@@ -300,7 +299,8 @@ useEffect(() => {
     {isFacultyPage && (
       <div>
         <div className="search-container">
-         <FeedbackForm/>
+        { user && <FeedbackForm user={user} authToken={authToken} />}
+
           <div className="action-buttons">
            
             <button onClick={handleUploadButtonClick} className="authButton">

@@ -7,8 +7,9 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(null); // State to store logged-in user's data
+  const [user, setUser] = useState(null);
   const backendURL = 'http://localhost:3002';
+
   const fetchUserDetails = async (accessToken) => {
     try {
       const userInfoResponse = await axios.get(`${backendURL}/api_user/profile`, {
@@ -17,71 +18,72 @@ export const AuthProvider = ({ children }) => {
         }
       });
       if (userInfoResponse.data.user) {
-        setUser(userInfoResponse.data.user); // Set user data
+        setUser(userInfoResponse.data.user);
         setIsLoggedIn(true);
-        setIsAdmin(userInfoResponse.data.user.isAdmin); // Adjust based on your user object structure
+        setIsAdmin(userInfoResponse.data.user.isAdmin);
       } else {
         throw new Error('User data is not available.');
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      logout(); // Logout on error
+      logout();
+    }
+  };
+
+  const refreshTokenFunc = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) throw new Error('No refresh token available.');
+
+      const response = await axios.post(`${backendURL}/api_auth/refreshToken`, { refreshToken });
+      const { accessToken, newRefreshToken, user } = response.data;
+
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refreshToken', newRefreshToken || refreshToken);
+      setAuthToken(accessToken);
+      setIsLoggedIn(true);
+      setIsAdmin(user.isAdmin);
+      setUser(user);
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      logout();
+    }
+  };
+
+  const checkAuthStatus = async () => {
+    const token = localStorage.getItem('token');
+    const refreshToken = localStorage.getItem('refreshToken');
+    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+
+    if (!token && refreshToken) {
+      await refreshTokenFunc();
+    } else if (!token || !refreshToken) {
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      setUser(null);
+      return;
+    }
+
+    try {
+      await fetchUserDetails(token);
+      setIsLoggedIn(true);
+      setIsAdmin(storedIsAdmin);
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      setUser(null);
     }
   };
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      const token = localStorage.getItem('token');
-      const refreshToken = localStorage.getItem('refreshToken');
-      const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-
-      if (!token || !refreshToken) {
-        setIsLoggedIn(false);
-        setIsAdmin(false);
-        setUser(null); // Clear user data
-        return;
-      }
-
-      try {
-        const response = await axios.post(`${backendURL}/api_auth/refreshToken`, { refreshToken }, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        localStorage.setItem('token', response.data.accessToken);
-        setAuthToken(response.data.accessToken); // Update authToken state
-        setIsLoggedIn(true);
-        setIsAdmin(storedIsAdmin); // Set isAdmin from localStorage
-
-        // Fetch and set user details
-        const userInfoResponse = await axios.get(`${backendURL}/api_user/profile`, {
-          headers: {
-            Authorization: `Bearer ${response.data.accessToken}`
-          }
-        });
-        setUser(userInfoResponse.data.user); // Assuming the endpoint returns user data
-
-        localStorage.setItem('token', response.data.accessToken);
-        setAuthToken(response.data.accessToken);
-      } catch (error) {
-        console.error('Error refreshing token:', error);
-        setIsLoggedIn(false);
-        setIsAdmin(false);
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('isAdmin');
-        setUser(null); // Clear user data
-      }
-    };
-
     checkAuthStatus();
   }, []);
 
   const updateLoginStatus = (status, adminStatus = false, userDetails = null) => {
     setIsLoggedIn(status);
     setIsAdmin(adminStatus);
-    setUser(userDetails); // Set user details when logging in
+    setUser(userDetails);
   };
 
   const logout = () => {
@@ -91,10 +93,9 @@ export const AuthProvider = ({ children }) => {
     setAuthToken(null);
     setIsLoggedIn(false);
     setIsAdmin(false);
-    setUser(null); // Clear user data on logout
+    setUser(null);
   };
 
-  // Provide context values and functions to the children
   return (
     <AuthContext.Provider value={{
       isLoggedIn,
@@ -106,10 +107,12 @@ export const AuthProvider = ({ children }) => {
       user,
       setUser,
       updateLoginStatus,
-      logout
+      logout,
+      refreshTokenFunc
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
 export default AuthProvider;

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
+import { jwtDecode } from 'jwt-decode';
 
 const FacultyPage = () => {
   const [resources, setResources] = useState([]);
@@ -12,11 +13,10 @@ const FacultyPage = () => {
   const history = useHistory();
   const backendURL = 'http://localhost:3002';
   const { facultyId } = useParams();
-  const { authToken } = useContext(AuthContext);
+  const { authToken, refreshTokenFunc } = useContext(AuthContext);
   const { setRouteParams } = useContext(RouteParamsContext);
-
+ 
   useEffect(() => {
-    // Ensure facultyId is set in the RouteParamsContext
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
 
@@ -45,30 +45,44 @@ const FacultyPage = () => {
         setError(err.response?.data?.error || 'An error occurred while fetching resources.');
       }
     };
+    const tokenIsExpired = (token) => {
+      if (!token) return true;
+  
+      const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Convert to seconds
+  
+      return decoded.exp < currentTime;
+    };
+  
+    const ensureValidToken = async () => {
+      if (tokenIsExpired(authToken)) { // Add your token expiration check logic
+        await refreshTokenFunc();
+      }
+    };
+    
+    const fetchData = async () => {
+      await ensureValidToken();
+      fetchUserProfile();
+      fetchResources();
+    };
 
     if (authToken) {
-      fetchResources();
-      fetchUserProfile();
-
+      fetchData();
     }
   }, [facultyId, authToken, backendURL]);
 
-  // Function to check if a resource is favorited
   const isResourceFavorited = resourceId => userFavorites.includes(resourceId);
 
-  // Function to handle click on a document card
   const handleCardClick = resourceId => {
     history.push(`/resource/${resourceId}`);
   };
 
   const toggleFavorite = async (resourceId) => {
     try {
-      // API call to backend to toggle favorite status
       await axios.post(`${backendURL}/api_user/toggle_favorite/${resourceId}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
   
-      // Update local state to reflect changes
       setUserFavorites(currentFavorites => {
         return currentFavorites.includes(resourceId)
           ? currentFavorites.filter(id => id !== resourceId)
@@ -79,13 +93,10 @@ const FacultyPage = () => {
     }
   };
   
-  
-  // Render error message if there is an error
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-  // Main render
   return (
     <div>
       <h1>Resources for Faculty</h1>

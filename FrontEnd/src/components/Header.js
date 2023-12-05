@@ -8,7 +8,6 @@ import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
 import { RouteParamsContext } from './context/RouteParamsContext'; 
-import { debounce } from 'lodash';
 import './Sidebar.css'; 
 
 const Sidebar = ({ }) => {

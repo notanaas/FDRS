@@ -317,7 +317,7 @@ useEffect(() => {
         <button className="authButton" onClick={handleLogout}>Logout
         </button>
         <button onClick={goToUserProfile} className="profile-button">
-        <img src={`${process.env.PUBLIC_URL}/picon.png`} alt="Profile" /> 
+        <img src={`${process.env.PUBLIC_URL}/img_avatar.png`} alt="Profile" /> 
         </button>
       </div>
     ) : (

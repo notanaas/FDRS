@@ -14,7 +14,7 @@
 
 .profile-sections {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
 /* If you want them to wrap when the screen size is small */
@@ -24,10 +24,23 @@
   }
 }
 
+.contentContainerP{
+  width: 100%;
+}
+
+.contentContainer .my-profile  {
+  align-items: center;
+  margin-bottom: 30px;
+  justify-content: space-between;
+  margin-top: 30px;
+  width: 1000px;
+  
+}
+
+.contentContainer .my-profile .profile-sections .f
+
 /* Style for individual sections */
 .section {
-  margin: 10px;
-  padding: 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #f9f9f9;
@@ -38,17 +51,16 @@
   background-color: #4CAF50; /* Green */
   border: none;
   color: white;
-  padding: 15px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
   cursor: pointer;
+  margin: 3px;
 }
 
 .authButton:hover {
-  background-color: #45a049;
+  background-color: #a04545;
 }
 
 /* Success and error message styling */
@@ -70,15 +82,12 @@
 .inputBar {
   width: 100%;
   padding: 12px 20px;
-  margin: 8px 0;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
 }
 body {
-  margin-top: 7rem; 
-  padding: 0 10rem;
   display: flex;
   font-size: 16px;
   justify-content: center;
@@ -103,7 +112,6 @@ body {
   width: 90%; /* Set width to a percentage of the container for consistent sizing */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
   background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
-  overflow: hidden;
   position: relative;
   z-index: 0;
   text-align: center; /* Center the text inside the button */
@@ -119,7 +127,7 @@ body {
 }
 
 .accordion-content.open {
-  max-height: 1000px; /* Use a large max-height value to accommodate varying content sizes */
+  max-height: 5000px; /* Use a large max-height value to accommodate varying content sizes */
 }
 
 /* Style for the content inside the accordion */
@@ -127,7 +135,6 @@ body {
   padding: 0 18px;
   background-color: white;
   max-height: 0;
-  overflow: hidden;
   transition: max-height 0.2s ease-out;
 }
 

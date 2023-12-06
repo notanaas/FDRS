@@ -197,7 +197,19 @@ const MyProfile = () => {
     }
   }, [profile.isAdmin, authToken, backendURL]);
   if (!profile.username) {
-    return <div>Loading...</div>;
+    //Loading...
+    return <div class="center"> 
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>;
   }
 
   const deleteFeedback = async (feedbackId) => {

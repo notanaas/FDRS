@@ -1,4 +1,4 @@
-import React, { useState ,useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
@@ -8,7 +8,7 @@ const FeedbackForm = ({ authToken }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const location = useLocation();
-  const isFacultyPage = location.pathname.includes(`/faculty/`); 
+  const isFacultyPage = location.pathname.includes(`/faculty/`);
   const backendURL = 'http://localhost:3002';
   const { user } = useContext(AuthContext);
 
@@ -39,21 +39,22 @@ const FeedbackForm = ({ authToken }) => {
     try {
       await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
         User: user._id,
-        SearchText: searchTerm, 
+        SearchText: searchTerm,
       }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`
-          
+
         },
       });
 
-      setsearchTerm(''); 
+      setsearchTerm('');
     } catch (error) {
       console.error('Feedback submission error:', error);
     }
   };
- 
+  
+
   const submitFeedbackSection = isFacultyPage && (
     <>
       <input
@@ -64,6 +65,7 @@ const FeedbackForm = ({ authToken }) => {
         placeholder="Search or submit feedback"
       />
       <button className="authButton" onClick={handleSearch}>Search</button>
+
 
       {searchPerformed && searchResults.length === 0 && (
         <>
@@ -76,17 +78,17 @@ const FeedbackForm = ({ authToken }) => {
 
   return (
     <div>
-    
 
-   {submitFeedbackSection}
 
-   {searchPerformed && searchResults.length > 0 && (
-     searchResults.map(result => (
-       <div key={result.id}>{result.title}</div>
-     ))
-   )}
- </div>
-);
+      {submitFeedbackSection}
+
+      {searchPerformed && searchResults.length > 0 && (
+        searchResults.map(result => (
+          <div key={result.id}>{result.title}</div>
+        ))
+      )}
+    </div>
+  );
 };
 
 

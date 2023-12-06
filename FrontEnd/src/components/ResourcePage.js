@@ -35,7 +35,19 @@ const ResourcePage = () => {
   }, [resourceId, authToken]);
 
   if (!resourceDetails) {
-    return <div>Loading resource...</div>;
+    //Loading...
+    return <div class="center">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>;
   }
   const toggleFavorite = async () => {
     const action = isFavorited ? 'unfavorite' : 'favorite';

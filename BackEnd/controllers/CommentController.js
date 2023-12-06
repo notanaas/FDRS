@@ -30,19 +30,19 @@ exports.comment =[
 
 exports.Delete_comment = asyncHandler(async(req,res,next)=>
 {
-    const resourceId = req.params.id; // finding the comment by the resource id
-    const comment = await Comment.findOne({Resource:resourceId}).exec();
+  const { resourceId, commentId } = req.params;
+  const comment = await Comment.findOne({ _id: commentId, Resource: resourceId }).exec();
 
-    if (!comment) {
-      return res.status(404).json({ message: "Resource does not exist" });
-    }
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found" });
+  }
 
-    // Check if the user is an admin or if the resource belongs to the user
-    if (req.user.isAdmin || comment.User._id.toString() === req.user._id.toString()) {
-      await Comment.findByIdAndDelete(comment._id);
-      return res.status(200).json({ message: "Comment deleted successfully" });
-    }
-      return res.status(403).json({ message: "Unauthorized to delete this comment" });
+  if (req.user.isAdmin || comment.User._id.toString() === req.user._id.toString()) {
+    await Comment.findByIdAndDelete(comment._id);
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  }
+
+  return res.status(403).json({ message: "Unauthorized to delete this comment" });
 })
 exports.Update_Comment = [
   body("NewComment", "Required text to post").trim().isLength({ min: 1 }).escape(),

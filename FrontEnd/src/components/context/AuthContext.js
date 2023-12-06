@@ -29,15 +29,38 @@ export const AuthProvider = ({ children }) => {
       logout();
     }
   };
-
+  const checkAuthStatus = async () => {
+    const token = localStorage.getItem('token');
+    const refreshToken = localStorage.getItem('refreshToken');
+  
+    if (token) {
+      // If token exists, verify and set user state
+      try {
+        await fetchUserDetails(token);
+        // Assuming fetchUserDetails will set isLoggedIn and other user details
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+        if (refreshToken) {
+          await refreshTokenFunc(); // Attempt to refresh token
+        } else {
+          logout(); // No valid tokens, logout
+        }
+      }
+    } else if (refreshToken) {
+      await refreshTokenFunc(); // No access token but refresh token exists
+    } else {
+      logout(); // No tokens, logout
+    }
+  };
+  
   const refreshTokenFunc = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) throw new Error('No refresh token available.');
-
+  
       const response = await axios.post(`${backendURL}/api_auth/refreshToken`, { refreshToken });
       const { accessToken, newRefreshToken, user } = response.data;
-
+  
       localStorage.setItem('token', accessToken);
       localStorage.setItem('refreshToken', newRefreshToken || refreshToken);
       setAuthToken(accessToken);
@@ -49,33 +72,10 @@ export const AuthProvider = ({ children }) => {
       logout();
     }
   };
+  
+  
 
-  const checkAuthStatus = async () => {
-    const token = localStorage.getItem('token');
-    const refreshToken = localStorage.getItem('refreshToken');
-    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-
-    if (!token && refreshToken) {
-      await refreshTokenFunc();
-    } else if (!token || !refreshToken) {
-      setIsLoggedIn(false);
-      setIsAdmin(false);
-      setUser(null);
-      return;
-    }
-
-    try {
-      await fetchUserDetails(token);
-      setIsLoggedIn(true);
-      setIsAdmin(storedIsAdmin);
-    } catch (error) {
-      console.error('Error checking auth status:', error);
-      setIsLoggedIn(false);
-      setIsAdmin(false);
-      setUser(null);
-    }
-  };
-
+ 
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -95,7 +95,27 @@ export const AuthProvider = ({ children }) => {
     setIsAdmin(false);
     setUser(null);
   };
-
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const refreshToken = localStorage.getItem('refreshToken');
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  
+    if (token && refreshToken) {
+      setAuthToken(token);
+      setIsLoggedIn(true);
+      setIsAdmin(isAdmin);
+      // Fetch user details with the token
+      fetchUserDetails(token).catch(() => {
+        // If fetching user details fails, try refreshing the token
+        refreshTokenFunc().catch(logout); // If refresh also fails, then logout
+      });
+    } else if (refreshToken) {
+      // No access token, but refresh token is available
+      refreshTokenFunc().catch(logout); // If refresh fails, then logout
+    }
+    // If there are no tokens, maintain the logged out state
+  }, []);
+  
   return (
     <AuthContext.Provider value={{
       isLoggedIn,

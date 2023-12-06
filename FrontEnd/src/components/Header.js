@@ -299,7 +299,7 @@ useEffect(() => {
     {isFacultyPage && (
       <div>
         <div className="search-container">
-        { user && <FeedbackForm user={user} authToken={authToken} />}
+        { <FeedbackForm user={user} authToken={authToken} />}
 
           <div className="action-buttons">
            

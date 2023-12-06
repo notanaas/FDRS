@@ -61,22 +61,26 @@ const Comments = ({ resourceId }) => {
   };
 
   const deleteComment = async (commentId) => {
-    if (!isLoggedIn || (!isAdmin && userId !== commentId)) {
+    const commentToDelete = comments.find(comment => comment._id === commentId);
+  
+    if (!isLoggedIn || (!isAdmin && userId !== commentToDelete.User._id)) {
       alert('You are not authorized to delete this comment.');
       return;
     }
-
+  
     try {
-      await axios.delete(`${backendURL}/api_comment/delete/${resourceId}`, { // Use the commentId to delete
+      await axios.delete(`${backendURL}/api_comment/delete/${resourceId}/${commentId}`, {
         headers: { Authorization: `Bearer ${authToken}` },
+        data: { commentId: commentId }, 
       });
-
+  
       setComments(comments.filter(comment => comment._id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
   };
-
+  
+  
   const saveUpdatedComment = async (commentId) => {
     if (!isLoggedIn) {
       alert('You need to log in to update a comment.');

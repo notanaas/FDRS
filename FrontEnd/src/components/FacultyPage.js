@@ -60,15 +60,10 @@ const FacultyPage = () => {
       }
     };
     
-    const fetchData = async () => {
-      await ensureValidToken();
       fetchUserProfile();
       fetchResources();
-    };
 
-    if (authToken) {
-      fetchData();
-    }
+   
   }, [facultyId, authToken, backendURL]);
 
   const isResourceFavorited = resourceId => userFavorites.includes(resourceId);

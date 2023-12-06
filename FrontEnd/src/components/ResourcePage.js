@@ -11,6 +11,7 @@ const ResourcePage = () => {
   const [comments, setComments] = useState([]);
   const { authToken, isLoggedIn, user,isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
+  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
 
   useEffect(() => {
     const fetchResourceDetails = async () => {
@@ -36,7 +37,17 @@ const ResourcePage = () => {
   if (!resourceDetails) {
     return <div>Loading resource...</div>;
   }
-  
+  const toggleFavorite = async () => {
+    const action = isFavorited ? 'unfavorite' : 'favorite';
+    try {
+      await axios.post(`http://localhost:3002/api_favorite/resources/${document._id}/${action}`, {}, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error(`Error toggling favorite status: ${error}`);
+    }
+  };
   return (
     <div className="resource-page">
     <section className="resource-header">
@@ -53,10 +64,12 @@ const ResourcePage = () => {
       <p className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
       <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
       <p className="user-email">{resourceDetails.User.Email}</p>
-      {resourceDetails.fileUrl && (
+    
         <a onClick={(e) => {e.stopPropagation();}} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank'  className="authButton">Download</a>
-       
-      )}
+        <button className="favorite-button"onClick={(e) => {e.stopPropagation();toggleFavorite();}}>
+            {isFavorited ? '\u2605' : '\u2606'}
+          </button>
+      
     </div>
   </section>
   <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />

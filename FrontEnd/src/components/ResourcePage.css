@@ -22,6 +22,10 @@
   margin-bottom: 30px;
 }
 
+.resource-header .authButton {
+  height: 6%;
+}
+
 .resource-cover {
   width: 100%;
   height: auto;

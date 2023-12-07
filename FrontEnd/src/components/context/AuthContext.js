@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 export const AuthContext = createContext();
@@ -8,15 +9,27 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
+  const history = useHistory();
   const backendURL = 'http://localhost:3002';
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('isAdmin');
-    setAuthToken(null);
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    setUser(null);
+  const logout = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      await axios.post(`${backendURL}/api_auth/logout`, { refreshToken }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isAdmin');
+      setAuthToken(null);
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      setUser(null);
+      history.push('/welcomingpage');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
   const checkAuthStatus = async () => {
     const token = localStorage.getItem('token');

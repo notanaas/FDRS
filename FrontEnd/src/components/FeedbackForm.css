@@ -1,0 +1,63 @@
+.feedback-form-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust the space between elements */
+}
+
+.search-input {
+  padding: 10px;
+  border: 2px solid #333;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%; /* You can adjust this as needed */
+}
+
+.search-button, .feedback-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #5c6bc0;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-button:hover, .feedback-button:hover {
+  background-color: #3949ab;
+}
+
+.no-results-prompt {
+  margin-top: 20px;
+  background-color: #ffecb3;
+  padding: 10px;
+  border-radius: 4px;
+  display: none;
+  position: absolute;
+  right: 0; /* Positioning the prompt */
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: max-content;
+  max-width: 90%;
+  text-align: center;
+}
+
+/* Show the prompt when the class 'show' is added */
+.no-results-prompt.show {
+  display: block;
+  animation: fadeOut 4s forwards; /* Fade out after 4 seconds */
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  90% {
+    opacity: 0.5; /* Start fading out */
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

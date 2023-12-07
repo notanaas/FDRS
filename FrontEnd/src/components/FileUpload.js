@@ -91,7 +91,7 @@ const handleImgChange = (e) => {
     <>
 
       {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
           <div className="custom-upload-modal">
             {error && <div className="error-message">{error}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}

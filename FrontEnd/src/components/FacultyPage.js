@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
-import {jwtDecode} from 'jwt-decode'; // Corrected import statement
+import {jwtDecode} from 'jwt-decode'; // Ensure that jwt-decode is properly imported
 
 const FacultyPage = () => {
   const [resources, setResources] = useState([]);
@@ -21,76 +21,65 @@ const FacultyPage = () => {
   }, [facultyId, setRouteParams]);
 
   useEffect(() => {
-    const tokenIsExpired = (token) => {
-      if (!token) return true;
-      const decoded = jwtDecode(token);
-      return decoded.exp < (Date.now() / 1000);
-    };
-
-    const ensureValidToken = async () => {
-      if (tokenIsExpired(authToken)) {
-        await refreshTokenFunc();
-      }
-    };
-
-    const fetchUserProfileAndResources = async () => {
-      await ensureValidToken(); // Ensure token is valid before making API calls
-
+    const fetchResources = async () => {
       try {
-        const [profileResponse, resourcesResponse] = await Promise.all([
-          axios.get(`${backendURL}/api_user/profile`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }),
-          facultyId ? axios.get(`${backendURL}/api_resource/faculty/${facultyId}`) : Promise.resolve({ data: { resource_list: [] } }),
-        ]);
-
-        // Set user favorites using just the IDs for easy checking
-        const favoriteIds = profileResponse.data.userFavorites.map(fav => fav.Resource._id);
-        setUserFavorites(favoriteIds);
-
-        // Set resources
+        const resourcesResponse = await axios.get(`${backendURL}/api_resource/faculty/${facultyId}`);
         setResources(resourcesResponse.data.resource_list);
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.response?.data?.error || 'An error occurred while fetching data.');
+        console.error('Error fetching faculty resources:', err);
+        setError(err.response?.data?.error || 'An error occurred while fetching resources.');
       }
     };
 
-    fetchUserProfileAndResources();
-  }, [facultyId, authToken, refreshTokenFunc, backendURL]);
+    fetchResources();
+  }, [facultyId, backendURL]);
 
-  const isResourceFavorited = resourceId => userFavorites.includes(resourceId);
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (authToken) {
+        try {
+          const profileResponse = await axios.get(`${backendURL}/api_user/profile`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          setUserFavorites(profileResponse.data.userFavorites.map(fav => fav.Resource._id));
+        } catch (err) {
+          console.error('Error fetching user favorites:', err);
+        }
+      }
+    };
+
+    if (authToken) {
+      fetchFavorites();
+    }
+  }, [authToken, backendURL]);
+
+  const isResourceFavorited = resourceId => authToken && userFavorites.includes(resourceId);
 
   const handleCardClick = resourceId => {
     history.push(`/resource/${resourceId}`);
   };
 
   const toggleFavorite = async (resourceId) => {
+    // Refresh token if needed
+    if (jwtDecode(authToken).exp < Date.now() / 1000) {
+      await refreshTokenFunc();
+    }
     const isAlreadyFavorited = userFavorites.includes(resourceId);
-    
+    const endpoint = isAlreadyFavorited ? 'unfavorite' : 'favorite';
+    const method = isAlreadyFavorited ? axios.delete : axios.post;
+
     try {
-      if (isAlreadyFavorited) {
-        // Send a DELETE request to unfavorite the resource
-        await axios.delete(`${backendURL}/api/resources/${resourceId}/unfavorite`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-  
-        // Update the userFavorites state to remove the unfavorited resource
-        setUserFavorites(currentFavorites => currentFavorites.filter(id => id !== resourceId));
-      } else {
-        // Send a POST request to favorite the resource
-        await axios.post(`${backendURL}/api/resources/${resourceId}/favorite`, {}, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-  
-        // Update the userFavorites state to add the new favorite resource
-        setUserFavorites(currentFavorites => [...currentFavorites, resourceId]);
-      }
+      await method(`${backendURL}/api/resources/${resourceId}/${endpoint}`, {}, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      setUserFavorites(currentFavorites => isAlreadyFavorited
+        ? currentFavorites.filter(id => id !== resourceId)
+        : [...currentFavorites, resourceId]);
     } catch (err) {
       console.error('Error toggling favorite:', err);
     }
   };
-  
 
   if (error) {
     return <div>Error: {error}</div>;

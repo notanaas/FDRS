@@ -1,20 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 
 const FeedbackForm = ({ authToken }) => {
-  const [searchTerm, setsearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [showSearchPrompt, setShowSearchPrompt] = useState(false);
+
   const location = useLocation();
-  const isFacultyPage = location.pathname.includes(`/faculty/`);
+  const isFacultyPage = location.pathname.includes('/faculty/');
   const backendURL = 'http://localhost:3002';
   const { user } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (searchPerformed && searchResults.length === 0) {
+      setShowSearchPrompt(true);
+      const timer = setTimeout(() => {
+        setShowSearchPrompt(false);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchPerformed, searchResults]);
 
   const handleInputChange = (e) => {
-    setsearchTerm(e.target.value);
+    setSearchTerm(e.target.value);
   };
 
   const handleSearch = async () => {
@@ -37,60 +48,95 @@ const FeedbackForm = ({ authToken }) => {
     }
 
     try {
-      await axios.post(`${backendURL}/api_feedback/FeedBack-post`, {
+      await axios.post(`${backendURL}/api_feedback/feedback-post`, {
         User: user._id,
         SearchText: searchTerm,
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-
+          'Authorization': `Bearer ${authToken}`,
         },
       });
-
-      setsearchTerm('');
+      setSearchTerm('');
     } catch (error) {
       console.error('Feedback submission error:', error);
     }
   };
-  
-
-  const submitFeedbackSection = isFacultyPage && (
-    <>
-      <input
-        type="text"
-        value={searchTerm}
-        className='inputBar'
-        onChange={handleInputChange}
-        placeholder="Search or submit feedback"
-      />
-      <button className="authButton" onClick={handleSearch}>Search</button>
-      
-
-
-      {searchPerformed && searchResults.length === 0 && (
-        <>
-          <p>No results found. Would you like to submit your search as feedback?</p>
-          <button className="authButton" onClick={submitFeedback}>Submit Feedback</button>
-        </>
-      )}
-    </>
-  );
 
   return (
     <div>
-
-
-      {submitFeedbackSection}
-
+      {isFacultyPage && (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search or submit feedback"
+            value={searchTerm}
+            onChange={handleInputChange}
+            style={{
+              padding: '10px',
+              margin: '5px',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              flexGrow: 1
+            }}
+          />
+          <button
+            className="authButton"
+            onClick={handleSearch}
+            style={{
+              padding: '10px 20px',
+              margin: '5px',
+              borderRadius: '5px',
+              border: 'none',
+              cursor: 'pointer',
+              backgroundColor: '#007bff',
+              color: 'white'
+            }}
+          >
+            Search
+          </button>
+          {searchPerformed && searchResults.length === 0 && (
+            <button
+              className="authButton"
+              onClick={submitFeedback}
+              style={{
+                padding: '10px 20px',
+                margin: '5px',
+                borderRadius: '5px',
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: '#28a745',
+                color: 'white'
+              }}
+            >
+              Submit Feedback
+            </button>
+          )}
+        </div>
+      )}
+      {showSearchPrompt && (
+        <div
+          style={{
+            backgroundColor: 'orange',
+            padding: '10px',
+            marginTop: '10px',
+            borderRadius: '5px',
+            color: 'white'
+          }}
+        >
+          No results found. Would you like to submit your search as feedback?
+        </div>
+      )}
       {searchPerformed && searchResults.length > 0 && (
-        searchResults.map(result => (
-          <div key={result.id}>{result.title}</div>
-        ))
+        <div>
+          {searchResults.map((result) => (
+            <div key={result.id}>{result.title}</div>
+          ))}
+        </div>
       )}
     </div>
   );
 };
-
 
 export default FeedbackForm;

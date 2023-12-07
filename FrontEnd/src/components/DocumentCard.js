@@ -1,47 +1,53 @@
-import React, { useState,useEffect,useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
-const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
-  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
-  const { authToken } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002';
+const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
+  // Hooks should be called at the top level
   const [feedbacks, setFeedbacks] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
-
-  const location = useLocation();
+  const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
+  const { authToken, isLoggedIn } = useContext(AuthContext);
+  const backendURL = 'http://localhost:3002';
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
+  const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const isProfilePage = location.pathname.includes(`/my-profile`);
 
-  const goToResourceDetail = () => {
-    history.push(`/resource/${document._id}`);
-  };
+
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/api_user/profile`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        // Check if the current document is in the fetched favorites
-        const isDocFavorited = response.data.userFavorites.some(fav => fav.Resource._id === document._id);
-        setIsFavorited(isDocFavorited);
-      } catch (error) {
-        console.error(`Error fetching favorites: ${error}`);
-      }
-    };
+    if (authToken&&document) {
+      const fetchFavorites = async () => {
+        try {
+          const response = await axios.get(`${backendURL}/api_user/profile`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const isDocFavorited = response.data.userFavorites.some(fav => fav.Resource._id === document._id);
+          setIsFavorited(isDocFavorited);
+        } catch (error) {
+          console.error(`Error fetching favorites: ${error}`);
+        }
+      };
 
-    fetchFavorites();
+      fetchFavorites();
+    }
   }, [authToken, document._id, backendURL]);
-  const toggleFavorite = async () => {
-    const action = isFavorited ? 'unfavorite' : 'favorite';
-    const method = isFavorited ? axios.delete : axios.post;
+  if (!document) return null;
 
+  const toggleFavorite = async () => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      setTimeout(() => setShowLoginPrompt(false), 4000);
+      return;
+    }
+
+    const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
-      await method(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
+      await axios.post(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
@@ -49,6 +55,7 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
       console.error(`Error toggling favorite status: ${error}`);
     }
   };
+
 
 
   
@@ -102,7 +109,14 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
       )
     );
   };
-
+  const handleFavButtonClick = () => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      setTimeout(() => setShowLoginPrompt(false), 4000);
+      return;
+    }
+    toggleFavorite();
+    };
 
 
   const CardContent = () => (
@@ -119,8 +133,11 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
         </div>
         <div className="document-actions">
           <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
+          {showLoginPrompt && (
+        <div className="login-prompt">You need to be logged in to add to favorites.</div>
+      )}
           {isFacultyPage && (
-          <button className="favorite-button" onClick={(e) => { e.stopPropagation(); toggleFavorite(); }}>
+          <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
           {isFavorited ? '\u2605' : '\u2606'}
             </button>
           )}
@@ -139,22 +156,21 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
 
 
   return (
-    <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? goToResourceDetail : undefined}>
+    <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? () => history.push(`/resource/${document._id}`) : undefined}>
       {isFeedback ?
         <FeedbackCardContent
-          item={item}
+          item={document}
           isProfilePage={isProfilePage}
           deleteFeedback={deleteFeedback}
           sendEmail={sendEmail}
         />
-
         :
         <CardContent />
       }
     </div>
   );
-
 };
+
 
 
 export default DocumentCard;

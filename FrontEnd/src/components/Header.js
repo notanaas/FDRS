@@ -32,7 +32,7 @@ const Header = ({ setIsModalOpen }) => {
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { updateLoginStatus, isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken, refreshToken } = useContext(AuthContext);
+  const { updateLoginStatus, isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken, refreshToken,logout } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -52,6 +52,7 @@ const Header = ({ setIsModalOpen }) => {
   const [passwordResetEmail, setPasswordResetEmail] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
+  const [signupErrorMessage, setSignupErrorMessage] = useState('');
   const [ForgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
   const history = useHistory();
   const [successMessage, setSuccessMessage] = useState(null);
@@ -103,11 +104,49 @@ const Header = ({ setIsModalOpen }) => {
     };
 
   }, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL, isFacultyPage, location]);
+  
+  const clearFormFields = () => {
+    setEmail('');
+    setPassword('');
+    setPasswordConfirm('');
+    setSignupData({ username: '', email: '', password: '' }); // Reset signup data
+    setLoginErrorMessage('');
+    setSignupErrorMessage('');
+    setSuccessMessage('');
+  };
 
+  const handleSignupModalOpen = () => {
+    setIsLoginModalOpen(false);
+    setIsSignupOpen(true);
+    clearFormFields();
+  };
+
+  const handleLoginModalOpen = () => {
+    setIsSignupOpen(false);
+    setIsLoginModalOpen(true);
+    clearFormFields();
+  };
+
+  const closeSignupModal = () => {
+    setIsSignupOpen(false);
+    clearFormFields();
+  };
+
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    clearFormFields();
+  };
+  const handleForgotPassword = () => {
+    setPasswordResetEmail(email);
+    setPassword('');
+    setIsLoginModalOpen(false);
+    setIsSignupOpen(false); // Close signup modal if open
+    setIsForgotPasswordOpen(true);
+  };
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     if (passwordConfirm !== signupData.password) {
-      setErrorMessage("Passwords don't match");
+      setLoginErrorMessage('Email and password are required.');
       return;
     }
 
@@ -116,7 +155,7 @@ const Header = ({ setIsModalOpen }) => {
       setSuccessMessage('Registration successful: ' + response.data.message);
       closeSignupModal();
     } catch (error) {
-      handleAPIError(error);
+      setLoginErrorMessage('Login failed. Please try again.');
     }
   };
   const handleLoginSubmit = async (e) => {
@@ -172,22 +211,7 @@ const Header = ({ setIsModalOpen }) => {
     }
   };
   const handleLogout = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      await axios.post(`${backendURL}/api_auth/logout`, { refreshToken }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      setIsLoggedIn(false);
-      setIsAdmin(false);
-
-      history.push('/welcomingpage');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+ logout();
   };
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
@@ -243,41 +267,25 @@ const Header = ({ setIsModalOpen }) => {
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
   };
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-    setLoginError('');
-  };
+  
 
   const handleForgotPasswordInputChange = (e) => {
     setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
   };
 
-  const closeSignupModal = () => {
-    setIsSignupOpen(false);
-    setSuccessMessage('');
-    setErrorMessage('');
-  };
 
-  const handleForgotPassword = () => {
-    setPasswordResetEmail(email);
-    setPassword('');
-    setIsLoginModalOpen(false);
-    setIsForgotPasswordOpen(true);
-  };
+  
 
   const closeFileUpload = () => {
-    setIsFileUploadOpen(false); // Close FileUpload
+    setIsFileUploadOpen(false); 
   };
-
   const handleUploadButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
       setTimeout(() => setShowLoginPrompt(false), 4000);
       return;
     }
-    setIsModalOpen(true); // This should match the prop name passed to Header
+    setIsModalOpen(true); 
   };
 
 
@@ -300,7 +308,6 @@ const Header = ({ setIsModalOpen }) => {
   <div className="search-upload-container">
     <div className="search-container">
       {<FeedbackForm user={user} authToken={authToken} />}
-      {/* Other elements related to the search functionality */}
     </div>
     <div className="action-buttons">
       <button onClick={handleUploadButtonClick} className="authButton">
@@ -322,16 +329,16 @@ const Header = ({ setIsModalOpen }) => {
           </div>
         ) : (
           <div className='logoReg'>
-            <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
-            <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
-          </div>
+            <button className="authButton" onClick={handleLoginModalOpen}>Login</button>
+            <button className="authButton" onClick={handleSignupModalOpen}>Sign Up</button>
+        </div>
         )}
       </div>
       {isFileUploadOpen && (
         <FileUpload facultyId={facultyId} />
       )}
 
-      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
+<Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -366,11 +373,11 @@ const Header = ({ setIsModalOpen }) => {
           )}
         </form>
       </Modal>
-      <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
+      <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} isDarkMode={isDarkMode}>
         <h1>Login</h1>
-        {successMessage && <div className="success-message">{successMessage}</div>}
         {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
         <form onSubmit={handleLoginSubmit}>
+     
           <div className="form-group">
             <label htmlFor="usernameOrEmail">Username or Email:</label>
             <input

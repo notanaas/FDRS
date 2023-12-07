@@ -65,6 +65,7 @@ const FeedbackForm = ({ authToken }) => {
         placeholder="Search or submit feedback"
       />
       <button className="authButton" onClick={handleSearch}>Search</button>
+      
 
 
       {searchPerformed && searchResults.length === 0 && (

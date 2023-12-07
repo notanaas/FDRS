@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext,useCallback } from 'react';
-import {  Link, useHistory,useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
 import FileUpload from './FileUpload';
@@ -7,13 +7,13 @@ import FeedbackForm from './FeedbackForm';
 import Modal from './Modal';
 import axios from 'axios';
 import './App.css';
-import { RouteParamsContext } from './context/RouteParamsContext'; 
-import './Sidebar.css'; 
+import { RouteParamsContext } from './context/RouteParamsContext';
+import './Sidebar.css';
 
 const Sidebar = ({ }) => {
   return (
     <div className="sidebar">
-    <FacultyButtons/>
+      <FacultyButtons />
     </div>
   );
 }
@@ -29,10 +29,10 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 const Header = ({ setIsModalOpen }) => {
   const backendURL = 'http://localhost:3002';
   const axiosInstance = axios.create({ baseURL: backendURL });
-  const [isFileUploadOpen, setIsFileUploadOpen] = useState(false); 
+  const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { updateLoginStatus,isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken,refreshToken } = useContext(AuthContext);
+  const { updateLoginStatus, isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken, refreshToken } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -47,12 +47,12 @@ const Header = ({ setIsModalOpen }) => {
     email: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginError,setLoginError] = useState(''); 
+  const [loginError, setLoginError] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
-  const [ForgotPasswordErrorMessage,setForgotPasswordErrorMessage] = useState(''); 
+  const [ForgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
   const history = useHistory();
   const [successMessage, setSuccessMessage] = useState(null);
   const location = useLocation();
@@ -61,49 +61,49 @@ const Header = ({ setIsModalOpen }) => {
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
 
-    const goToUserProfile = () => {
+  const goToUserProfile = () => {
     history.push('/my-profile');
   };
-useEffect(() => {
-  if (location.pathname.includes('/faculty')) {
-    setIsSidebarOpen(false);
-  } else {
-    setIsSidebarOpen(true);
-
-  }
-  const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  setIsDarkMode(prefersDarkMode);
-
-  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  const darkModeChangeListener = (e) => {
-    setIsDarkMode(e.matches);
-    if (e.matches) {
-      document.documentElement.classList.add('dark');
+  useEffect(() => {
+    if (location.pathname.includes('/faculty')) {
+      setIsSidebarOpen(false);
     } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
-  darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+      setIsSidebarOpen(true);
 
-  if (tokenFromLink) {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/api_faculty/${facultyId}`, {
-          headers: {
-            Authorization: `Bearer ${tokenFromLink}`
-          }
-        });
-      } catch (error) {
+    }
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setIsDarkMode(prefersDarkMode);
+
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkModeChangeListener = (e) => {
+      setIsDarkMode(e.matches);
+      if (e.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
       }
     };
-    fetchData();
-  }
+    darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+    if (tokenFromLink) {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`${backendURL}/api_faculty/${facultyId}`, {
+            headers: {
+              Authorization: `Bearer ${tokenFromLink}`
+            }
+          });
+        } catch (error) {
+        }
+      };
+      fetchData();
+    }
     return () => {
-    darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-  };
-  
-}, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL,isFacultyPage,location]);
-  
+      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+    };
+
+  }, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL, isFacultyPage, location]);
+
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     if (passwordConfirm !== signupData.password) {
@@ -121,44 +121,44 @@ useEffect(() => {
   };
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage(''); 
+    setSuccessMessage('');
     setLoginErrorMessage('');
-    
+
     if (!email || !password) {
       setLoginErrorMessage('Email and password are required.');
       return;
     }
-    
+
     const loginData = {
       email: email,
       password: password,
     };
-    
+
     try {
       const response = await axios.post(`${backendURL}/api_auth/login`, loginData);
-      const { token, refreshToken, user } = response.data; 
-    
+      const { token, refreshToken, user } = response.data;
+
       if (token) {
         // Store the token, refresh token, and isAdmin status in localStorage
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isAdmin', user.isAdmin.toString());
-    
+
         // Update the AuthContext with the new user information
-        setAuthToken(token); 
-        setIsLoggedIn(true); 
+        setAuthToken(token);
+        setIsLoggedIn(true);
         setIsAdmin(user.isAdmin);
         setUser(user); // This updates the user information in the context
-        
+
         // Close the modal and clear form fields
-        setIsLoginModalOpen(false); 
+        setIsLoginModalOpen(false);
         setEmail('');
         setPassword('');
-        
+
         // If you have a function that updates the login status in the context, use it
         // Otherwise, you can directly set the states as shown above
         if (updateLoginStatus) {
-          updateLoginStatus(true, user.isAdmin, user); 
+          updateLoginStatus(true, user.isAdmin, user);
         }
       } else {
         setLoginErrorMessage('Login response did not include the token.');
@@ -171,7 +171,7 @@ useEffect(() => {
       setLoginErrorMessage(errorMessage);
     }
   };
-  const handleLogout = async () => {  
+  const handleLogout = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
       await axios.post(`${backendURL}/api_auth/logout`, { refreshToken }, {
@@ -184,26 +184,26 @@ useEffect(() => {
       setIsLoggedIn(false);
       setIsAdmin(false);
 
-      history.push('/welcomingpage'); 
+      history.push('/welcomingpage');
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
-    setForgotPasswordErrorMessage(''); 
+    setForgotPasswordErrorMessage('');
     setSuccessMessage('');
 
     if (!forgotPasswordData.email) {
-      setForgotPasswordErrorMessage('Email is required.'); 
+      setForgotPasswordErrorMessage('Email is required.');
       return;
     }
-  
+
     try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`, {
         email: forgotPasswordData.email,
       });
-  
+
       if (response.data.message) {
         setSuccessMessage(response.data.message);
         setIsForgotPasswordOpen(false);
@@ -215,11 +215,11 @@ useEffect(() => {
   };
   const handleAPIError = (error) => {
     if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
-        setErrorMessage('Operation failed: ' + error.response.data.errors[0].msg);
-        console.error('Operation failed:', error.response.data.errors);
+      setErrorMessage('Operation failed: ' + error.response.data.errors[0].msg);
+      console.error('Operation failed:', error.response.data.errors);
     } else {
-        setErrorMessage('Operation failed. Please try again later.');
-        console.error('Operation failed:', error);
+      setErrorMessage('Operation failed. Please try again later.');
+      console.error('Operation failed:', error);
     }
   };
   const toggleSidebar = () => {
@@ -231,15 +231,15 @@ useEffect(() => {
       ...signupData,
       [name]: value,
     });
-  };  
+  };
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
   };
   const handleBackToLogin = () => {
-    setPasswordResetEmail(false); 
-    setPassword(''); 
+    setPasswordResetEmail(false);
+    setPassword('');
     setIsForgotPasswordOpen(false);
     setIsLoginModalOpen(true);
   };
@@ -253,20 +253,20 @@ useEffect(() => {
   const handleForgotPasswordInputChange = (e) => {
     setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
   };
-  
+
   const closeSignupModal = () => {
     setIsSignupOpen(false);
     setSuccessMessage('');
     setErrorMessage('');
   };
-  
+
   const handleForgotPassword = () => {
     setPasswordResetEmail(email);
     setPassword('');
     setIsLoginModalOpen(false);
     setIsForgotPasswordOpen(true);
   };
-  
+
   const closeFileUpload = () => {
     setIsFileUploadOpen(false); // Close FileUpload
   };
@@ -279,59 +279,62 @@ useEffect(() => {
     }
     setIsModalOpen(true); // This should match the prop name passed to Header
   };
-  
-  
+
+
   return (
     <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
-    <div className='left'>
-      <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
-      <div className="logoContainer">
-        <Link to="/welcomingpage">
-          <img src="/logo.png" alt="Logo" className="logo" />
-        </Link>
+      <div className='left'>
+        <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
+        <div className="logoContainer">
+          <Link to="/welcomingpage">
+            <img src="/logo.png" alt="Logo" className="logo" />
+          </Link>
+        </div>
+        {isSidebarOpen && <Sidebar />}
       </div>
-      {isSidebarOpen && <Sidebar />}
-    </div>
-    {showLoginPrompt && (
-      <div className="login-prompt">You need to be logged in to upload files.</div>
-    )}
+      {showLoginPrompt && (
+        <div className="login-prompt">You need to be logged in to upload files.</div>
+      )}
 
-    {isFacultyPage && (
-      <div>
-        <div className="search-container">
-        { <FeedbackForm user={user} authToken={authToken} />}
+      {isFacultyPage && (
+        <div>
+          <div className="search-container">
+            {<FeedbackForm user={user} authToken={authToken} />}
 
-          <div className="action-buttons">
-           
+            <div className="action-buttons">
+
+              {/* <button onClick={handleUploadButtonClick} className="authButton">
+                Upload
+              </button> */}
+              {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="authButtons">
+        {isLoggedIn ? (
+          <div className='button'>
             <button onClick={handleUploadButtonClick} className="authButton">
               Upload
             </button>
-            {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
+            <button className="authButton" onClick={handleLogout}>Logout
+            </button>
+            <button onClick={goToUserProfile} className="profile-button">
+              <img src={`${process.env.PUBLIC_URL}/img_avatar.png`} alt="Profile" />
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className='logoReg'>
+            <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
+            <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
+          </div>
+        )}
       </div>
-    )}
-  <div className="authButtons">
-    {isLoggedIn ? (
-      <div className='button'>
-        <button className="authButton" onClick={handleLogout}>Logout
-        </button>
-        <button onClick={goToUserProfile} className="profile-button">
-        <img src={`${process.env.PUBLIC_URL}/img_avatar.png`} alt="Profile" /> 
-        </button>
-      </div>
-    ) : (
-      <div className='logoReg'>
-        <button className="authButton" onClick={() => setIsLoginModalOpen(true)}>Login</button>
-        <button className="authButton" onClick={() => setIsSignupOpen(true)}>Sign Up</button>
-      </div>
-    )}
-  </div>
-  {isFileUploadOpen && (
+      {isFileUploadOpen && (
         <FileUpload facultyId={facultyId} />
       )}
 
-<Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
+      <Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>SignUp</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -342,7 +345,7 @@ useEffect(() => {
           <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
           <button type="submit" className="authButton">Submit</button>
         </form>
-</Modal>
+      </Modal>
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} isDarkMode={isDarkMode}>
         <label htmlFor="username"><h1>Forget Password</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
@@ -355,7 +358,7 @@ useEffect(() => {
           ) : (
             <div className="form-group">
               <label htmlFor="email">Email:</label>
-              <input type="email" id="email" name="email" className="inputBar" placeholder="Email" value={forgotPasswordData.email} onChange={handleForgotPasswordInputChange} required/>
+              <input type="email" id="email" name="email" className="inputBar" placeholder="Email" value={forgotPasswordData.email} onChange={handleForgotPasswordInputChange} required />
             </div>
           )}
           <button type="submit" className="authButton">
@@ -365,43 +368,43 @@ useEffect(() => {
             <button className="authButton" onClick={handleBackToLogin}> Back to Login </button>
           )}
         </form>
-</Modal>
+      </Modal>
       <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal} isDarkMode={isDarkMode}>
         <h1>Login</h1>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
         <form onSubmit={handleLoginSubmit}>
-    <div className="form-group">
-      <label htmlFor="usernameOrEmail">Username or Email:</label>
-      <input
-        type="text"
-        id="usernameOrEmail"
-        name="usernameOrEmail"
-        className="inputBar"
-        placeholder="Username or Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)} 
-        required
-      />
-    </div>
+          <div className="form-group">
+            <label htmlFor="usernameOrEmail">Username or Email:</label>
+            <input
+              type="text"
+              id="usernameOrEmail"
+              name="usernameOrEmail"
+              className="inputBar"
+              placeholder="Username or Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-    <div className="form-group">
-      <label htmlFor="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        className="inputBar"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)} // Changed setPasswordConfirm to setPassword
-        placeholder="Password"
-        required
-      />
-    </div>
-    <button type="submit" className="authButton">Login</button>
-    <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
-  </form>
-</Modal>
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="inputBar"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)} // Changed setPasswordConfirm to setPassword
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button type="submit" className="authButton">Login</button>
+          <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
+        </form>
+      </Modal>
 
 
 

@@ -47,8 +47,7 @@
 }
 
 /* Styling for buttons */
-.authButton {
-  background-color: #4CAF50; /* Green */
+.document-actions .authButton {
   border: none;
   color: white;
   text-align: center;
@@ -56,11 +55,11 @@
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
-  margin: 3px;
+  height: 20px;
 }
 
 .authButton:hover {
-  background-color: #a04545;
+  background-color: #9c0505;
 }
 
 /* Success and error message styling */
@@ -81,11 +80,8 @@
 
 .inputBar {
   width: 100%;
-  padding: 12px 20px;
-  display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-sizing: border-box;
 }
 body {
   display: flex;
@@ -139,3 +135,6 @@ body {
 }
 
 /* Additional styles may follow */
+.user-info {
+  margin: 3px;
+}

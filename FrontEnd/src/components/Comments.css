@@ -51,25 +51,16 @@
   color: #fff; /* White text color for input */
   border: 1px solid #444; /* Slightly lighter border for visibility */
   border-radius: 4px;
-  padding: 10px 15px;
-  margin-bottom: 10px;
 }
 
 .authButton {
   position: sticky;
-  bottom: 20px; /* Adjust if needed based on your padding/margins */
-  background-color: #0a84ff; /* Set a background color if needed */
   color: #ffffff;
-  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.authButton:hover {
-  background-color: transparent; /* Darker blue on hover */
-}
 
 .add-comment {
   margin-top: 20px;

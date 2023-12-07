@@ -727,6 +727,8 @@ bodY {
   position: relative;
   padding: 5rem 4rem;
   width: 80%;
+  justify-self: center;
+  align-items: center;
   left: 10%;
 }
 

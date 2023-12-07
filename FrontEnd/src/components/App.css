@@ -240,7 +240,7 @@
   border-radius: 4px;
   padding: 20px;
   background-color: transparent;
-  max-width: 15rem;
+  /* max-width: 15rem; */
 }
 
 .document-image {
@@ -273,6 +273,9 @@
   align-items: center;
 }
 
+.card .document-actions .authButton {
+  height: 35px;
+}
 
 .document-card {
   background-color: #333; 
@@ -295,12 +298,13 @@
 
 .document-info h3 {
   margin: 0;
-  color: #e0e0e0;
+  color: #000000;
 }
 
 .document-info p {
   color: #aaa; /* Slightly dim text for less important information */
   margin: 5px 0;
+  display: none;
 }
 .success-message {
   padding: 10px;

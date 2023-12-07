@@ -22,10 +22,6 @@
   margin-bottom: 30px;
 }
 
-.resource-header .authButton {
-  height: 6%;
-}
-
 .resource-cover {
   width: 100%;
   height: auto;
@@ -63,4 +59,12 @@
   background-color: #0077cc;
 }
 
+.document-info .document-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
+.document-info .document-author .document-description {
+  display: none;
+}

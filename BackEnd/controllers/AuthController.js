@@ -123,31 +123,45 @@ const user = await Users.findOne({ refreshToken: refreshToken }).exec();
 
 })
 
-exports.refresh_token = async(req,res)=>
-{
-    const { refreshToken } = req.body;
-    console.log('REfresh token: ', refreshToken);
-    try {
-        const decoded = jwt.verify(refreshToken ,process.env.JWT_SECRET)
+exports.refresh_token = async (req, res) => {
+  const { refreshToken } = req.body;
+  console.log('Refresh token: ', refreshToken);
 
-    // Find the user associated with the refresh token
-    console.log('Token content: ', decoded);
-    const user = await Users.findById(decoded.user._id)
-        //console.log('Expected refresh token: ', user.refreshToken,)
-    if(!user || user.refreshToken !== refreshToken)
-    {
-        return res.status(401).json({ message: 'Invalid refresh token' });
-    }
-     // Generate a new access token
-     const accessToken = jwt.sign({ user: { _id: user._id, username: user.Username, email: user.Email } }, process.env.JWT_SECRET, {
-        expiresIn: '1d', // Set the expiration time for the new access token
-      });
+  // Check if the refreshToken is provided
+  if (!refreshToken) {
+      return res.status(400).json({ message: 'No refresh token provided' });
+  }
+
+  try {
+      // Verify the provided refresh token
+      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+      console.log('Token content: ', decoded);
+
+      // Find the user associated with the refresh token
+      const user = await Users.findById(decoded.user._id);
+      if (!user || user.refreshToken !== refreshToken) {
+          return res.status(401).json({ message: 'Invalid refresh token' });
+      }
+
+      // Generate a new access token
+      const accessToken = jwt.sign(
+          { user: { _id: user._id, username: user.Username, email: user.Email } },
+          process.env.JWT_SECRET,
+          { expiresIn: '1d' } // Set the expiration time for the new access token
+      );
+
       res.json({ accessToken });
-    } catch (error) {
+  } catch (error) {
+      // Specific error handling for JWT related errors
+      if (error instanceof jwt.JsonWebTokenError) {
+          return res.status(401).json({ message: 'Invalid token' });
+      }
+      // Log other errors and send a generic server error response
       console.error(error);
       return res.status(500).json({ message: 'Internal server error' });
-    }
-}
+  }
+};
+
 
 exports.forgot_password = [
     body('email', 'Email must be required')

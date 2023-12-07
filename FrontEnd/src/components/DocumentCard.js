@@ -5,7 +5,6 @@ import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
-  // Hooks should be called at the top level
   const [feedbacks, setFeedbacks] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
@@ -20,7 +19,7 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
 
 
   useEffect(() => {
-    if (authToken&&document) {
+    if (authToken&&document&&document._id) {
       const fetchFavorites = async () => {
         try {
           const response = await axios.get(`${backendURL}/api_user/profile`, {
@@ -35,7 +34,7 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
 
       fetchFavorites();
     }
-  }, [authToken, document._id, backendURL]);
+  }, [authToken, document]);
   if (!document) return null;
 
   const toggleFavorite = async () => {
@@ -91,7 +90,7 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
 
 
 
-  const FeedbackCardContent = ({ item, isProfilePage, deleteFeedback, sendEmail }) => {
+  const FeedbackCardContent = ({ item, isProfilePage, deleteFeedback, sendEmail, feedbacks }) => {
     return (
       isProfilePage && (
         <div className="feedback-card-content">
@@ -157,20 +156,18 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
 
   return (
     <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? () => history.push(`/resource/${document._id}`) : undefined}>
-      {isFeedback ?
+      {isFeedback ? (
         <FeedbackCardContent
           item={document}
           isProfilePage={isProfilePage}
           deleteFeedback={deleteFeedback}
           sendEmail={sendEmail}
+          feedbacks={feedbacks} 
         />
-        :
+      ) : (
         <CardContent />
-      }
+      )}
     </div>
   );
 };
-
-
-
 export default DocumentCard;

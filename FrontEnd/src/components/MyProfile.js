@@ -27,18 +27,18 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isAdmin&&isProfilePage) { 
+      if (isAdmin && isProfilePage) {
         try {
           const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
+          console.log("Feedbacks:", response.data.feedbacks); // Check the fetched data
           setFeedbacks(response.data.feedbacks); // Set feedbacks in state
         } catch (error) {
           console.error('Error fetching feedbacks:', error);
         }
       }
     };
-  
     fetchFeedbacks();
   }, [authToken, isAdmin, backendURL]);
 
@@ -335,19 +335,20 @@ const MyProfile = () => {
         <div className="feedbacks-section">
         <h2>Feedbacks</h2>
         <div className="feedbacks-container">
-              {feedbacks.length > 0 ? (
-                feedbacks.map((feedback) => (
-                  <DocumentCard
-                    key={`feedback-${feedback._id}`} // Ensure the key is unique
-                    item={{
-                      _id: feedback._id,
-                      userEmail: feedback.User.Email,
-                      searchText: feedback.SearchText,
-                    }}
-                    isFeedback={true}
-                    deleteFeedback={deleteFeedback}
-                    sendEmail={sendEmail}
-                  />
+        {feedbacks.length > 0 ? (
+  feedbacks.map((feedback) => (
+    <DocumentCard
+    key={`feedback-${feedback._id}`}
+    item={{
+      _id: feedback._id,
+      userEmail: feedback.User.Email,
+      searchText: feedback.SearchText,
+    }}
+    isFeedback={true}
+    deleteFeedback={deleteFeedback}
+    sendEmail={sendEmail}
+    feedbacks={feedbacks} 
+  />
   
   ))
 ) : (

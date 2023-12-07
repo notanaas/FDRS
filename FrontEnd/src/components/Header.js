@@ -296,21 +296,20 @@ const Header = ({ setIsModalOpen }) => {
         <div className="login-prompt">You need to be logged in to upload files.</div>
       )}
 
-      {isFacultyPage && (
-        <div>
-          <div className="search-container">
-            {<FeedbackForm user={user} authToken={authToken} />}
-
-            <div className="action-buttons">
-
-              <button onClick={handleUploadButtonClick} className="authButton">
-                Upload
-              </button> 
-              {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
-            </div>
-          </div>
-        </div>
-      )}
+{isFacultyPage && (
+  <div className="search-upload-container">
+    <div className="search-container">
+      {<FeedbackForm user={user} authToken={authToken} />}
+      {/* Other elements related to the search functionality */}
+    </div>
+    <div className="action-buttons">
+      <button onClick={handleUploadButtonClick} className="authButton">
+        Upload
+      </button>
+      {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
+    </div>
+  </div>
+)}
       <div className="authButtons">
         {isLoggedIn ? (
           <div className='button'>

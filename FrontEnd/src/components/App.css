@@ -97,7 +97,11 @@
 }
 
 
-
+.search-upload-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 /* Card components styling */
 .document-cover {

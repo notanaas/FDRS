@@ -303,9 +303,9 @@ const Header = ({ setIsModalOpen }) => {
 
             <div className="action-buttons">
 
-              {/* <button onClick={handleUploadButtonClick} className="authButton">
+              <button onClick={handleUploadButtonClick} className="authButton">
                 Upload
-              </button> */}
+              </button> 
               {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
             </div>
           </div>
@@ -314,9 +314,7 @@ const Header = ({ setIsModalOpen }) => {
       <div className="authButtons">
         {isLoggedIn ? (
           <div className='button'>
-            <button onClick={handleUploadButtonClick} className="authButton">
-              Upload
-            </button>
+        
             <button className="authButton" onClick={handleLogout}>Logout
             </button>
             <button onClick={goToUserProfile} className="profile-button">

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState,useEffect,useContext} from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
@@ -10,6 +10,7 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
   const backendURL = 'http://localhost:3002';
   const [feedbacks, setFeedbacks] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [userFavorites, setUserFavorites] = useState([]);
 
   const location = useLocation();
   const history = useHistory();
@@ -19,10 +20,28 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
   const goToResourceDetail = () => {
     history.push(`/resource/${document._id}`);
   };
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await axios.get(`${backendURL}/api_user/profile`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        // Check if the current document is in the fetched favorites
+        const isDocFavorited = response.data.userFavorites.some(fav => fav.Resource._id === document._id);
+        setIsFavorited(isDocFavorited);
+      } catch (error) {
+        console.error(`Error fetching favorites: ${error}`);
+      }
+    };
+
+    fetchFavorites();
+  }, [authToken, document._id, backendURL]);
   const toggleFavorite = async () => {
     const action = isFavorited ? 'unfavorite' : 'favorite';
+    const method = isFavorited ? axios.delete : axios.post;
+
     try {
-      await axios.post(`http://localhost:3002/api_favorite/resources/${document._id}/${action}`, {}, {
+      await method(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
@@ -30,6 +49,9 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
       console.error(`Error toggling favorite status: ${error}`);
     }
   };
+
+
+  
 
   const authorizeResource = async (resourceId) => {
     try {
@@ -98,8 +120,8 @@ const DocumentCard = ({ item, document, onClick, showAdminActions, isFeedback, d
         <div className="document-actions">
           <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
           {isFacultyPage && (
-            <button className="favorite-button" onClick={(e) => { e.stopPropagation(); toggleFavorite(); }}>
-              {isFavorited ? '\u2605' : '\u2606'}
+          <button className="favorite-button" onClick={(e) => { e.stopPropagation(); toggleFavorite(); }}>
+          {isFavorited ? '\u2605' : '\u2606'}
             </button>
           )}
 

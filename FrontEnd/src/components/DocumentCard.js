@@ -4,7 +4,7 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
-const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
+const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
@@ -36,7 +36,9 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
     }
   }, [authToken, document]);
   if (!document) return null;
-
+  const goToResourceDetail = () => {
+    history.push(`/resource/${document._id}`);
+  };
   const toggleFavorite = async () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -90,16 +92,16 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
 
 
 
-  const FeedbackCardContent = ({ item, isProfilePage, deleteFeedback, sendEmail, feedbacks }) => {
+  const FeedbackCardContent = ({ item, isProfilePage, deleteFeedback, sendEmail }) => {
     return (
       isProfilePage && (
         <div className="feedback-card-content">
           <p><strong>Email:</strong> {item.userEmail}</p>
           <p><strong>Feedback:</strong> {item.searchText}</p>
           <div className="feedback-actions">
-            <button className="authButton" onClick={(e) => { e.stopPropagation(); deleteFeedback(item._id); }}>
-              Delete Feedback
-            </button>
+          <button className="authButton"onClick={(e) => {e.stopPropagation(); deleteFeedback(item._id);}}>
+      Delete Feedback
+    </button>
             <button onClick={() => sendEmail(item.userEmail)} className="authButton">
               Send Email
             </button>
@@ -155,19 +157,21 @@ const DocumentCard = ({ document, onClick, showAdminActions, isFeedback, deleteF
 
 
   return (
-    <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? () => history.push(`/resource/${document._id}`) : undefined}>
-      {isFeedback ? (
-        <FeedbackCardContent
-          item={document}
-          isProfilePage={isProfilePage}
-          deleteFeedback={deleteFeedback}
-          sendEmail={sendEmail}
-          feedbacks={feedbacks} 
-        />
-      ) : (
+    <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? goToResourceDetail : undefined}>
+      {isFeedback ? 
+        <FeedbackCardContent 
+        item={item}
+        isProfilePage={isProfilePage}
+        deleteFeedback={deleteFeedback}
+        sendEmail={sendEmail}
+      />
+      
+        : 
         <CardContent />
-      )}
+      }
     </div>
   );
+  
 };
+
 export default DocumentCard;

@@ -12,8 +12,26 @@ const ResourcePage = () => {
   const { authToken, isLoggedIn, user,isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
-
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   useEffect(() => {
+    if (authToken&&document&&document._id) {
+      const fetchFavorites = async () => {
+        try {
+          const response = await axios.get(`${backendURL}/api_user/profile`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const isDocFavorited = response.data.userFavorites.some(fav => fav.Resource._id === document._id);
+          setIsFavorited(isDocFavorited);
+        } catch (error) {
+          console.error(`Error fetching favorites: ${error}`);
+        }
+      };
+
+      fetchFavorites();
+    }
+  }, [authToken, document]);
+  useEffect(() => {
+    
     const fetchResourceDetails = async () => {
       try {
         const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
@@ -33,9 +51,9 @@ const ResourcePage = () => {
     }
     
   }, [resourceId, authToken]);
+  if (!document) return null;
 
   if (!resourceDetails) {
-    //Loading...
     return <div class="center">
     <div class="wave"></div>
     <div class="wave"></div>
@@ -50,9 +68,15 @@ const ResourcePage = () => {
   </div>;
   }
   const toggleFavorite = async () => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      setTimeout(() => setShowLoginPrompt(false), 4000);
+      return;
+    }
+
     const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
-      await axios.post(`http://localhost:3002/api_favorite/resources/${document._id}/${action}`, {}, {
+      await axios.post(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
@@ -60,6 +84,15 @@ const ResourcePage = () => {
       console.error(`Error toggling favorite status: ${error}`);
     }
   };
+  const handleFavButtonClick = () => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      setTimeout(() => setShowLoginPrompt(false), 4000);
+      return;
+    }
+    toggleFavorite();
+    };
+
   return (
     <div className="resource-page">
     <section className="resource-header">
@@ -78,7 +111,7 @@ const ResourcePage = () => {
       <p className="user-email">{resourceDetails.User.Email}</p>
     
         <a onClick={(e) => {e.stopPropagation();}} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank'  className="authButton">Download</a>
-        <button className="favorite-button"onClick={(e) => {e.stopPropagation();toggleFavorite();}}>
+        <button className="favorite-button"onClick={(e) => {e.stopPropagation();handleFavButtonClick();}}>
             {isFavorited ? '\u2605' : '\u2606'}
           </button>
       

@@ -27,18 +27,18 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isAdmin && isProfilePage) {
+      if (isAdmin&&isProfilePage) { 
         try {
           const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
-          console.log("Feedbacks:", response.data.feedbacks); // Check the fetched data
           setFeedbacks(response.data.feedbacks); // Set feedbacks in state
         } catch (error) {
           console.error('Error fetching feedbacks:', error);
         }
       }
     };
+  
     fetchFeedbacks();
   }, [authToken, isAdmin, backendURL]);
 
@@ -197,19 +197,7 @@ const MyProfile = () => {
     }
   }, [profile.isAdmin, authToken, backendURL]);
   if (!profile.username) {
-    //Loading...
-    return <div class="center"> 
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-  </div>;
+    return <div>Loading...</div>;
   }
 
   const deleteFeedback = async (feedbackId) => {
@@ -274,12 +262,8 @@ const MyProfile = () => {
           <div className="resources-list">
             {userResources.length > 0 ? (
               userResources.map((resource) => (
-                <DocumentCard
-                  key={`userResource-${resource._id}`} // Ensure the key is unique
-                  document={resource}
-                  showAdminActions={false}
-                  onClick={() => handleCardClick(resource._id)}
-                />
+              
+                <DocumentCard key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
 
               ))
             ) : (
@@ -293,16 +277,16 @@ const MyProfile = () => {
 
           <h2>Your Favorites</h2>
           <div className="favorites-list">
-            {userFavorites.length > 0 ? (
-              userFavorites.map((resource) => {
-                const resourceData = resource.Resource;
-                return resourceData ? (
-                  <DocumentCard
-                    key={`userFavorite-${resourceData._id}`} // Ensure the key is unique
-                    document={resourceData}
-                    showAdminActions={false}
-                    onClick={() => handleCardClick(resourceData._id)}
-                  />
+    {userFavorites.length > 0 ? (
+      userFavorites.map((resource) => {
+        const resourceData = resource.Resource; 
+        return resourceData ? (
+          <DocumentCard 
+            key={resourceData._id} 
+            document={resourceData}
+            showAdminActions={false}
+            onClick={() => handleCardClick(resourceData._id)}
+          />
         ) : (
           <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
         );
@@ -321,24 +305,24 @@ const MyProfile = () => {
         <div className="admin-section">
           <h2>Unauthorized Documents</h2>
           <div className="documents-list">
-              {documents.map((doc) => (
-                <DocumentCard
-                  key={`adminDocument-${doc._id}`} // Ensure the key is unique
-                  document={doc}
-                  onAuthorize={authorizeResource}
-                  onUnauthorize={unauthorizeResource}
-                  showAdminActions={true}
-                />
+            {documents.map((doc) => (
+              <DocumentCard 
+                key={doc._id} 
+                document={doc}
+                onAuthorize={authorizeResource} 
+                onUnauthorize={unauthorizeResource} 
+                showAdminActions={true} 
+              />
             ))}
           </div>
         </div>
         <div className="feedbacks-section">
         <h2>Feedbacks</h2>
-        <div className="feedbacks-container">
-        {feedbacks.length > 0 ? (
-  feedbacks.map((feedback) => (
+          <div className="feedbacks-container">
+          {feedbacks.length > 0 ? (
+  feedbacks.map(feedback => (
     <DocumentCard
-    key={`feedback-${feedback._id}`}
+    key={feedback._id}
     item={{
       _id: feedback._id,
       userEmail: feedback.User.Email,
@@ -347,7 +331,6 @@ const MyProfile = () => {
     isFeedback={true}
     deleteFeedback={deleteFeedback}
     sendEmail={sendEmail}
-    feedbacks={feedbacks} 
   />
   
   ))
@@ -364,4 +347,3 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
-

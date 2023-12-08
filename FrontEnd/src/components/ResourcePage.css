@@ -56,7 +56,7 @@
   background-color: #0077cc;
 }
 
-.document-info .document-title {
+.document-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -64,4 +64,8 @@
 
 .document-info .document-author .document-description {
   display: none;
+}
+
+.root-faculty {
+  margin-top: 100px;
 }

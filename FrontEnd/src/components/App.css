@@ -1,9 +1,12 @@
 
 .faculty-container {
-  max-height: 90vh; /* Adjust the height as needed */
   display: flex;
+  position: relative;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: flex-end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 @keyframes fadeOut {
   to {

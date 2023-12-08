@@ -6,7 +6,7 @@
   padding: 1rem;
   align-items: center;
   text-align: center;
-  background: moz-linear-gradient(45deg, #090709 0%, #ff0000 100%);
+  background: moz-linear-gradient(45deg, #090709 0%, #960000 100%);
   background: -webkit-linear-gradient(45deg, #a00202 0%, #04120b 100%);
   background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
   display: flex;
@@ -16,14 +16,14 @@
 
 /* Light Mode Styles */
 .headerContainer {
-  background: linear-gradient(to right, red, #121212);
+  background: linear-gradient(to right, rgb(150, 0, 0), #121212);
   color: #2f3640;
 }
 
 /* Dark Mode Styles */
 @media (prefers-color-scheme: dark) {
   .headerContainer {
-    background: linear-gradient(to right, red, #121212);
+    background: linear-gradient(to right, rgb(163, 1, 1), #121212);
     color: #f5f5f5;
   }
 }
@@ -127,7 +127,7 @@
 }
 @media (prefers-color-scheme: light) {
   .sidebar {
-    background-color: #dfe6e9;
+    background-color: #5c0000;
     color: #2f3640;
     font-family: 'Arial', sans-serif;
     padding: 15px;
@@ -243,7 +243,7 @@
 
 /* Styles for Links and Buttons in Dark and Light Modes */
 .header a, .header button, .sidebar a, .sidebar button {
-  color: #2f3640; /* Default color for light mode */
+  color: #ffffff; /* Default color for light mode */
   text-decoration: none;
 }
 

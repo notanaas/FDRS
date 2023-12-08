@@ -5,7 +5,6 @@ import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
 import {jwtDecode} from 'jwt-decode'; // Ensure that jwt-decode is properly imported
-
 const FacultyPage = () => {
   const [resources, setResources] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);

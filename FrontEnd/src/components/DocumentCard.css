@@ -1,0 +1,120 @@
+/* DocumentCard.css */
+
+/* Base styles for the document card */
+.document-card {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px;
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for color and background */
+  background-color: #333; 
+  color: #fff; 
+  margin-bottom: 15px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.document-cover {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+/* Base styles for text inside the document card */
+.document-card .document-title,
+.document-card .document-author,
+.document-card .document-description,
+.document-card .document-uploader {
+  margin: 0.5rem 0;
+}
+
+/* Styles for actions like download and favorite */
+.document-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.authButton, .favorite-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 0.3s; /* Smooth transition for color */
+}
+
+/* Favorite button specific styles */
+.favorite-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* adjust size as needed */
+}
+
+/* Favorited state for the favorite button */
+.favorite-button.favorited {
+  color: #d9534f; /* Example color, adjust as needed */
+}
+
+.clickable {
+  cursor: pointer;
+  width: 30%;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .document-card {
+    flex-direction: column;
+  }
+
+  .document-actions {
+    justify-content: center;
+  }
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .document-card {
+    background-color: #000; /* Black background */
+    color: white; /* White text */
+    border: 1px solid #ddd;
+
+  }
+
+  .document-card .document-title,
+  .document-card .document-author,
+  .document-card .document-description,
+  .document-card .document-uploader {
+    color: white; /* White text for all child elements */
+  }
+
+  .favorite-button {
+    color: #ffda44; /* Gold color for favorite button, adjust if needed */
+  }
+
+  /* Add any other dark mode specific styles for child elements here */
+}
+
+/* Light mode styles */
+@media (prefers-color-scheme: light) {
+  .document-card {
+    background-color: #fff; /* White background */
+    color: #000; /* Black text */
+    border: 1px solid black;
+
+  }
+
+  .document-card .document-title,
+  .document-card .document-author,
+  .document-card .document-description,
+  .document-card .document-uploader {
+    color: #000; /* Black text for all child elements */
+  }
+
+  .favorite-button {
+    color: #f0ad4e; /* Gold color for favorite button, adjust if needed */
+  }
+
+  /* Add any other light mode specific styles for child elements here */
+}

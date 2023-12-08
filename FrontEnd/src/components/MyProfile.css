@@ -122,8 +122,8 @@ body {
 }
 
 .accordion-content.open {
-  max-height: 100%; /* Use a large max-height value to accommodate varying content sizes */
-  width: 100%; /* تحديد عرض البطاقة حسب الحاجة */
+  max-height: 100%; 
+  width: 100%; 
   box-sizing: border-box;
 }
 
@@ -158,5 +158,18 @@ body {
 .resource-details .resource-title {
   opacity: .75;
   text-overflow: ellipsis;
+  overflow: hidden;
+}
+.accordion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+.accordion-content {
+  max-height: 0;
   overflow: hidden;
 }

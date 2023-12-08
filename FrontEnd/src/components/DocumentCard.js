@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import './App.css';
+import './DocumentCard.css';
 
 const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
+
   const [feedbacks, setFeedbacks] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
@@ -16,7 +17,15 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const isProfilePage = location.pathname.includes(`/my-profile`);
+ const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => setDarkMode(mediaQuery.matches);
+    mediaQuery.addListener(handleChange);
+
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
 
   useEffect(() => {
     if (authToken&&document&&document._id) {
@@ -123,7 +132,7 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
   const CardContent = () => (
     !isFeedback && (
 
-      <div className='faculty-card' onClick={onClick}>
+      <div className='document-card' onClick={onClick}>
         <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
         <div className="document-info">
           <h3 className="document-title">{document.Title || "Untitled"}</h3>
@@ -157,8 +166,8 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
 
 
   return (
-    <div className={`card ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? goToResourceDetail : undefined}>
-      {isFeedback ? 
+    <div className={`card ${darkMode ? 'dark-mode' : 'light-mode'} ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? goToResourceDetail : undefined}>
+    {isFeedback ? 
         <FeedbackCardContent 
         item={item}
         isProfilePage={isProfilePage}

@@ -16,7 +16,7 @@
 
 /* Light Mode Styles */
 .headerContainer {
-  background: linear-gradient(to right, #d6eaf8, #d5d8dc);
+  background: linear-gradient(to right, red, #121212);
   color: #2f3640;
 }
 

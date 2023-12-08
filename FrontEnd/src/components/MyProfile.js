@@ -27,12 +27,12 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isAdmin&&isProfilePage) { 
+      if (isProfilePage) { 
         try {
           const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
-          setFeedbacks(response.data.feedbacks); // Set feedbacks in state
+          setFeedbacks(response.data.feedbacks);
         } catch (error) {
           console.error('Error fetching feedbacks:', error);
         }
@@ -40,7 +40,7 @@ const MyProfile = () => {
     };
   
     fetchFeedbacks();
-  }, [authToken, isAdmin, backendURL]);
+  }, [authToken, isProfilePage, backendURL]);
 
   const fetchProfileData = async () => {
     try {
@@ -198,17 +198,17 @@ const MyProfile = () => {
   }, [profile.isAdmin, authToken, backendURL]);
   //loading
   if (!profile.username) {
-    return <div class="center">
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
+    return <div className="center">
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
+    <div className="wave"></div>
   </div>;
   }
 
@@ -275,7 +275,8 @@ const MyProfile = () => {
             {userResources.length > 0 ? (
               userResources.map((resource) => (
               
-                <DocumentCard key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
+                <DocumentCard cardType="resource"
+                key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
 
               ))
             ) : (
@@ -294,6 +295,7 @@ const MyProfile = () => {
         const resourceData = resource.Resource; 
         return resourceData ? (
           <DocumentCard 
+          cardType="favorite"
             key={resourceData._id} 
             document={resourceData}
             showAdminActions={false}
@@ -319,6 +321,7 @@ const MyProfile = () => {
           <div className="documents-list">
             {documents.map((doc) => (
               <DocumentCard 
+              cardType="adminActions"
                 key={doc._id} 
                 document={doc}
                 onAuthorize={authorizeResource} 
@@ -330,20 +333,16 @@ const MyProfile = () => {
         </div>
         <div className="feedbacks-section">
         <h2>Feedbacks</h2>
-          <div className="feedbacks-container">
-          {feedbacks.length > 0 ? (
-  feedbacks.map(feedback => (
-    <DocumentCard
-    key={feedback._id}
-    item={{
-      _id: feedback._id,
-      userEmail: feedback.User.Email,
-      searchText: feedback.SearchText,
-    }}
-    isFeedback={true}
-    deleteFeedback={deleteFeedback}
-    sendEmail={sendEmail}
-  />
+        <div className="feedbacks-container">
+  {feedbacks.length > 0 ? (
+    feedbacks.map(feedback => (
+      <DocumentCard
+        key={feedback._id}
+        cardType="feedback"
+        item={feedback}
+        deleteFeedback={deleteFeedback}
+        sendEmail={sendEmail}
+      />
   
   ))
 ) : (

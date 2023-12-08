@@ -91,6 +91,7 @@ const FacultyPage = () => {
         {resources.length > 0 ? (
           resources.map((resource) => (
             <DocumentCard
+            cardType="faculty"
               key={resource._id}
               document={resource}
               onClick={() => handleCardClick(resource._id)}

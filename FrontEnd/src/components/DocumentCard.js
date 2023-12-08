@@ -4,19 +4,22 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './DocumentCard.css';
 
-const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, deleteFeedback, sendEmail }) => {
+const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,item}) => {
 
-  const [feedbacks, setFeedbacks] = useState([]);
+  
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
   const { authToken, isLoggedIn } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
+  const [feedbacks, setFeedbacks] = useState([]);
+
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const isProfilePage = location.pathname.includes(`/my-profile`);
+
  const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   useEffect(() => {
@@ -57,19 +60,15 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
 
     const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
-      await axios.post(`${backendURL}/api_favorite/resources/${document._id}/${action}`, {}, {
-        headers: { Authorization: `Bearer ${authToken}` },
+      const method = isFavorited ? 'delete' : 'post';  // Use delete for unfavorite
+    const response = await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
+      headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
     } catch (error) {
       console.error(`Error toggling favorite status: ${error}`);
     }
   };
-
-
-
-  
-
   const authorizeResource = async (resourceId) => {
     try {
       const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
@@ -83,7 +82,6 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
       console.error('Error authorizing the resource:', error);
     }
   };
-
   const unauthorizeResource = async (resourceId) => {
     try {
       const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
@@ -97,28 +95,7 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
       console.error('Error unauthorizing the resource:', error);
     }
   };
-
-
-
-
-  const FeedbackCardContent = ({ item, isProfilePage, deleteFeedback, sendEmail }) => {
-    return (
-      isProfilePage && (
-        <div className="feedback-card-content">
-          <p><strong>Email:</strong> {item.userEmail}</p>
-          <p><strong>Feedback:</strong> {item.searchText}</p>
-          <div className="feedback-actions">
-          <button className="authButton"onClick={(e) => {e.stopPropagation(); deleteFeedback(item._id);}}>
-      Delete Feedback
-    </button>
-            <button onClick={() => sendEmail(item.userEmail)} className="authButton">
-              Send Email
-            </button>
-          </div>
-        </div>
-      )
-    );
-  };
+  
   const handleFavButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -128,36 +105,15 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
     toggleFavorite();
     };
 
+    const CardContent = () => {
+      console.log(cardType, item); // Debug output to verify the props
 
-  const CardContent = () => (
-    !isFeedback && (
-
-      <div className='document-card' onClick={onClick}>
-        <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
-        <div className="document-info">
-          <h3 className="document-title">{document.Title || "Untitled"}</h3>
-          <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
-        </div>
-        <div className="document-actions">
-          <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
-          {showLoginPrompt && (
-        <div className="login-prompt">You need to be logged in to add to favorites.</div>
-      )}
-          {isFacultyPage && (
-          <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
-          {isFavorited ? '\u2605' : '\u2606'}
-            </button>
-          )}
-
-          {showAdminActions && (
-            <>
-              <div className='document-card' onClick={onClick}>
-        <img 
-          src={`${backendURL}/api_resource/cover/${document._id}`} 
-          alt={document.Title || "Document cover"} 
-          className="document-cover" 
-        />
-        <div className="document-info">
+      switch (cardType) {
+        case 'adminActions':
+          return (
+            <div className='document-card' onClick={onClick}>
+         <img  src={`${backendURL}/api_resource/cover/${document._id}`}  alt={document.Title || "Document cover"}  className="document-cover"  />
+          <div className="document-info">
           <h3 className="document-title">{document.Title || "Untitled"}</h3>
           <p className="document-author">
             Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
@@ -179,30 +135,90 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
           </button>
           <button onClick={(e) => { e.stopPropagation(); unauthorizeResource(document._id); }} className="authButton">
             Unauthorize
-          </button>
-        </div>
-      </div>
-            </>
-          )}
-        </div>
-      </div>
-    )
-  );
+          </button>             
+          </div>
+            </div>
+          );
+  
+        case 'resource':
+          return (
+            <div className='document-card' onClick={onClick}>
+              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
+              <div className="document-info">
+                <h3 className="document-title">{document.Title || "Untitled"}</h3>
+                <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+              </div>
+              <div className="document-actions">
+                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
+               
+              </div>
+            </div>
+          );
+        case 'favorite':
+          return (
+            <div className='document-card' onClick={onClick}>
+              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
+              <div className="document-info">
+                <h3 className="document-title">{document.Title || "Untitled"}</h3>
+                <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+              </div>
+              <div className="document-actions">
+                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
+                <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
+          {isFavorited ? '\u2605' : '\u2606'}
+            </button>
+              </div>
+            </div>
+          );
+  
+        case 'faculty':
+          return (
+            <div className='document-card' onClick={onClick}>
+            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
+            <div className="document-info">
+              <h3 className="document-title">{document.Title || "Untitled"}</h3>
+              <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+            </div>
+            <div className="document-actions">
+              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
+              <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
+          {isFavorited ? '\u2605' : '\u2606'}
+            </button>
+            </div>
+          </div>
+          );
+          case 'feedback':
+            return (
+              <div className='feedback-card'>
+                <div className="feedback-card-content">
+                <p><strong>Email:</strong> {item.userEmail}</p>
+               <p><strong>Feedback:</strong> {item.searchText}</p>
+                  <div className="feedback-actions">
+                    <button className="authButton" onClick={(e) => {e.stopPropagation(); deleteFeedback(item._id);}}>
+                      Delete Feedback
+                    </button>
+                    <button onClick={() => sendEmail(item.userEmail)} className="authButton">
+                      Send Email
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+        default:
+          return null;
+      }
+    };
+  
+
+ 
 
 
   return (
-    <div className={`card ${darkMode ? 'dark-mode' : 'light-mode'} ${isFacultyPage && !isFeedback ? 'clickable' : ''}`} onClick={isFacultyPage && !isFeedback ? goToResourceDetail : undefined}>
-    {isFeedback ? 
-        <FeedbackCardContent 
-        item={item}
-        isProfilePage={isProfilePage}
-        deleteFeedback={deleteFeedback}
-        sendEmail={sendEmail}
-      />
-      
-        : 
+    <div >
+   
+        
         <CardContent />
-      }
+      
     </div>
   );
   

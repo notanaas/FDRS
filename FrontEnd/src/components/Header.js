@@ -306,7 +306,7 @@ const Header = ({ setIsModalOpen }) => {
 
 {isFacultyPage && (
   <div className="search-upload-container">
-    <div className="search-container">
+    <div className="search-container">  
       {<FeedbackForm user={user} authToken={authToken} />}
     </div>
     <div className="action-buttons">

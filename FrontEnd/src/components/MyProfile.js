@@ -196,8 +196,20 @@ const MyProfile = () => {
       fetchUnauthorizedResources();
     }
   }, [profile.isAdmin, authToken, backendURL]);
+  //loading
   if (!profile.username) {
-    return <div>Loading...</div>;
+    return <div class="center">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>;
   }
 
   const deleteFeedback = async (feedbackId) => {

@@ -142,7 +142,21 @@ body {
 
 .card {
   width: 350px;
-
   box-sizing: border-box;
-  height: 30%;
+}
+
+@media (max-width: 768px) {
+  .accordion{
+    width: 510px; /* Set a fixed width for smaller screens */
+    padding-left: 350px;
+    margin-top: 0 auto;
+    
+  }
+}
+
+
+.resource-details .resource-title {
+  opacity: .75;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

@@ -1,14 +1,11 @@
 .resource-page {
-  display: flex;
+  display: block;
   flex-direction: column;
-  height: calc(100vh - 60px); /* Adjust 60px to the height of your header/footer */
+  height: calc(50vh - 60px); /* Adjust 60px to the height of your header/footer */
   width: calc(100vh - 60px); /* Adjust 60px to the height of your header/footer */
   background-color: #121212;
   color: #ffffff;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow-y: auto; /* Enable scrolling */
-  margin: auto;
+  padding: 0;
   max-width: 800px;
   max-height: 90vh;
 }
@@ -34,15 +31,15 @@
   object-fit: cover;
 }
 
-.resource-details {
-  text-align: center;
+.resource-title{
+  opacity: .75;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
-
-.resource-title {
-  font-size: 2.5em;
-  margin-bottom: 10px;
+.resource-details .resource-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
 
 .download-button {
   background-color: #0a84ff;

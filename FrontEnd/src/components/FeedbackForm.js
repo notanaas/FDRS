@@ -64,7 +64,7 @@ const FeedbackForm = ({ authToken }) => {
   };
 
   return (
-    <div>
+    <div className='search'>
       {isFacultyPage && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <input
@@ -74,28 +74,25 @@ const FeedbackForm = ({ authToken }) => {
             value={searchTerm}
             onChange={handleInputChange}
             style={{
-              padding: '10px',
-              margin: '5px',
-              borderRadius: '5px',
+              borderRadius: '10px 0 0 10px',
               border: '1px solid #ccc',
-              flexGrow: 1
+              flexGrow: 1,
+              height:'31px'
             }}
           />
           <button
-            className="authButton"
+            className="authButtonsearch"
             onClick={handleSearch}
             style={{
-              padding: '10px 20px',
-              margin: '5px',
-              borderRadius: '5px',
+              borderRadius: '0 10px 10px 0',
               border: 'none',
               cursor: 'pointer',
-              backgroundColor: '#007bff',
-              color: 'white'
+              height:'35px',
+              width:'40px'
             }}
           >
-            Search
-          </button>
+          <svg height="17" viewBox="0 0 1792 1792" width="17" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/></svg>        
+            </button>
           {searchPerformed && searchResults.length === 0 && (
             <button
               className="authButton"
@@ -122,7 +119,7 @@ const FeedbackForm = ({ authToken }) => {
             padding: '10px',
             marginTop: '10px',
             borderRadius: '5px',
-            color: 'white'
+            color: 'white',
           }}
         >
           No results found. Would you like to submit your search as feedback?

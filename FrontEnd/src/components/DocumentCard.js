@@ -137,9 +137,6 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
         <div className="document-info">
           <h3 className="document-title">{document.Title || "Untitled"}</h3>
           <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
-          <p className="document-description">Description: {document.Description || "No description provided."}</p>
-          {!isFeedback && <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>}
-          <p className="document-uploader">Uploader: {document.User.Email}</p>
         </div>
         <div className="document-actions">
           <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
@@ -153,10 +150,38 @@ const DocumentCard = ({item ,document, onClick, showAdminActions, isFeedback, de
           )}
 
           {showAdminActions && (
-
             <>
-              <button onClick={(e) => { e.stopPropagation(); authorizeResource(document._id); }} className="authButton">Authorize</button>
-              <button onClick={(e) => { e.stopPropagation(); unauthorizeResource(document._id); }} className="authButton">Unauthorize</button>
+              <div className='document-card' onClick={onClick}>
+        <img 
+          src={`${backendURL}/api_resource/cover/${document._id}`} 
+          alt={document.Title || "Document cover"} 
+          className="document-cover" 
+        />
+        <div className="document-info">
+          <h3 className="document-title">{document.Title || "Untitled"}</h3>
+          <p className="document-author">
+            Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
+          </p>
+          <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>
+          <p className="document-uploader">Uploader: {document.User.Email}</p>
+        </div>
+        <div className="document-actions">
+          <a 
+            onClick={(e) => { e.stopPropagation(); }} 
+            href={`${backendURL}/api_resource/download/${document._id}`} 
+            target='_blank' 
+            className="authButton"
+          >
+            Download
+          </a>
+          <button onClick={(e) => { e.stopPropagation(); authorizeResource(document._id); }} className="authButton">
+            Authorize
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); unauthorizeResource(document._id); }} className="authButton">
+            Unauthorize
+          </button>
+        </div>
+      </div>
             </>
           )}
         </div>

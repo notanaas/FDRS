@@ -6,7 +6,7 @@ import FileUpload from './FileUpload';
 import FeedbackForm from './FeedbackForm';
 import Modal from './Modal';
 import axios from 'axios';
-import './App.css';
+import './Header.css';
 import { RouteParamsContext } from './context/RouteParamsContext';
 import './Sidebar.css';
 

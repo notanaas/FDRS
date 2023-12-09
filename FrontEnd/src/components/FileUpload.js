@@ -86,6 +86,11 @@ const handleImgChange = (e) => {
   const closeModal = () => {
     setIsModalOpen(false); 
   };
+// Example toggle function in your main component
+const toggleDarkMode = () => {
+  setIsDarkMode(!isDarkMode); // This will toggle the dark mode state
+};
+
 
   return (
     <>

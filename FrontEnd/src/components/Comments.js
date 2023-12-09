@@ -132,7 +132,7 @@ const Comments = ({ resourceId }) => {
   
   return (
     <div className="comments-container">
-     <h2>Comments</h2>
+<h2 className="comments-title">Comments</h2>
      <button className="authButton sortButton" onClick={handleSort}>
         Sort by {sortOrder === 'newest' ? 'Oldest' : 'Newest'}
       </button>

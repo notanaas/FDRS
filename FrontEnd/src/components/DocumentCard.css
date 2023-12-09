@@ -49,6 +49,19 @@
   gap: 0.5rem;
   margin-top: 15px;
 }
+
+.card-actions .authButton{
+  /* padding: 5px; */
+  /* padding-top: 10px; */
+  /* padding-bottom: 3px; */
+  width: 100%;
+}
+
+.card-actions a {
+  text-decoration: none;
+  /* margin-top: 3px; */
+}
+
 .favorite-button {
   color: #f0ad4e; /* Gold color for favorite button, adjust if needed */
   background: none;

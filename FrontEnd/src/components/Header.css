@@ -12,6 +12,7 @@
   display: flex;
   justify-content: space-between;
   z-index: 1;
+  
 }
 
 /* Light Mode Styles */
@@ -49,6 +50,14 @@
   margin-right: 30px;
 }
 
+.headerContainer .authButton {
+  margin-right: 25px;
+}
+
+.logoReg .authButton{
+  padding-right: 15px;
+}
+
 .authButton {
   background: transparent;
   color: #fff;
@@ -57,7 +66,7 @@
   cursor: pointer;
   align-items: center;
   height: 35px;
-  font-size: large;
+  font-size:medium;
   display: inline-block;
   background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
   position: relative;
@@ -84,6 +93,7 @@
   color: #fff;
   height: 30px;
   margin-right: 3px;
+  font-weight: 100;
 }
 
 .inputBar::placeholder {
@@ -93,7 +103,7 @@
 /* Sidebar Styles */
 .sidebar {
   position: fixed;
-  margin-top: 80px;
+  margin-top: 75px;
   left: 0;
   top: 0px;
   width: 250px;

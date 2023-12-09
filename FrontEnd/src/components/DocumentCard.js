@@ -106,7 +106,6 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
     };
 
     const CardContent = () => {
-      console.log(cardType, item); // Debug output to verify the props
 
       switch (cardType) {
         case 'adminActions':
@@ -191,13 +190,13 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
             return (
               <div className='feedback-card'>
                 <div className="feedback-card-content">
-                <p><strong>Email:</strong> {item.userEmail}</p>
-               <p><strong>Feedback:</strong> {item.searchText}</p>
+                <p><strong>Email:</strong> {document.User.Email}</p>
+               <p><strong>Feedback:</strong> {document.SearchText}</p>
                   <div className="feedback-actions">
-                    <button className="authButton" onClick={(e) => {e.stopPropagation(); deleteFeedback(item._id);}}>
+                    <button className="authButton" onClick={(e) => {e.stopPropagation(); deleteFeedback(document._id);}}>
                       Delete Feedback
                     </button>
-                    <button onClick={() => sendEmail(item.userEmail)} className="authButton">
+                    <button onClick={() => sendEmail(document.User.Email)} className="authButton">
                       Send Email
                     </button>
                   </div>
@@ -208,10 +207,6 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
           return null;
       }
     };
-  
-
- 
-
 
   return (
     <div >

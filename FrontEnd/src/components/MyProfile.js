@@ -27,7 +27,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isProfilePage) { 
+      if (isAdmin&&isProfilePage) { 
         try {
           const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -335,11 +335,11 @@ const MyProfile = () => {
         <h2>Feedbacks</h2>
         <div className="feedbacks-container">
   {feedbacks.length > 0 ? (
-    feedbacks.map(feedback => (
+    feedbacks.map(fb => (
       <DocumentCard
-        key={feedback._id}
+        key={fb._id}
         cardType="feedback"
-        item={feedback}
+        document={fb}
         deleteFeedback={deleteFeedback}
         sendEmail={sendEmail}
       />

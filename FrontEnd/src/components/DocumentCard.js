@@ -104,50 +104,48 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
     }
     toggleFavorite();
     };
+    const cardClassName = "card"; // This is the new class name for all card types
 
+    // Function to stop event propagation
+    const stopPropagation = (e) => e.stopPropagation();
     const CardContent = () => {
 
       switch (cardType) {
         case 'adminActions':
           return (
-            <div className='document-card' onClick={onClick}>
-         <img  src={`${backendURL}/api_resource/cover/${document._id}`}  alt={document.Title || "Document cover"}  className="document-cover"  />
-          <div className="document-info">
-          <h3 className="document-title">{document.Title || "Untitled"}</h3>
-          <p className="document-author">
-            Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
-          </p>
-          <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>
-          <p className="document-uploader">Uploader: {document.User.Email}</p>
-        </div>
-        <div className="document-actions">
-          <a 
-            onClick={(e) => { e.stopPropagation(); }} 
-            href={`${backendURL}/api_resource/download/${document._id}`} 
-            target='_blank' 
-            className="authButton"
-          >
-            Download
-          </a>
-          <button onClick={(e) => { e.stopPropagation(); authorizeResource(document._id); }} className="authButton">
-            Authorize
-          </button>
-          <button onClick={(e) => { e.stopPropagation(); unauthorizeResource(document._id); }} className="authButton">
-            Unauthorize
-          </button>             
-          </div>
+            <div className={cardClassName} onClick={onClick}>
+              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+              <div className="card-content">
+                <h3 className="card-title">{document.Title || "Untitled"}</h3>
+                <p className="card-author">
+                  Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
+                </p>
+                <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>
+                <p className="card-uploader">Uploader: {document.User.Email}</p>
+              </div>
+              <div className="card-actions">
+                <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">
+                  Download
+                </a>
+                <button onClick={(e) => { stopPropagation(e); authorizeResource(document._id); }} className="authButton">
+                  Authorize
+                </button>
+                <button onClick={(e) => { stopPropagation(e); unauthorizeResource(document._id); }} className="authButton">
+                  Unauthorize
+                </button>             
+              </div>
             </div>
           );
   
         case 'resource':
           return (
-            <div className='document-card' onClick={onClick}>
-              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
-              <div className="document-info">
-                <h3 className="document-title">{document.Title || "Untitled"}</h3>
-                <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+            <div className={cardClassName} onClick={onClick}>
+              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+              <div className="card-content">
+                <h3 className="card-title">{document.Title || "Untitled"}</h3>
+                <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
               </div>
-              <div className="document-actions">
+              <div className="card-actions">
                 <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
                
               </div>
@@ -155,13 +153,13 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
           );
         case 'favorite':
           return (
-            <div className='document-card' onClick={onClick}>
-              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
-              <div className="document-info">
-                <h3 className="document-title">{document.Title || "Untitled"}</h3>
-                <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+            <div className={cardClassName} onClick={onClick}>
+              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+              <div className="card-content">
+                <h3 className="card-title">{document.Title || "Untitled"}</h3>
+                <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
               </div>
-              <div className="document-actions">
+              <div className="card-actions">
                 <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
                 <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
           {isFavorited ? '\u2605' : '\u2606'}
@@ -172,27 +170,30 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
   
         case 'faculty':
           return (
-            <div className='document-card' onClick={onClick}>
-            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="document-cover" />
-            <div className="document-info">
-              <h3 className="document-title">{document.Title || "Untitled"}</h3>
-              <p className="document-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+            <div className={cardClassName} onClick={onClick}>
+            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+            <div className="card-content">
+              <h3 className="card-title">{document.Title || "Untitled"}</h3>
+              <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
             </div>
-            <div className="document-actions">
+            <div className="card-actions">
               <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
               <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
-          {isFavorited ? '\u2605' : '\u2606'}
+              {isFavorited ? '\u2605' : '\u2606'}
+          {showLoginPrompt && (
+            <span className="login-tooltip">Log in to add</span>
+          )}
             </button>
             </div>
           </div>
           );
           case 'feedback':
             return (
-              <div className='feedback-card'>
-                <div className="feedback-card-content">
+              <div className={cardClassName}>
+            <div className="card-content">
                 <p><strong>Email:</strong> {document.User.Email}</p>
                <p><strong>Feedback:</strong> {document.SearchText}</p>
-                  <div className="feedback-actions">
+                  <div className="card-actions">
                     <button className="authButton" onClick={(e) => {e.stopPropagation(); deleteFeedback(document._id);}}>
                       Delete Feedback
                     </button>

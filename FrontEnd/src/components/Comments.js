@@ -10,6 +10,12 @@ const Comments = ({ resourceId }) => {
     const [newComment, setNewComment] = useState('');
     const backendURL = 'http://localhost:3002';
     const userId = user?._id;
+    const [sortOrder, setSortOrder] = useState('newest'); // State to control sort order
+    const handleSort = () => {
+      // Toggle sort order between 'newest' and 'oldest'
+      setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest');
+    };
+  
   const fetchComments = async () => {
     try {
       const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
@@ -116,11 +122,22 @@ const Comments = ({ resourceId }) => {
     const commentOwnerId = comment.User._id || comment.User; 
     return isLoggedIn && (isAdmin || (user && user._id === commentOwnerId));  };
 
+    const sortedComments = comments.sort((a, b) => {
+      if (sortOrder === 'newest') {
+        return new Date(b.Created_date) - new Date(a.Created_date);
+      } else {
+        return new Date(a.Created_date) - new Date(b.Created_date);
+      }
+    });
+  
   return (
     <div className="comments-container">
      <h2>Comments</h2>
+     <button className="authButton sortButton" onClick={handleSort}>
+        Sort by {sortOrder === 'newest' ? 'Oldest' : 'Newest'}
+      </button>
     <div className="comments-list">
-      {comments.map(comment => (
+      {sortedComments.map(comment => (
         <div key={comment._id} className="comment">
           <div className="comment-header">
             <span className="comment-author">{comment.User.Username || 'Anonymous'}</span>

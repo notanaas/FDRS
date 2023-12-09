@@ -1,13 +1,18 @@
 .resource-page {
-  display: block;
+  display: flex;
   flex-direction: column;
-  height: calc(50vh - 60px); /* Adjust 60px to the height of your header/footer */
-  width: calc(100vh - 60px); /* Adjust 60px to the height of your header/footer */
+  margin: auto;
+  margin-top: 60px; /* Adjust this value if your header is taller or shorter */
   background-color: #121212;
   color: #ffffff;
-  padding: 0;
-  max-width: 800px;
-  max-height: 90vh;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.resource-content {
+  display: flex;
+  flex-direction: column-reverse; /* For mobile, data first then image */
 }
 
 .resource-header {
@@ -69,3 +74,114 @@
 .root-faculty {
   margin-top: 100px;
 }
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-in;
+}
+
+@media (max-width: 768px) {
+  .resource-page {
+    max-width: 800px;
+    max-height: 90vh;
+    width: calc(100% - 40px);
+    height: calc(100vh - 120px);
+  }
+
+  .resource-cover img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 200px; /* Set a max-height for mobile */
+  }
+}
+
+/* Styles for tablets and desktops */
+@media (min-width: 769px) {
+  .resource-page {
+    /* Make use of the full viewport width and a min-height */
+    width: 95vw; /* Use 95% of the viewport width */
+    min-height: calc(100vh - 60px); /* Subtract the header height */
+    max-width: none; /* Override the max-width for larger screens */
+  }
+
+  .resource-header {
+    flex-direction: row; /* Align header items in a row for larger screens */
+    align-items: flex-start; /* Align items to the start */
+    justify-content: space-between; /* Distribute space between items */
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .resource-cover img {
+    width: 50%; /* Take half the width of the container */
+    max-width: 600px; /* Max width for the image */
+    height: auto;
+    object-fit: cover;
+  }
+
+
+  .resource-details {
+    width: 50%; /* Take the remaining half of the width */
+    margin-left: 20px; /* Spacing between image and details */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically center the details */
+  }
+
+
+  .resource-title {
+    opacity: .75;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .download-button {
+    align-self: flex-start; 
+  }
+
+  .document-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .document-info .document-author .document-description {
+    display: block; 
+  }
+
+
+  .resource-main-content {
+    display: flex;
+    flex-direction: row;
+  }
+
+ 
+}
+.login-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  z-index: 10; /* Make sure it's above other content */
+}
+
+.login-prompt a {
+  color: #0a84ff;
+  text-decoration: underline;
+}
+

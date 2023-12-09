@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import DocumentCard from './DocumentCard';
 import axios from 'axios';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
-import {jwtDecode} from 'jwt-decode'; // Ensure that jwt-decode is properly imported
+import {jwtDecode} from 'jwt-decode'; 
+import { CSSTransition } from 'react-transition-group';
+
 const FacultyPage = () => {
   const [resources, setResources] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
@@ -14,10 +16,13 @@ const FacultyPage = () => {
   const { facultyId } = useParams();
   const { authToken, refreshTokenFunc } = useContext(AuthContext);
   const { setRouteParams } = useContext(RouteParamsContext);
+  const location = useLocation();
+const facultyName = location.state?.facultyName || 'Faculty'; 
 
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
+
 
   useEffect(() => {
     const fetchResources = async () => {
@@ -85,8 +90,9 @@ const FacultyPage = () => {
   }
 
   return (
+    <CSSTransition in={true}appear={true} timeout={300} classNames="fade">
     <div className='root-faculty'>
-      <h1>Resources for Faculty</h1>
+      <h1>Resources for {facultyName}</h1>
       <div className="faculty-container">
         {resources.length > 0 ? (
           resources.map((resource) => (
@@ -104,6 +110,8 @@ const FacultyPage = () => {
         )}
       </div>
     </div>
+    </CSSTransition>
+
   );
 };
 

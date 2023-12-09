@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Comments from './Comments';
 import { AuthContext } from './context/AuthContext';
+import { CSSTransition } from 'react-transition-group';
 import './ResourcePage.css';
 
 const ResourcePage = () => {
@@ -12,7 +13,14 @@ const ResourcePage = () => {
   const { authToken, isLoggedIn, user,isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
+  const history = useHistory();
+
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [inProp, setInProp] = useState(false);
+
+  useEffect(() => {
+    setInProp(true);
+  }, []);
   useEffect(() => {
     if (authToken && resourceId) {
       const fetchFavorites = async () => {
@@ -67,6 +75,10 @@ const ResourcePage = () => {
     <div className="wave"></div>
   </div>;
   }
+  const promptLogin = () => {
+    setShowLoginPrompt(true);
+    setTimeout(() => setShowLoginPrompt(false), 4000); // Hide prompt after 4 seconds
+  };
   const toggleFavorite = async () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -95,13 +107,16 @@ const ResourcePage = () => {
     }
     toggleFavorite();
     };
-
+    
   return (
+    <CSSTransition in={inProp} timeout={300} classNames="fade" appear>
+
     <div className="resource-page">
+    
       <section className="resource-header">
         {resourceDetails.Cover && (
           <div className="resource-cover">
-            <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="document-cover" />
+            <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="resource-cover" />
           </div>
         )}
         <div className="resource-details">
@@ -115,12 +130,16 @@ const ResourcePage = () => {
 
           <a onClick={(e) => {e.stopPropagation();}} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank' className="authButton">Download</a>
           <button className="favorite-button" onClick={handleFavButtonClick}>
-              {isFavorited ? '\u2605' : '\u2606'}
-          </button>
+          {isFavorited ? '\u2605' : '\u2606'}
+          {showLoginPrompt && (
+            <span className="login-tooltip">Log in to add</span>
+          )}
+        </button>
         </div>
       </section>
       <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
     </div>
+    </CSSTransition>
 
   );
 };

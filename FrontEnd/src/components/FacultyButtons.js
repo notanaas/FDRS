@@ -37,14 +37,19 @@ const FacultyButtons = () => {
     <div className='sides'>
       <h1>Faculties</h1>
       {faculties.length > 0 ? (
-        faculties.map(Faculty => (
+        faculties.map(faculty => (
           <Link 
-            key={Faculty._id}
-            to={`/faculty/${Faculty._id}`}
-            className="facultyauthButtonLink"
-          >
-            {Faculty.FacultyName}
-          </Link>
+          key={faculty._id}
+          to={{
+            pathname: `/faculty/${faculty._id}`,
+            state: { facultyName: faculty.FacultyName } // Ensure this matches your data structure
+          }}
+          className="facultyauthButtonLink"
+        >
+          {faculty.FacultyName}
+        </Link>
+        
+        
         ))
       ) : (
         <p>No faculties found.</p>
@@ -52,5 +57,4 @@ const FacultyButtons = () => {
     </div>
   );
 };
-
 export default FacultyButtons;

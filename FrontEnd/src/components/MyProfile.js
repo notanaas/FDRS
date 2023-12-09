@@ -27,7 +27,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isAdmin&&isProfilePage) { 
+      if (isProfilePage) { 
         try {
           const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -243,7 +243,6 @@ const MyProfile = () => {
       {showErrorMessage && (
         <div className="error-message-header">{errorMessage}</div>
       )}
-      <h1>User Profile</h1>
       <Accordion title="User Profile Information">
       {isEditMode ? (
         <div className="edit-profile">
@@ -270,8 +269,7 @@ const MyProfile = () => {
       <Accordion title="Your Resources">
 
         <div className="user-resources section">
-          <h2>Your Resources</h2>
-          <div className="resources-list">
+          <div className="card-container">
             {userResources.length > 0 ? (
               userResources.map((resource) => (
               
@@ -288,8 +286,7 @@ const MyProfile = () => {
         <div className="user-favorites section">
         <Accordion title="Your Favorites">
 
-          <h2>Your Favorites</h2>
-          <div className="favorites-list">
+          <div className="card-container">
     {userFavorites.length > 0 ? (
       userFavorites.map((resource) => {
         const resourceData = resource.Resource; 
@@ -318,7 +315,7 @@ const MyProfile = () => {
 
         <div className="admin-section">
           <h2>Unauthorized Documents</h2>
-          <div className="documents-list">
+          <div className="card-container">
             {documents.map((doc) => (
               <DocumentCard 
               cardType="adminActions"
@@ -333,7 +330,7 @@ const MyProfile = () => {
         </div>
         <div className="feedbacks-section">
         <h2>Feedbacks</h2>
-        <div className="feedbacks-container">
+        <div className="card-container">
   {feedbacks.length > 0 ? (
     feedbacks.map(fb => (
       <DocumentCard

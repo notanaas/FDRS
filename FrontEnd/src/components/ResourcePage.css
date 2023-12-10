@@ -3,7 +3,8 @@
   display: flex;
   flex-direction: column;
   margin: auto;
-  margin-top: 60px; /* Adjust this value if your header is taller or shorter */
+  margin-top: 60px;
+  /* Adjust this value if your header is taller or shorter */
   background-color: transparent;
   color: #ffffff;
   padding: 20px;
@@ -11,9 +12,11 @@
   box-shadow: black;
   overflow: hidden;
 }
+
 .resource-content {
   display: flex;
-  flex-direction: column-reverse; /* For mobile, data first then image */
+  flex-direction: column-reverse;
+  /* For mobile, data first then image */
 }
 
 .resource-header {
@@ -39,11 +42,12 @@
   object-fit: cover;
 }
 
-.resource-title{
+.resource-title {
   opacity: .75;
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
 .resource-details .resource-title {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -70,13 +74,16 @@
 .fade-enter {
   opacity: 0;
 }
+
 .fade-enter-active {
   opacity: 1;
   transition: opacity 300ms ease-in;
 }
+
 .fade-exit {
   opacity: 1;
 }
+
 .fade-exit-active {
   opacity: 0;
   transition: opacity 300ms ease-in;
@@ -94,7 +101,8 @@
     width: 100%;
     height: auto;
     object-fit: cover;
-    max-height: 200px; /* Set a max-height for mobile */
+    max-height: 200px;
+    /* Set a max-height for mobile */
   }
 }
 
@@ -102,33 +110,44 @@
 @media (min-width: 769px) {
   .resource-page {
     /* Make use of the full viewport width and a min-height */
-    width: 95vw; /* Use 95% of the viewport width */
-    min-height: calc(100vh - 60px); /* Subtract the header height */
-    max-width: none; /* Override the max-width for larger screens */
+    width: 95vw;
+    /* Use 95% of the viewport width */
+    min-height: calc(100vh - 60px);
+    /* Subtract the header height */
+    max-width: none;
+    /* Override the max-width for larger screens */
   }
 
   .resource-header {
-    flex-direction: row; /* Align header items in a row for larger screens */
-    align-items: flex-start; /* Align items to the start */
-    justify-content: space-between; /* Distribute space between items */
+    flex-direction: row;
+    /* Align header items in a row for larger screens */
+    align-items: flex-start;
+    /* Align items to the start */
+    justify-content: space-between;
+    /* Distribute space between items */
     padding: 20px;
     margin-bottom: 30px;
   }
 
   .resource-cover img {
-    width: 50%; /* Take half the width of the container */
-    max-width: 600px; /* Max width for the image */
+    width: 50%;
+    /* Take half the width of the container */
+    max-width: 600px;
+    /* Max width for the image */
     height: auto;
     object-fit: cover;
   }
 
 
   .resource-details {
-    width: 50%; /* Take the remaining half of the width */
-    margin-left: 20px; /* Spacing between image and details */
+    width: 50%;
+    /* Take the remaining half of the width */
+    margin-left: 20px;
+    /* Spacing between image and details */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Vertically center the details */
+    justify-content: center;
+    /* Vertically center the details */
   }
 
 
@@ -139,7 +158,24 @@
   }
 
   .download-button {
-    align-self: flex-start; 
+    align-self: flex-start;
+  }
+
+  .downloadButton {
+    background: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-items: center;
+    font-size: medium;
+    display: inline-block;
+    background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+    position: relative;
+    z-index: 0;
+    padding-top: 8px;
+    width: 100%;
+    height: 30px;
   }
 
   .document-title {
@@ -149,7 +185,7 @@
   }
 
   .document-info .document-author .document-description {
-    display: block; 
+    display: block;
   }
 
 
@@ -158,8 +194,9 @@
     flex-direction: row;
   }
 
- 
+
 }
+
 .login-prompt {
   position: fixed;
   top: 0;
@@ -169,7 +206,8 @@
   color: white;
   text-align: center;
   padding: 10px;
-  z-index: 10; /* Make sure it's above other content */
+  z-index: 10;
+  /* Make sure it's above other content */
 }
 
 .login-prompt a {
@@ -189,6 +227,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .resource-page,
 .author,
 .description,
@@ -202,21 +241,33 @@
 
 
 :root {
-  --text-color: #ffffff; /* Default text color */
-  --background-color: #121212; /* Default background color */
-  --link-color: #0a84ff; /* Default link color */
-  --link-hover-color: #0077cc; /* Default link hover color */
-  --login-prompt-background: rgba(0, 0, 0, 0.85); /* Default login prompt background */
-  --login-prompt-text-color: #ffffff; /* Default login prompt text color */
+  --text-color: #ffffff;
+  /* Default text color */
+  --background-color: #121212;
+  /* Default background color */
+  --link-color: #0a84ff;
+  /* Default link color */
+  --link-hover-color: #0077cc;
+  /* Default link hover color */
+  --login-prompt-background: rgba(0, 0, 0, 0.85);
+  /* Default login prompt background */
+  --login-prompt-text-color: #ffffff;
+  /* Default login prompt text color */
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --text-color: #000000; /* Text color for light mode */
-    --background-color: #f0f0f0; /* Background color for light mode */
-    --link-color: #0066cc; /* Link color for light mode */
-    --link-hover-color: #0055bb; /* Link hover color for light mode */
-    --login-prompt-background: rgba(255, 255, 255, 0.85); /* Login prompt background for light mode */
-    --login-prompt-text-color: #333333; /* Login prompt text color for light mode */
+    --text-color: #000000;
+    /* Text color for light mode */
+    --background-color: #f0f0f0;
+    /* Background color for light mode */
+    --link-color: #0066cc;
+    /* Link color for light mode */
+    --link-hover-color: #0055bb;
+    /* Link hover color for light mode */
+    --login-prompt-background: rgba(255, 255, 255, 0.85);
+    /* Login prompt background for light mode */
+    --login-prompt-text-color: #333333;
+    /* Login prompt text color for light mode */
   }
 }

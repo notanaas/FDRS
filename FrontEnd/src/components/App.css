@@ -197,4 +197,15 @@ bodY {
 .fade-enter-active {
   opacity: 1;
   transition: opacity 300ms linear;
+<<<<<<< Updated upstream
+=======
+}
+
+
+.welcome {
+  font-size: 20px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+>>>>>>> Stashed changes
 }

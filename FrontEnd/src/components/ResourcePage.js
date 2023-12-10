@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams,useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Comments from './Comments';
 import { AuthContext } from './context/AuthContext';
@@ -7,10 +7,10 @@ import { CSSTransition } from 'react-transition-group';
 import './ResourcePage.css';
 
 const ResourcePage = () => {
-  const { resourceId } = useParams(); 
+  const { resourceId } = useParams();
   const [resourceDetails, setResourceDetails] = useState(null);
   const [comments, setComments] = useState([]);
-  const { authToken, isLoggedIn, user,isAdmin } = useContext(AuthContext);
+  const { authToken, isLoggedIn, user, isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
   const history = useHistory();
@@ -71,17 +71,17 @@ const ResourcePage = () => {
 
   if (!resourceDetails) {
     return <div className="center">
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-  </div>;
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+    </div>;
   }
   const promptLogin = () => {
     setShowLoginPrompt(true);
@@ -97,15 +97,15 @@ const ResourcePage = () => {
     const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
       const method = isFavorited ? 'delete' : 'post';  // Use delete for unfavorite
-    const response = await axios[method](`${backendURL}/api_favorite/resources/${resourceId}/${action}`, {
-      headers: { Authorization: `Bearer ${authToken}` },
+      const response = await axios[method](`${backendURL}/api_favorite/resources/${resourceId}/${action}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
     } catch (error) {
       console.error(`Error toggling favorite status: ${error}`);
     }
   };
-  
+
 
   const handleFavButtonClick = () => {
     if (!isLoggedIn) {
@@ -114,39 +114,39 @@ const ResourcePage = () => {
       return;
     }
     toggleFavorite();
-    };
-    
+  };
+
   return (
     <CSSTransition in={inProp} timeout={300} classNames="fade" appear>
 
-    <div className="resource-page">
-    
-      <section className="resource-header">
-        {resourceDetails.Cover && (
-          <div className="resource-cover">
-            <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="resource-cover" />
-          </div>
-        )}
-        <div className="resource-details">
-          <h1 className="resource-title">{resourceDetails.Title}</h1>
-          <p className="author"><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
-          <p className="description"><strong>Description:</strong> {resourceDetails.Description}</p>
-          <p className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
-          <p className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
-          <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
-          <p className="user-email">{resourceDetails.User.Email}</p>
+      <div className="resource-page">
 
-          <a onClick={(e) => {e.stopPropagation();}} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank' className="authButton">Download</a>
-          <button className="favorite-button" onClick={handleFavButtonClick}>
-          {isFavorited ? '\u2605' : '\u2606'}
-          {showLoginPrompt && (
-            <span className="login-tooltip">Log in to add</span>
+        <section className="resource-header">
+          {resourceDetails.Cover && (
+            <div className="resource-cover">
+              <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="resource-cover" />
+            </div>
           )}
-        </button>
-        </div>
-      </section>
-      <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
-    </div>
+          <div className="resource-details">
+            <h1 className="resource-title">{resourceDetails.Title}</h1>
+            <p className="author"><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
+            <p className="description"><strong>Description:</strong> {resourceDetails.Description}</p>
+            <p className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
+            <p className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
+            <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
+            <p className="user-email">{resourceDetails.User.Email}</p>
+
+            <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank' className="downloadButton">Download</a>
+            <button className="favorite-button" onClick={handleFavButtonClick}>
+              {isFavorited ? '\u2605' : '\u2606'}
+              {showLoginPrompt && (
+                <span className="login-tooltip">Log in to add</span>
+              )}
+            </button>
+          </div>
+        </section>
+        <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
+      </div>
     </CSSTransition>
 
   );

@@ -4,9 +4,9 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './DocumentCard.css';
 
-const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,item}) => {
+const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, item }) => {
 
-  
+
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
@@ -20,7 +20,7 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const isProfilePage = location.pathname.includes(`/my-profile`);
 
- const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -31,7 +31,7 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
   }, []);
 
   useEffect(() => {
-    if (authToken&&document&&document._id) {
+    if (authToken && document && document._id) {
       const fetchFavorites = async () => {
         try {
           const response = await axios.get(`${backendURL}/api_user/profile`, {
@@ -61,8 +61,8 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
     const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
       const method = isFavorited ? 'delete' : 'post';  // Use delete for unfavorite
-    const response = await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
-      headers: { Authorization: `Bearer ${authToken}` },
+      const response = await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
     } catch (error) {
@@ -95,7 +95,7 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
       console.error('Error unauthorizing the resource:', error);
     }
   };
-  
+
   const handleFavButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -103,121 +103,123 @@ const DocumentCard = ({cardType ,document, onClick, deleteFeedback, sendEmail ,i
       return;
     }
     toggleFavorite();
-    };
-    const cardClassName = "card"; // This is the new class name for all card types
+  };
+  const cardClassName = "card"; // This is the new class name for all card types
 
-    // Function to stop event propagation
-    const stopPropagation = (e) => e.stopPropagation();
-    const CardContent = () => {
+  // Function to stop event propagation
+  const stopPropagation = (e) => e.stopPropagation();
+  const CardContent = () => {
 
-      switch (cardType) {
-        case 'adminActions':
-          return (
-            <div className={cardClassName} onClick={onClick}>
-              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-              <div className="card-content">
-                <h3 className="card-title">{document.Title || "Untitled"}</h3>
-                <p className="card-author">
-                  Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
-                </p>
-                <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>
-                <p className="card-uploader">Uploader: {document.User.Email}</p>
-              </div>
-              <div className="card-actions">
-                <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">
+    switch (cardType) {
+      case 'adminActions':
+        return (
+          <div className={cardClassName} onClick={onClick}>
+            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+            <div className="card-content">
+              <h3 className="card-title">{document.Title || "Untitled"}</h3>
+              <p className="card-author">
+                Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
+              </p>
+              <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>
+              <p className="card-uploader">Uploader: {document.User.Email}</p>
+            </div>
+            <div className="card-actions">
+              <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">
+                <span>
                   Download
-                </a>
-                <button onClick={(e) => { stopPropagation(e); authorizeResource(document._id); }} className="authButton">
-                  Authorize
-                </button>
-                <button onClick={(e) => { stopPropagation(e); unauthorizeResource(document._id); }} className="authButton">
-                  Unauthorize
-                </button>             
-              </div>
+                </span>
+              </a>
+              <button onClick={(e) => { stopPropagation(e); authorizeResource(document._id); }} className="authButton">
+                Authorize
+              </button>
+              <button onClick={(e) => { stopPropagation(e); unauthorizeResource(document._id); }} className="authButton">
+                Unauthorize
+              </button>
             </div>
-          );
-  
-        case 'resource':
-          return (
-            <div className={cardClassName} onClick={onClick}>
-              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-              <div className="card-content">
-                <h3 className="card-title">{document.Title || "Untitled"}</h3>
-                <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
-              </div>
-              <div className="card-actions">
-                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
-               
-              </div>
-            </div>
-          );
-        case 'favorite':
-          return (
-            <div className={cardClassName} onClick={onClick}>
-              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-              <div className="card-content">
-                <h3 className="card-title">{document.Title || "Untitled"}</h3>
-                <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
-              </div>
-              <div className="card-actions">
-                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
-                <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
-          {isFavorited ? '\u2605' : '\u2606'}
-            </button>
-              </div>
-            </div>
-          );
-  
-        case 'faculty':
-          return (
-            <div className={cardClassName} onClick={onClick}>
+          </div>
+        );
+
+      case 'resource':
+        return (
+          <div className={cardClassName} onClick={onClick}>
             <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
             <div className="card-content">
               <h3 className="card-title">{document.Title || "Untitled"}</h3>
               <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
             </div>
             <div className="card-actions">
-              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="authButton">Download</a>
-              <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
-              {isFavorited ? '\u2605' : '\u2606'}
-          {showLoginPrompt && (
-            <span className="login-tooltip">Log in to add</span>
-          )}
-            </button>
+              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+
             </div>
           </div>
-          );
-          case 'feedback':
-            return (
-              <div className={cardClassName}>
+        );
+      case 'favorite':
+        return (
+          <div className={cardClassName} onClick={onClick}>
+            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
             <div className="card-content">
-                <p><strong>Email:</strong> {document.User.Email}</p>
-               <p><strong>Feedback:</strong> {document.SearchText}</p>
-                  <div className="card-actions">
-                    <button className="authButton" onClick={(e) => {e.stopPropagation(); deleteFeedback(document._id);}}>
-                      Delete Feedback
-                    </button>
-                    <button onClick={() => sendEmail(document.User.Email)} className="authButton">
-                      Send Email
-                    </button>
-                  </div>
-                </div>
+              <h3 className="card-title">{document.Title || "Untitled"}</h3>
+              <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+            </div>
+            <div className="card-actions">
+              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+              <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
+                {isFavorited ? '\u2605' : '\u2606'}
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'faculty':
+        return (
+          <div className={cardClassName} onClick={onClick}>
+            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+            <div className="card-content">
+              <h3 className="card-title">{document.Title || "Untitled"}</h3>
+              <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+            </div>
+            <div className="card-actions">
+              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+              <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
+                {isFavorited ? '\u2605' : '\u2606'}
+                {showLoginPrompt && (
+                  <span className="login-tooltip">Log in to add</span>
+                )}
+              </button>
+            </div>
+          </div>
+        );
+      case 'feedback':
+        return (
+          <div className={cardClassName}>
+            <div className="card-content">
+              <p><strong>Email:</strong> {document.User.Email}</p>
+              <p><strong>Feedback:</strong> {document.SearchText}</p>
+              <div className="card-actions">
+                <button className="authButton" onClick={(e) => { e.stopPropagation(); deleteFeedback(document._id); }}>
+                  Delete Feedback
+                </button>
+                <button onClick={() => sendEmail(document.User.Email)} className="authButton">
+                  Send Email
+                </button>
               </div>
-            );
-        default:
-          return null;
-      }
-    };
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div >
-   
-        
-        <CardContent />
-      
+
+
+      <CardContent />
+
     </div>
   );
-  
+
 };
 
 export default DocumentCard;

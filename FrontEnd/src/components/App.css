@@ -157,3 +157,11 @@ bodY {
   opacity: 1;
   transition: opacity 300ms linear;
 }
+
+
+.welcome {
+  font-size: 20px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+}

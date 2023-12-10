@@ -33,7 +33,7 @@ const WelcomingPage = () => {
 
   return (
     <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-      <main>
+      <main className='welcome'>
         {showMessage && <div className="header-message">{message}</div>}
         <p>Welcome to the page!</p>
       </main>

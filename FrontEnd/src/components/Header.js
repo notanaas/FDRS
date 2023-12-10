@@ -21,7 +21,7 @@ const Sidebar = ({ }) => {
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">
     <label htmlFor={id}>{placeholder}</label>
-    <input type={type} id={id} name={name} className="inputBar" placeholder={placeholder} value={value} onChange={onChange} required />
+    <input type={type} id={id} name={name} className="inputBarH" placeholder={placeholder} value={value} onChange={onChange} required />
   </div>
 );
 
@@ -362,7 +362,7 @@ const Header = ({ setIsModalOpen }) => {
           ) : (
             <div className="form-group">
               <label htmlFor="email">Email:</label>
-              <input type="email" id="email" name="email" className="inputBar" placeholder="Email" value={forgotPasswordData.email} onChange={handleForgotPasswordInputChange} required />
+              <input type="email" id="email" name="email" className="inputBarH" placeholder="Email" value={forgotPasswordData.email} onChange={handleForgotPasswordInputChange} required />
             </div>
           )}
           <button type="submit" className="authButton">
@@ -384,7 +384,7 @@ const Header = ({ setIsModalOpen }) => {
               type="text"
               id="usernameOrEmail"
               name="usernameOrEmail"
-              className="inputBar"
+              className="inputBarH"
               placeholder="Username or Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -398,7 +398,7 @@ const Header = ({ setIsModalOpen }) => {
               type="password"
               id="password"
               name="password"
-              className="inputBar"
+              className="inputBarH"
               value={password}
               onChange={(e) => setPassword(e.target.value)} // Changed setPasswordConfirm to setPassword
               placeholder="Password"

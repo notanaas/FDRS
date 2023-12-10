@@ -3,6 +3,12 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import Modal from './Modal';
 import { RouteParamsContext } from './context/RouteParamsContext'; 
+const Input = ({ type, id, name, value, onChange, placeholder }) => (
+  <div className="form-group">
+    <label htmlFor={id}>{placeholder}</label>
+    <input type={type} id={id} name={name} className="inputBarH" placeholder={placeholder} value={value} onChange={onChange} required />
+  </div>
+);
 
 const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   const [title, setTitle] = useState('');
@@ -97,46 +103,27 @@ const toggleDarkMode = () => {
 
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
-          <div className="custom-upload-modal">
             {error && <div className="error-message">{error}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}
 
-            <div className="form-container">
-              <label htmlFor="title">Title:</label>
-              <input type="text" id="title" value={title} onChange={handleTitleChange} className="inputBar" />
+              <Input placeholder="Title"type="text" id="title" value={title} onChange={handleTitleChange} className="inputBarH" />
 
-              <label htmlFor="authorFirstName">Author First Name:</label>
-              <input type="text" id="authorFirstName" value={authorFirstName} onChange={handleAuthorFirstNameChange} className="inputBar" />
+              <Input placeholder="Author FirstName"type="text" id="authorFirstName" value={authorFirstName} onChange={handleAuthorFirstNameChange} className="inputBarH" />
 
-              <label htmlFor="authorLastName">Author Last Name:</label>
-              <input type="text" id="authorLastName" value={authorLastName} onChange={handleAuthorLastNameChange} className="inputBar" />
+              <Input placeholder="Author LastName"type="text" id="authorLastName" value={authorLastName} onChange={handleAuthorLastNameChange} className="inputBarH" />
 
-              <label htmlFor="description">Description:</label>
-              <textarea id="description" value={description} onChange={handleDescriptionChange} className="inputBar"></textarea>
+              <Input placeholder="Description"type="text" id="description" value={description} onChange={handleDescriptionChange} className="inputBarH" />
 
-              <label htmlFor="documentFile">Choose Document (PDF):</label>
-              <input type="file" id="documentFile" accept="application/pdf" onChange={handleFileChange} className="inputBar" />
+              <Input placeholder="File To upload(PDF)"type="file" id="documentFile" accept="application/pdf" onChange={handleFileChange} className="inputBarH" />
 
-              <label htmlFor="imageFile">Choose Photo for Document (JPEG, JPG, PNG):</label>
-              <input type="file" id="imageFile" accept="image/jpeg, image/jpg, image/png" onChange={handleImgChange} className="inputBar" />
-            </div>
+              <Input placeholder="Related Image"type="file" id="imageFile" accept="image/jpeg, image/jpg, image/png" onChange={handleImgChange} className="inputBarH" />
 
-            {imgUrl && (
-              <div className="card">
-                <img className="uploaded-photo" src={imgUrl} alt="Document" />
-                <div className="card-body">
-                  <p className="card-title">{title}</p>
-                  <p className="card-text">Author First Name: {authorFirstName}</p>
-                  <p className="card-text">Author Last Name: {authorLastName}</p>
-                </div>
-              </div>
-            )}
+           
 
             <div className="modal-footer">
               <button onClick={closeModal} className="authButton">Close</button>
               <button onClick={handleUpload} className="authButton">Upload</button>
             </div>
-          </div>
         </Modal>
       )}
     </>

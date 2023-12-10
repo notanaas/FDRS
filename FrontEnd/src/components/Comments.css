@@ -48,12 +48,13 @@
   color: white;
 }
 
-.inputBar {
+.inputBarC {
   width: 100%;
   background-color: transparent; /* Dark background for input */
   color: #fff; /* White text color for input */
   border: 1px solid transparent; /* Slightly lighter border for visibility */
   border-radius: 4px;
+  
 }
 
 .add-comment {

@@ -146,7 +146,7 @@ const Comments = ({ resourceId }) => {
           <div className="comment-body">
             {editing.id === comment._id ? (
               <textarea
-                className="inputBar"
+                className="inputBarC"
                 value={editing.text}
                 onChange={(e) => setEditing({ ...editing, text: e.target.value })}
               />
@@ -173,7 +173,7 @@ const Comments = ({ resourceId }) => {
       <div className="add-comment">
         <textarea
           value={newComment}
-          className="inputBar"
+          className="inputBarC"
           onChange={handleTextChange}
           placeholder="Write your comment..."
         />

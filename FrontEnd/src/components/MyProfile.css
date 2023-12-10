@@ -77,11 +77,7 @@
   background-color: #f44336; /* Red */
 }
 
-.inputBar {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+
 body {
   display: flex;
   font-size: 16px;

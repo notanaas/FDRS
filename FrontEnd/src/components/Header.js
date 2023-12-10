@@ -301,7 +301,7 @@ const Header = ({ setIsModalOpen }) => {
         {isSidebarOpen && <Sidebar />}
       </div>
       {showLoginPrompt && (
-        <div className="login-prompt">You need to be logged in to upload files.</div>
+        <div className="login-prompt"><b>You need to be logged in to upload files.</b></div>
       )}
 
 {isFacultyPage && (

@@ -112,19 +112,22 @@ const FeedbackForm = ({ authToken }) => {
           )}
         </div>
       )}
-      {showSearchPrompt && (
-        <div
-          style={{
-            backgroundColor: 'orange',
-            padding: '10px',
-            marginTop: '10px',
-            borderRadius: '5px',
-            color: 'white',
-          }}
-        >
-          No results found. Would you like to submit your search as feedback?
-        </div>
-      )}
+{showSearchPrompt && (
+    <div
+      style={{
+        position: 'absolute',
+        top: '100%', // Adjust as needed to position the prompt below the search bar
+        left: 800,
+        backgroundColor: 'orange',
+        padding: '10px',
+        borderRadius: '5px',
+        color: 'white',
+        zIndex: 999, // Make sure the z-index is higher than other elements if needed
+      }}
+    >
+      No results found. Would you like to submit your search as feedback?
+    </div>
+)}
       {searchPerformed && searchResults.length > 0 && (
         <div>
           {searchResults.map((result) => (

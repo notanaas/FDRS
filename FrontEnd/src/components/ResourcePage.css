@@ -206,8 +206,6 @@
     display: flex;
     flex-direction: row;
   }
-
-
 }
 
 .login-prompt {
@@ -219,7 +217,9 @@
   color: white;
   text-align: center;
   padding: 10px;
-  z-index: 10;
+  z-index: 11;
+  margin-top: 60px;
+  font-size: large;
   /* Make sure it's above other content */
 }
 
@@ -270,7 +270,7 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --text-color: #000000;
+    --text-color: #fffafa;
     /* Text color for light mode */
     --background-color: #f0f0f0;
     /* Background color for light mode */

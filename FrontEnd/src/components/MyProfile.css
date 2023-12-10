@@ -24,8 +24,12 @@
   }
 }
 
-.contentContainerP{
+.contentContainer P{
   width: 100%;
+  color: #000;
+}
+.contentContainer{
+  margin-top: 100px;
 }
 
 .contentContainer .my-profile  {

@@ -37,3 +37,11 @@
     margin-top: 0; /* No top margin */
   }
 }
+
+
+@media (max-width: 768px) {
+  .sides {
+    margin-right: 280px;
+
+  }
+}

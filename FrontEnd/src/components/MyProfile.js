@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import DocumentCard  from './DocumentCard'; // Ensure this is the correct path
+import DocumentCard from './DocumentCard'; // Ensure this is the correct path
 import './MyProfile.css';
-import { useHistory,useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Accordion from './Accordion'; // Make sure to create this component
 
 
 const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
-  const [documents, setDocuments] = useState([]); 
+  const [documents, setDocuments] = useState([]);
   const { authToken, isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [isEditMode, setIsEditMode] = useState(false);
@@ -27,7 +27,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isProfilePage) { 
+      if (isProfilePage) {
         try {
           const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -38,7 +38,7 @@ const MyProfile = () => {
         }
       }
     };
-  
+
     fetchFeedbacks();
   }, [authToken, isProfilePage, backendURL]);
 
@@ -55,8 +55,8 @@ const MyProfile = () => {
         });
         setUserResources(response.data.UserResources);
         setUserFavorites(response.data.userFavorites);
-        
-   } else {
+
+      } else {
         console.error('Unexpected response format:', response.data);
       }
     } catch (error) {
@@ -77,7 +77,7 @@ const MyProfile = () => {
       setTimeout(() => setShowErrorMessage(false), 5000);
     }
   };
-  
+
   const handlePasswordResetRequest = async () => {
     try {
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`, { email: profile.email }, {
@@ -96,7 +96,7 @@ const MyProfile = () => {
       setTimeout(() => setShowErrorMessage(false), 5000);
     }
   };
- 
+
   const handleEditToggle = () => {
     setIsEditMode(!isEditMode);
     if (isEditMode) {
@@ -159,8 +159,8 @@ const MyProfile = () => {
 
   const authorizeResource = async (resourceId) => {
     try {
-      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`, 
-        { accept: true }, 
+      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
+        { accept: true },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       if (response.status === 200) {
@@ -170,11 +170,11 @@ const MyProfile = () => {
       console.error('Error authorizing the resource:', error);
     }
   };
-  
+
   const unauthorizeResource = async (resourceId) => {
     try {
-      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`, 
-        { accept: false }, 
+      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
+        { accept: false },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       if (response.status === 200) {
@@ -184,7 +184,7 @@ const MyProfile = () => {
       console.error('Error unauthorizing the resource:', error);
     }
   };
-  
+
   const handleCardClick = (resourceId) => {
     history.push(`/resource/${resourceId}`);
   };
@@ -192,24 +192,24 @@ const MyProfile = () => {
     if (authToken) {
       fetchProfileData();
     }
-    if (profile.isAdmin ) {
+    if (profile.isAdmin) {
       fetchUnauthorizedResources();
     }
   }, [profile.isAdmin, authToken, backendURL]);
   //loading
   if (!profile.username) {
     return <div className="center">
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-    <div className="wave"></div>
-  </div>;
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+      <div className="wave"></div>
+    </div>;
   }
 
   const deleteFeedback = async (feedbackId) => {
@@ -230,11 +230,11 @@ const MyProfile = () => {
     // Optionally, add subject and body to the email
     const subject = encodeURIComponent("Your Feedback");
     const body = encodeURIComponent("Thank you for your feedback!");
-  
+
     // Construct the mailto link
     window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
   };
-  
+
   return (
     <div className="my-profile">
       {showSuccessMessage && (
@@ -244,109 +244,111 @@ const MyProfile = () => {
         <div className="error-message-header">{errorMessage}</div>
       )}
       <Accordion title="User Profile Information">
-      {isEditMode ? (
-        <div className="edit-profile">
-          <label htmlFor="username">Username:</label>
-          <input id="username" type="text" name="username" className="inputBar" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
-          <label htmlFor="email">Email:</label>
-          <input id="email" type="email" name="email" className="inputBar" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
-          <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
-          <button className="authButton" onClick={handleEditToggle}>Cancel</button>
-        </div>
-      ) : (
-        <div className="user-info">
-          <p>Username: {profile.username}</p>
-          <p>Email: {profile.email}</p>
-          <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
-        </div>
-      )}
-      {successMessage && <div className="success-message">{successMessage}</div>}
-      <div className="user-actions">
-        <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
-      </div>
+        {isEditMode ? (
+          <div className="edit-profile">
+            <label htmlFor="username">Username:</label>
+            <input id="username" type="text" name="username" className="inputBar" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
+            <label htmlFor="email">Email:</label>
+            <input id="email" type="email" name="email" className="inputBar" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
+            <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
+            <button className="authButton" onClick={handleEditToggle}>Cancel</button>
+            {successMessage && <div className="success-message">{successMessage}</div>}
+            <div className="user-actions">
+              <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
+            </div>
+          </div>
+        ) : (
+          <div className="user-info">
+            <p>Username: {profile.username}</p>
+            <p>Email: {profile.email}</p>
+            <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
+
+          </div>
+        )}
+
       </Accordion>
       <div className="profile-sections">
-      <Accordion title="Your Resources">
+        <Accordion title="Your Resources">
 
-        <div className="user-resources section">
-          <div className="card-container">
-            {userResources.length > 0 ? (
-              userResources.map((resource) => (
-              
-                <DocumentCard cardType="resource"
-                key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
+          <div className="user-resources section">
+            <div className="card-container">
+              {userResources.length > 0 ? (
+                userResources.map((resource) => (
 
-              ))
-            ) : (
-              <p>No resources available.</p>
-            )}
+                  <DocumentCard cardType="resource"
+                    key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
+
+                ))
+              ) : (
+                <p>No resources available.</p>
+              )}
+            </div>
           </div>
-        </div>
         </Accordion>
         <div className="user-favorites section">
-        <Accordion title="Your Favorites">
+          <Accordion title="Your Favorites">
 
-          <div className="card-container">
-    {userFavorites.length > 0 ? (
-      userFavorites.map((resource) => {
-        const resourceData = resource.Resource; 
-        return resourceData ? (
-          <DocumentCard 
-          cardType="favorite"
-            key={resourceData._id} 
-            document={resourceData}
-            showAdminActions={false}
-            onClick={() => handleCardClick(resourceData._id)}
-          />
-        ) : (
-          <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
-        );
-      })
-    ) : (
-      <p>No favorites available.</p>
-    )}
-          </div>
+            <div className="card-container">
+              {userFavorites.length > 0 ? (
+                userFavorites.map((resource) => {
+                  const resourceData = resource.Resource;
+                  return resourceData ? (
+                    <DocumentCard
+                      cardType="favorite"
+                      key={resourceData._id}
+                      document={resourceData}
+                      showAdminActions={false}
+                      onClick={() => handleCardClick(resourceData._id)}
+                    />
+                  ) : (
+                    <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
+                  );
+                })
+              ) : (
+                <p>No favorites available.</p>
+              )}
+            </div>
           </Accordion>
         </div>
       </div>
 
       {profile.isAdmin && (
-      <Accordion title="Admin Actions">
+        <Accordion title="Admin Actions">
 
-        <div className="admin-section">
-          <h2>Unauthorized Documents</h2>
-          <div className="card-container">
-            {documents.map((doc) => (
-              <DocumentCard 
-              cardType="adminActions"
-                key={doc._id} 
-                document={doc}
-                onAuthorize={authorizeResource} 
-                onUnauthorize={unauthorizeResource} 
-                showAdminActions={true} 
-              />
-            ))}
-          </div>
-        </div>
-        <div className="feedbacks-section">
-        <h2>Feedbacks</h2>
-        <div className="card-container">
-  {feedbacks.length > 0 ? (
-    feedbacks.map(fb => (
-      <DocumentCard
-        key={fb._id}
-        cardType="feedback"
-        document={fb}
-        deleteFeedback={deleteFeedback}
-        sendEmail={sendEmail}
-      />
-  
-  ))
-) : (
-  <p>No feedbacks to display.</p>
-)}
-          </div>
+          <div className="admin-section">
+            <h2>Unauthorized Documents</h2>
+            <div className="card-container">
+              {documents.map((doc) => (
+                <DocumentCard
+                  cardType="adminActions"
+                  key={doc._id}
+                  document={doc}
+                  onAuthorize={authorizeResource}
+                  onUnauthorize={unauthorizeResource}
+                  showAdminActions={true}
+                />
+              ))}
             </div>
+          </div>
+          <div className="feedbacks-section">
+            <h2>Feedbacks</h2>
+            <div className="card-container">
+              {feedbacks.length > 0 ? (
+                feedbacks.map(fb => (
+                  <DocumentCard
+                    key={fb._id}
+                    cardType="feedback"
+                    document={fb}
+                    deleteFeedback={deleteFeedback}
+                    sendEmail={sendEmail}
+                  />
+
+                ))
+              ) : (
+                <p>No feedbacks to display.</p>
+              )}
+            </div>
+          </div>
         </Accordion>
       )}
 

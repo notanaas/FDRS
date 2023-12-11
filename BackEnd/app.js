@@ -49,13 +49,7 @@ const corsOptions = {
 };
 
 const app = express();
-app.use(cors(
-  {
-    origin: ["https://fdrs-hslg.vercel.app"],
-    methods:["POST","GET"],
-    credentials: true
-  }
-));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

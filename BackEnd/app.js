@@ -49,7 +49,13 @@ const corsOptions = {
 };
 
 const app = express();
-
+app.use(cors(
+  {
+    origin: ["https://deploy-mern-1whp.vercel.app"],
+    methods:["POST","GET"],
+    credentials: true
+  }
+));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

@@ -1,56 +1,67 @@
 /* Container for cards to align them side by side */
 .card-container {
-    display: flex;
-    position: relative;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 5px;
-  
+  display: flex;
+  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
+  justify-content: center;
 }
+
 /* Individual card */
 .card {
-  flex: 1; /* Allow the card to grow and shrink as needed */
-  min-width: 250px; /* Minimum width of a card */
-  max-width: 300px; /* Maximum width to ensure readability */
-  background-color: transparent; /* Transparent background */
+  flex: 1;
+  /* Allow the card to grow and shrink as needed */
+  min-width: 250px;
+  /* Minimum width of a card */
+  max-width: 300px;
+  /* Maximum width to ensure readability */
+  background-color: transparent;
+  /* Transparent background */
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for depth */
-  transition: all 0.3s ease; /* Smooth transition for hover effects */
-  border: 1px solid; /* Default border color, will be overridden by color scheme */
-  margin-bottom: 1rem; /* Spacing at the bottom of each card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow for depth */
+  transition: all 0.3s ease;
+  /* Smooth transition for hover effects */
+  border: 1px solid;
+  /* Default border color, will be overridden by color scheme */
+  margin-bottom: 1rem;
+  /* Spacing at the bottom of each card */
 
 }
 
 .card:hover {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Enhanced shadow on hover */
-  transform: scale(1.02); /* Slight increase in size on hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  /* Enhanced shadow on hover */
+  transform: scale(1.02);
+  /* Slight increase in size on hover */
 }
+
 .card-cover {
   width: 100px;
   height: 100px;
   object-fit: cover;
   margin-bottom: 15px;
 }
+
 .card-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Space content evenly */
+  justify-content: space-between;
+  /* Space content evenly */
   height: 100%;
 }
 
 .card-actions {
   display: flex;
-  justify-content: space-between; /* Align buttons to each side of the card */
+  justify-content: space-between;
+  /* Align buttons to each side of the card */
   gap: 0.5rem;
   margin-top: 15px;
 }
 
-.card-actions .authButton{
+.card-actions .authButton {
   /* padding: 5px; */
   /* padding-top: 10px; */
   /* padding-bottom: 3px; */
@@ -63,7 +74,8 @@
 }
 
 .favorite-button {
-  color: #f0ad4e; /* Gold color for favorite button, adjust if needed */
+  color: #f0ad4e;
+  /* Gold color for favorite button, adjust if needed */
   background: none;
   border: none;
   cursor: pointer;
@@ -73,14 +85,17 @@
 
 /* Favorited state for the favorite button */
 .favorite-button.favorited {
-  color: #d9534f; /* Example color, adjust as needed */
+  color: #d9534f;
+  /* Example color, adjust as needed */
 }
 
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .card {
-    border-color: #fff; /* White border in dark mode */
-    color: #fff; /* White text in dark mode */
+    border-color: #fff;
+    /* White border in dark mode */
+    color: #fff;
+    /* White text in dark mode */
   }
 
   /* Additional dark mode styles can be added here */
@@ -89,8 +104,10 @@
 /* Light mode styles */
 @media (prefers-color-scheme: light) {
   .card {
-    border-color: #333; /* Dark border in light mode */
-    color: #000; /* Black text in light mode */
+    border-color: #333;
+    /* Dark border in light mode */
+    color: #000;
+    /* Black text in light mode */
   }
 
   /* Additional light mode styles can be added here */
@@ -98,18 +115,41 @@
 
 @media (max-width: 992px) {
   .card-container {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust column size on smaller screens */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    /* Adjust column size on smaller screens */
 
   }
 }
 
 @media (max-width: 768px) {
   .card-container {
-    grid-template-columns: 1fr; /* Stack cards in a single column on small screens */
-    flex-direction: column; /* Stack cards in a single column on small screens */
+    grid-template-columns: 1fr;
+    /* Stack cards in a single column on small screens */
+    flex-direction: column;
+    /* Stack cards in a single column on small screens */
 
   }
-  .card {
-    max-width: 100%; /* Cards take full width on small screens */
+
+  .card .authButton {
+    max-width: 100%;
+    /* Cards take full width on small screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .downloadButton {
+
+    background: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-items: center;
+    padding: 10px;
+    font-size: medium;
+    display: inline-block;
+    background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+    position: relative;
+    z-index: 0;
   }
 }

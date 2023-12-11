@@ -83,7 +83,7 @@
   flex-direction: column;
   margin-bottom: 1rem;
   font-weight: bold;
-  width: 250px;
+  width: 100%;
 }
 
 /* Input Bar Styles */
@@ -93,9 +93,11 @@
   color: #fff;
   height: 30px;
   margin-right: 3px;
-  font-weight: 100;
+  font-weight: 100px;
   text-align: center;
   justify-content: center;
+  padding: 10px;
+  font-size: larger;
 }
 
 .inputBarH::placeholder {
@@ -129,10 +131,11 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
   z-index: 1;
+  width: 50%;
 }
 .sidebar {
   position: fixed;
-  margin-top: 74px;
+  margin-top: 70px;
   left: 0;
   top: 0px;
   width: 250px;

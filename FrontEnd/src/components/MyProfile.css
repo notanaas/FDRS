@@ -29,7 +29,7 @@
   color: #000;
 }
 .contentContainer{
-  margin-top: 100px;
+  margin-top: 130px;
 }
 
 .contentContainer .my-profile  {
@@ -37,7 +37,6 @@
   margin-bottom: 30px;
   justify-content: space-between;
   margin-top: 30px;
-  width: 1000px;
 }
 
 .contentContainer .my-profile .profile-sections .f
@@ -87,9 +86,15 @@ body {
   font-size: 16px;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background-size: cover;
   background-position: center;
+}
+
+/* Add a media query for screens smaller than 768 pixels */
+@media (max-width: 768px) {
+  body {
+      font-size: 14px; /* Adjust the font size for smaller screens */
+  }
 }
 .accordion-title {
   background: transparent;
@@ -98,18 +103,27 @@ body {
   border-radius: 5px;
   cursor: pointer;
   align-items: center;
-  height: 50px; /* Increased button height */
+  height: 80px; /* Increased button height */
   padding: 10px 20px; /* Add padding for bigger button size */
   margin: 10px auto; /* Center your button with automatic horizontal margins */
   margin-bottom: 15px; /* Increased bottom margin for better spacing between buttons */
   font-size: large;
   display: block; /* Make the buttons stack vertically */
-  width: 90%; /* Set width to a percentage of the container for consistent sizing */
+  width: 80%; /* Set width to a percentage of the container for consistent sizing */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
   background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
   position: relative;
   z-index: 0;
   text-align: center; /* Center the text inside the button */
+  left: 60px;
+}
+
+@media (max-width: 768px) {
+  .accordion-title {
+    width: 336px;
+    margin-right:200px ;
+  }
+
 }
 
 .accordion-content {
@@ -122,7 +136,7 @@ body {
 
 .accordion-content.open {
   max-height: 100%; 
-  width: 100%; 
+  width: 70%; 
   box-sizing: border-box;
 }
 
@@ -160,7 +174,6 @@ body {
   overflow: hidden;
 }
 .accordion {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

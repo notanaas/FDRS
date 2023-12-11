@@ -1,5 +1,4 @@
 .resource-page {
-  width: 50%;
   display: flex;
   flex-direction: column;
   margin: auto;
@@ -31,6 +30,7 @@
   background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
   position: relative;
   z-index: 0;
+  margin-right: 10px;
 }
 .resource-header {
   display: flex;
@@ -122,8 +122,6 @@
 /* Styles for tablets and desktops */
 @media (min-width: 769px) {
   .resource-page {
-    /* Make use of the full viewport width and a min-height */
-    width: 95vw;
     /* Use 95% of the viewport width */
     min-height: calc(100vh - 60px);
     /* Subtract the header height */
@@ -153,7 +151,6 @@
 
 
   .resource-details {
-    width: 50%;
     /* Take the remaining half of the width */
     margin-left: 20px;
     /* Spacing between image and details */
@@ -188,7 +185,8 @@
     z-index: 0;
     padding-top: 8px;
     width: 100%;
-    height: 30px;
+    padding: 10px;
+    text-decoration: none;
   }
 
   .document-title {
@@ -237,7 +235,6 @@
 .resource-details {
 
   white-space: wrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -249,7 +246,7 @@
 .login-prompt,
 .card-content,
 .resource-details {
-  color: var(--text-color);
+  color: var(--text-color-black);
 }
 
 

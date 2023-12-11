@@ -177,8 +177,9 @@ const Comments = ({ resourceId }) => {
           onChange={handleTextChange}
           placeholder="Write your comment..."
         />
+        <div>
         <button className="authButton" onClick={addComment}>Post Comment</button>
-      </div>
+      </div></div>
     )}
   </div>
 );

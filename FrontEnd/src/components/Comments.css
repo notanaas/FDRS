@@ -51,10 +51,11 @@
 .inputBarC {
   width: 100%;
   background-color: transparent; /* Dark background for input */
-  color: #fff; /* White text color for input */
-  border: 1px solid transparent; /* Slightly lighter border for visibility */
+  color: #000000; /* White text color for input */
+  border: 1px solid black; /* Slightly lighter border for visibility */
   border-radius: 4px;
-  
+  font-size: large;
+  font-weight: bolder;
 }
 
 .add-comment {

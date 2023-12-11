@@ -51,7 +51,7 @@ const corsOptions = {
 const app = express();
 app.use(cors(
   {
-    origin: ["https://deploy-mern-1whp.vercel.app"],
+    origin: ["https://fdrs-hslg.vercel.app"],
     methods:["POST","GET"],
     credentials: true
   }

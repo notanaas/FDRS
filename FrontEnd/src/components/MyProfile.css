@@ -162,7 +162,6 @@ body {
 @media (max-width: 768px) {
   .accordion{
     width: 510px; /* Set a fixed width for smaller screens */
-    padding-left: 350px;
     margin-top: 0 auto;
     
   }
@@ -183,3 +182,34 @@ body {
   max-height: 0;
   overflow: hidden;
 }
+
+.edit-profile {
+  display: grid;
+  width: 50%;
+  justify-content: center;
+  margin: 5px;
+  margin-left: 276px;
+}
+
+.edit-profile .inputBar {
+  padding: 7px;
+  font-size: large;
+}
+
+.edit-profile .authButton {
+  margin: 5px;
+}
+
+
+@media (max-width: 768px) {
+  .edit-profile {
+    margin-left: 80px;
+  }
+}
+
+@media(max-width:768px){
+  .my-profile {
+    margin-left: 80px;
+  }
+}
+

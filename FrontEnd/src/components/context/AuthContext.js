@@ -46,10 +46,11 @@ export const AuthProvider = ({ children }) => {
         },
         refreshToken
       });
+      
       localStorage.setItem('token', response.data.accessToken);
       setIsLoggedIn(true);
-      setIsAdmin(response.data.isAdmin);
-      setUser(user); // This updates the user information in the context
+      setIsAdmin(response.data.user.isAdmin);
+      setUser(response.data.user); // This updates the user information in the context
 
     } catch (error) {
       logout();

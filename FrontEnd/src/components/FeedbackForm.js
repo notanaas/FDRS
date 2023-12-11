@@ -12,7 +12,7 @@ const FeedbackForm = ({ authToken }) => {
   const location = useLocation();
   const isFacultyPage = location.pathname.includes('/faculty/');
   const backendURL = 'http://localhost:3002';
-  const { user } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     if (searchPerformed && searchResults.length === 0) {
@@ -42,6 +42,7 @@ const FeedbackForm = ({ authToken }) => {
   };
 
   const submitFeedback = async () => {
+    const { user } = authContext;
     if (!user) {
       console.error('User is not logged in.');
       return;

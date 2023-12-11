@@ -150,7 +150,7 @@ exports.refresh_token = async (req, res) => {
           { expiresIn: '1d' } // Set the expiration time for the new access token
       );
 
-      res.json({ accessToken });
+      res.json({ accessToken, user });
   } catch (error) {
       // Specific error handling for JWT related errors
       if (error instanceof jwt.JsonWebTokenError) {

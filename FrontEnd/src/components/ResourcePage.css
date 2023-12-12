@@ -281,3 +281,21 @@
     /* Login prompt text color for light mode */
   }
 }
+.noResults p{
+  position: absolute;
+  top: 77%; /*Adjust as needed to position the prompt below the search bar*/
+  background-color: orange;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  z-index: 9; /* Make sure the z-index is higher than other elements if needed*/
+
+}
+
+@media (max-width: 769px) {
+  .noResults p{
+    max-width: none;
+    width: 50%;
+  
+  }
+}

@@ -17,5 +17,5 @@ router.get('/cover/:id' , Resource.cover_download)
 
 router.get('/search' , Resource.search_resource)
 //Delete resource
-router.delete('/delete/:id' ,passport.authenticate('jwt', { session: false }) )
+router.delete('/delete/:id' ,passport.authenticate('jwt', { session: false }),Resource.deleteResource )
 module.exports = router;

@@ -196,7 +196,6 @@ const MyProfile = () => {
       fetchUnauthorizedResources();
     }
   }, [profile.isAdmin, authToken, backendURL]);
-  //loading
   if (!profile.username) {
     return <div className="center">
       <div className="wave"></div>
@@ -211,7 +210,6 @@ const MyProfile = () => {
       <div className="wave"></div>
     </div>;
   }
-
   const deleteFeedback = async (feedbackId) => {
     try {
       const response = await axios.delete(`${backendURL}/api_feedback/delete-feedback/${feedbackId}`, {
@@ -234,7 +232,18 @@ const MyProfile = () => {
     // Construct the mailto link
     window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
   };
-
+  const deleteDocument = async (resourceId) => {
+    try {
+      const response = await axios.delete(`${backendURL}/api_resource/delete/${resourceId}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status === 200) {
+        setUserResources(currentResources => currentResources.filter(resource => resource._id !== resourceId));
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
+  };
   return (
     <div className="my-profile">
       {showSuccessMessage && (
@@ -270,20 +279,24 @@ const MyProfile = () => {
       <div className="profile-sections">
         <Accordion title="Your Resources">
 
-          <div className="user-resources section">
-            <div className="card-container">
-              {userResources.length > 0 ? (
-                userResources.map((resource) => (
+        <div className="user-resources section">
+  <div className="card-container">
+    {userResources.length > 0 ? (
+      userResources.map((resource) => (
+        <DocumentCard
+          cardType="resource"
+          key={resource._id}
+          document={resource}
+          onClick={() => handleCardClick(resource._id)}
+          onDelete={deleteDocument}
+        />
+      ))
+    ) : (
+      <p>No resources available.</p>
+    )}
+  </div>
+</div>
 
-                  <DocumentCard cardType="resource"
-                    key={resource._id} document={resource} showAdminActions={false} onClick={() => handleCardClick(resource._id)} />
-
-                ))
-              ) : (
-                <p>No resources available.</p>
-              )}
-            </div>
-          </div>
         </Accordion>
         <div className="user-favorites section">
           <Accordion title="Your Favorites">

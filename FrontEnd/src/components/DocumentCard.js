@@ -4,22 +4,18 @@ import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './DocumentCard.css';
 
-const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, item }) => {
-
-
+const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, onDelete }) => {
   const [documents, setDocuments] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
   const { authToken, isLoggedIn } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
   const [feedbacks, setFeedbacks] = useState([]);
-
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const isProfilePage = location.pathname.includes(`/my-profile`);
-
   const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   useEffect(() => {
@@ -106,9 +102,15 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   };
   const cardClassName = "card"; // This is the new class name for all card types
 
-  // Function to stop event propagation
-  const stopPropagation = (e) => e.stopPropagation();
-  const CardContent = () => {
+  
+  
+  const handleDelete = () => {
+    if(onDelete) {
+      onDelete(document._id);
+    }
+  };
+    const stopPropagation = (e) => e.stopPropagation();
+    const CardContent = () => {
 
     switch (cardType) {
       case 'adminActions':
@@ -139,20 +141,24 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
           </div>
         );
 
-      case 'resource':
-        return (
-          <div className={cardClassName} onClick={onClick}>
-            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-            <div className="card-content">
-              <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+        case 'resource':
+          return (
+            <div className="card" onClick={onClick}>
+              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+              <div className="card-content">
+                <h3 className="card-title">{document.Title || "Untitled"}</h3>
+                <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+              </div>
+              <div className="card-actions">
+                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+                {onDelete && (
+              <button onClick={(e) => { e.stopPropagation(); onDelete(document._id); }}>
+                Delete
+              </button>
+            )}
+                          </div>
             </div>
-            <div className="card-actions">
-              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
-
-            </div>
-          </div>
-        );
+          );
       case 'favorite':
         return (
           <div className={cardClassName} onClick={onClick}>
@@ -215,7 +221,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
     <div >
 
 
-      <CardContent />
+<CardContent onDelete={onDelete} />
 
     </div>
   );

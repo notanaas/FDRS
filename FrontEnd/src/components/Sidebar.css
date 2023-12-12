@@ -35,13 +35,15 @@
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     margin-top: 0; /* No top margin */
+    background: transparent;
   }
 }
 
 
 @media (max-width: 768px) {
   .sides {
-    margin-right: 280px;
-
+    margin-right: 220px;
+    width: 50%;
+    height: 100%;
   }
 }

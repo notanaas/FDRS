@@ -66,7 +66,7 @@ const FeedbackForm = ({ authToken }) => {
   return (
     <div className='search'>
       {isFacultyPage && (
-        <div style={{ display: 'flex', alignItems: 'center', marginRight:'5px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: '5px' }}>
           <input
             type="text"
             className="search-input"
@@ -97,54 +97,44 @@ const FeedbackForm = ({ authToken }) => {
             }
             }
           >
-          <svg height="17" viewBox="0 0 1792 1792" width="17" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z" /></svg>
-        </button>
+            <svg height="17" viewBox="0 0 1792 1792" width="17" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z" /></svg>
+          </button>
           {searchPerformed && searchResults.length === 0 && (
-        <button
-          className="authButton"
-          onClick={submitFeedback}
-          style={{
-            padding: '10px 20px',
-            margin: '5px',
-            borderRadius: '5px',
-            border: 'none',
-            cursor: 'pointer',
-            backgroundColor: '#28a745',
-            color: 'white'
-          }}
-        >
-          Submit Feedback
-        </button>
-      )}
-    </div>
-  )
-}
-{
-  showSearchPrompt && (
-    <div
-      style={{
-        position: 'absolute',
-        top: '100%', // Adjust as needed to position the prompt below the search bar
-        backgroundColor: 'orange',
-        padding: '10px',
-        borderRadius: '5px',
-        color: 'white',
-        zIndex: 9, // Make sure the z-index is higher than other elements if needed
-      }}
-    >
-      No results found. Would you like to submit your search as feedback?
-    </div>
-  )
-}
-{
-  searchPerformed && searchResults.length > 0 && (
-    <div>
-      {searchResults.map((result) => (
-        <div key={result.id}>{result.title}</div>
-      ))}
-    </div>
-  )
-}
+            <button
+              className="authButton"
+              onClick={submitFeedback}
+              style={{
+                padding: '10px 20px',
+                margin: '5px',
+                borderRadius: '5px',
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: '#28a745',
+                color: 'white'
+              }}
+            >
+              Submit Feedback
+            </button>
+          )}
+        </div>
+      )
+      }
+      {
+        showSearchPrompt && (
+          <div className='noResults'>
+            <p> No results found. Would you like to submit your search as feedback?</p>
+          </div>
+        )
+      }
+      {
+        searchPerformed && searchResults.length > 0 && (
+          <div>
+            {searchResults.map((result) => (
+              <div key={result.id}>{result.title}</div>
+            ))}
+          </div>
+        )
+      }
     </div >
   );
 };

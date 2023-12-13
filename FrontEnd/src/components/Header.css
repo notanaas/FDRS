@@ -122,17 +122,7 @@
   display: flex;
 }
 
-.upload-modal-content  {
-  background-color: black;
-  font-size: large;
-  margin: 25px;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  z-index: 1;
-  width: 50%;
-}
+
 .sidebar {
   position: fixed;
   margin-top: 70px;
@@ -167,6 +157,17 @@
     background-color: #121212;
     color: #00a8ff;
   }
+  .upload-modal-content  {
+    background-color: #121212;
+    font-size: large;
+    margin: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 1;
+    width: 50%;
+  }
 }
 @media (prefers-color-scheme: light) {
   .sidebar {
@@ -183,7 +184,17 @@
     padding: 10px;
   }
   
-
+  .upload-modal-content  {
+    background-color: white;
+    font-size: large;
+    margin: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 1;
+    width: 50%;
+  }
   .sidebar a:hover, .sidebar button:hover {
     background-color: #4e0000;
     color: #492828;

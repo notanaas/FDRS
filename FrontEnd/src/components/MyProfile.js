@@ -256,21 +256,19 @@ const MyProfile = () => {
         {isEditMode ? (
           <div className="edit-profile">
             <label htmlFor="username">Username:</label>
-            <input id="username" type="text" name="username" className="inputBar" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
+            <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
             <label htmlFor="email">Email:</label>
-            <input id="email" type="email" name="email" className="inputBar" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
+            <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
             <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
             <button className="authButton" onClick={handleEditToggle}>Cancel</button>
             {successMessage && <div className="success-message">{successMessage}</div>}
-            <div className="user-actions">
-              <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
-            </div>
           </div>
         ) : (
           <div className="user-info">
-            <p>Username: {profile.username}</p>
-            <p>Email: {profile.email}</p>
+            <h3>Username: {profile.username}</h3>
+            <h3>Email: {profile.email}</h3>
             <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
+            <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
 
           </div>
         )}

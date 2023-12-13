@@ -129,12 +129,12 @@ const ResourcePage = () => {
           )}
           <div className="resource-details">
             <h1 className="resource-title">{resourceDetails.Title}</h1>
-            <p className="author"><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
-            <p className="description"><strong>Description:</strong> {resourceDetails.Description}</p>
-            <p className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
-            <p className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</p>
-            <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
-            <p className="user-email">{resourceDetails.User.Email}</p>
+            <h1 className="resource-title"><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</h1>
+            <h1 className="resource-title"><strong>Description:</strong> {resourceDetails.Description}</h1>
+            <h1 className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</h1>
+            <h1 className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</h1>
+            <h1 className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</h1>
+            <h1 className="user-email">{resourceDetails.User.Email}</h1>
 
             <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank' className="downloadButton">Download</a>
             <button className="favorite-button" onClick={handleFavButtonClick}>

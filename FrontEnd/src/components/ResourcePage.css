@@ -66,10 +66,6 @@
   text-overflow: ellipsis;
 }
 
-
-
-
-
 .document-title {
   white-space: nowrap;
   overflow: hidden;
@@ -277,7 +273,7 @@
     /* Link hover color for light mode */
     --login-prompt-background: rgba(255, 255, 255, 0.85);
     /* Login prompt background for light mode */
-    --login-prompt-text-color: #333333;
+    --login-prompt-text-color: white;
     /* Login prompt text color for light mode */
   }
 }

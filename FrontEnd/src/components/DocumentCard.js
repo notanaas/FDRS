@@ -119,11 +119,11 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
             <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
             <div className="card-content">
               <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <p className="card-author">
+              <h3 className="card-author">
                 Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
-              </p>
-              <p>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</p>
-              <p className="card-uploader">Uploader: {document.User.Email}</p>
+              </h3>
+              <h3>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</h3>
+              <h3 className="card-uploader">Uploader: {document.User.Email}</h3>
             </div>
             <div className="card-actions">
               <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">
@@ -147,7 +147,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
               <div className="card-content">
                 <h3 className="card-title">{document.Title || "Untitled"}</h3>
-                <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+                <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
               </div>
               <div className="card-actions">
                 <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
@@ -166,7 +166,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
             <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
             <div className="card-content">
               <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+              <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
             </div>
             <div className="card-actions">
               <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
@@ -183,7 +183,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
             <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
             <div className="card-content">
               <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <p className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</p>
+              <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
             </div>
             <div className="card-actions">
               <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
@@ -200,8 +200,8 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
         return (
           <div className={cardClassName}>
             <div className="card-content">
-              <p><strong>Email:</strong> {document.User.Email}</p>
-              <p><strong>Feedback:</strong> {document.SearchText}</p>
+              <h3><strong>Email:</strong> {document.User.Email}</h3>
+              <h3><strong>Feedback:</strong> {document.SearchText}</h3>
               <div className="card-actions">
                 <button className="authButton" onClick={(e) => { e.stopPropagation(); deleteFeedback(document._id); }}>
                   Delete Feedback

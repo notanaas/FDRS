@@ -51,7 +51,7 @@
 .inputBarC {
   width: 100%;
   background-color: transparent; /* Dark background for input */
-  color: #000000; /* White text color for input */
+  color: white; /* White text color for input */
   border: 1px solid black; /* Slightly lighter border for visibility */
   border-radius: 4px;
   font-size: large;
@@ -89,6 +89,32 @@
   }
   .comments-title {
     color: black;
+  }
+  .inputBarC {
+    color: black; /* White text color for input */
+   
+  }
+  
+}
+@media (prefers-color-scheme: dark) {
+  .comment-date {
+    font-size: 0.85em;
+    color: white; /* Lighter text for less emphasis */
+  }
+  .inputBar {
+    color: white; /* White text color for input */
+  }
+  .comment-body {
+    color: white; /* High contrast text color for readability */
+  }
+  .comment-author {
+    color: white;
+  }
+  .comments-container {
+    box-shadow: white;
+  }
+  .comments-title {
+    color: white;
   }
   
 }

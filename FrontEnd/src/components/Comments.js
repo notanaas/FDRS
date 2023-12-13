@@ -143,7 +143,7 @@ const Comments = ({ resourceId }) => {
             <span className="comment-author">{comment.User.Username || 'Anonymous'}</span>
             <span className="comment-date">{new Date(comment.Created_date).toLocaleString()}</span>
           </div>
-          <div className="comment-body">
+          <div className="comment-title">
             {editing.id === comment._id ? (
               <textarea
                 className="inputBarC"
@@ -151,7 +151,7 @@ const Comments = ({ resourceId }) => {
                 onChange={(e) => setEditing({ ...editing, text: e.target.value })}
               />
             ) : (
-              <p>{comment.Comment}</p> 
+              <h2>{comment.Comment}</h2> 
             )}
           </div>
           {canEditOrDeleteComment(comment) && (

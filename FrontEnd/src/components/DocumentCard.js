@@ -152,9 +152,10 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <div className="card-actions">
                 <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
                 {onDelete && (
-              <button className="downloadButton" onClick={(e) => { e.stopPropagation(); onDelete(document._id); }}>
-                Delete
-              </button>
+             <button className="trashButton" onClick={(e) => { e.stopPropagation(); onDelete(document._id); }}>
+             🗑️ 
+         </button>
+         
             )}
                           </div>
             </div>

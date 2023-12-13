@@ -135,10 +135,25 @@
     /* Cards take full width on small screens */
   }
 }
+button.trashButton {
+  background-color: transparent !important; 
+  border: none;
+  padding: 5px;
+  font-family: Arial, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  color: inherit;
+}
 
+
+button.trashButton:hover {
+  background-color: rgba(0,0,0,0.1);
+}
 @media (max-width: 768px) {
   .downloadButton {
-
     background: transparent;
     color: #fff;
     border: none;

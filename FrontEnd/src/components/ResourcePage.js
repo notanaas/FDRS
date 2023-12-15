@@ -141,7 +141,7 @@ const ResourcePage = () => {
             href={`${backendURL}/api_resource/download/${resourceId}`} 
             target='_blank' 
             rel="noopener noreferrer" 
-            className="download-button"
+            className="downloadButton"
           >
             Download
           </a>

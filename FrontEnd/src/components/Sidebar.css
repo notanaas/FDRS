@@ -1,6 +1,6 @@
 /* Sidebar.css */
 .profile-button {
-  background-color: transparent; 
+  background-color: transparent;
   color: #fff;
   border: none;
   margin-right: 10px;
@@ -10,31 +10,43 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .button {
-  display: flex; 
-  align-items: center; 
-  justify-content: space-around; 
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+@media screen and (max-width: 600px) {
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
 }
 
 .profile-button img {
   margin-right: 10px;
-  height: 24px; 
+  height: 24px;
   border-radius: 50px;
   width: 35px;
   height: 35px;
 }
 
 .profile-button:hover {
-  background-color: #333; 
+  background-color: #333;
 }
 
 
 /* Media query for screens smaller than 768px (adjust as needed) */
 @media (max-width: 768px) {
   .sidebar {
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    margin-top: 0; /* No top margin */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    margin-top: 0;
+    /* No top margin */
     background: transparent;
   }
 }
@@ -45,5 +57,6 @@
     margin-right: 220px;
     width: 50%;
     height: 100%;
+    background: #33333385;
   }
 }

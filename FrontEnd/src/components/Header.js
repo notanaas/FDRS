@@ -329,8 +329,8 @@ const Header = ({ setIsModalOpen,isLoading }) => {
           </div>
         ) : (
           <div className='logoReg'>
-            <button className="authButtonL" onClick={handleLoginModalOpen}>Login</button>
-            <button className="authButtonL" onClick={handleSignupModalOpen}>Sign Up</button>
+            <button className="authButtonL" onClick={handleLoginModalOpen}><b>Login</b></button>
+            <button className="authButtonL" onClick={handleSignupModalOpen}><b>Sign Up</b></button>
         </div>
         )}
       </div>

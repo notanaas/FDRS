@@ -1,7 +1,6 @@
 /* Comments.css */
 
 .comments-container {
-  flex: 1; /* New: this will make the container take up all available space */
   margin-top: 40px;
   padding: 20px;
   background-color: transparent;
@@ -117,4 +116,12 @@
     color: white;
   }
   
+}
+
+.comments-list{
+    /* Start by resetting potential impacts */
+    position: static;
+    margin: 0;
+    padding: 0;
+    /* Add a border or background color for visibility during debugging */
 }

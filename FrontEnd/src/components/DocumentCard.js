@@ -16,16 +16,8 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   const location = useLocation();
   const isFacultyPage = location.pathname.includes(`/faculty/`);
   const isProfilePage = location.pathname.includes(`/my-profile`);
-  const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => setDarkMode(mediaQuery.matches);
-    mediaQuery.addListener(handleChange);
-
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
-
+  
   useEffect(() => {
     if (authToken && document && document._id) {
       const fetchFavorites = async () => {

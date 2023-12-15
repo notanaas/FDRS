@@ -17,15 +17,8 @@ const ResourcePage = () => {
 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [inProp, setInProp] = useState(false);
-  const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => setDarkMode(mediaQuery.matches);
-    mediaQuery.addListener(handleChange);
-
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
+    
   useEffect(() => {
     setInProp(true);
   }, []);

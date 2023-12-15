@@ -134,7 +134,6 @@
 .authButtonL,
 .sidebarToggle {
   color: #000000;
-  /* border: none; */
   border-radius: 5px;
   cursor: pointer;
   align-items: center;
@@ -199,73 +198,8 @@
   transition: transform 0.3s ease;
 }
 
-/* Dark Mode and Light Mode specific styles */
-@media (prefers-color-scheme: dark) {
-  .headerContainer {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
 
-  .sidebar {
-    background-color: #121212;
-    color: #dcdde1;
-  }
 
-  .sidebar a,
-  .sidebar button {
-    color: #f5f5f5;
-    text-decoration: none;
-    display: block;
-    padding: 10px;
-  }
-
-  .sidebar a:hover,
-  .sidebar button:hover {
-    background-color: #121212;
-    color: #00a8ff;
-  }
-
-  .upload-modal-content {
-    background-color: #121212;
-    font-size: large;
-    margin: 25px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    z-index: 1;
-    width: 50%;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .headerContainer {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .sidebar {
-    background-color: rgb(0 0 0 / 50%);
-    color: #ffffff;
-  }
-
-  .sidebar a,
-  .sidebar button {
-    color: #ffffff;
-    text-decoration: none;
-    display: block;
-    padding: 10px;
-  }
-
-  .sidebar a:hover,
-  .sidebar button:hover {
-    background-color: #bdbdbd;
-    color: #ffffff;
-  }
-
-  .upload-modal-content {
-    background-color: white;
-    color: #2f3640;
-  }
-}
 
 .upload-modal-content {
   height: 520px;

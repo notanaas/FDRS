@@ -92,17 +92,14 @@ const handleImgChange = (e) => {
   const closeModal = () => {
     setIsModalOpen(false); 
   };
-// Example toggle function in your main component
-const toggleDarkMode = () => {
-  setIsDarkMode(!isDarkMode); // This will toggle the dark mode state
-};
+
 
 
   return (
     <>
 
       {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode}>
+        <Modal isOpen={isModalOpen} onClose={closeModal} >
             {error && <div className="error-message">{error}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}
 

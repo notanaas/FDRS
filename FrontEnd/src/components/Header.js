@@ -31,7 +31,6 @@ const Header = ({ setIsModalOpen,isLoading }) => {
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const { updateLoginStatus, isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken, refreshToken,logout } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -72,20 +71,8 @@ const Header = ({ setIsModalOpen,isLoading }) => {
       setIsSidebarOpen(false);
 
     }
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(prefersDarkMode);
 
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const darkModeChangeListener = (e) => {
-      setIsDarkMode(e.matches);
-      if (e.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
-    darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
-
+    
     if (tokenFromLink) {
       const fetchData = async () => {
         try {
@@ -99,9 +86,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
       };
       fetchData();
     }
-    return () => {
-      darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
-    };
+    
 
   }, [tokenFromLink, facultyId, history, setIsLoggedIn, backendURL, isFacultyPage, location]);
   
@@ -290,7 +275,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
 
 
   return (
-    <header className={`headerContainer ${isLoading ? 'loading' : ''} ${isDarkMode ? 'dark' : 'light'}`}>
+    <header className={`headerContainer ${isLoading ? 'loading' : ''}`}>
       <div className='left'>
         <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
         <div className="logoContainer">
@@ -338,7 +323,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
         <FileUpload facultyId={facultyId} />
       )}
 
-<Modal isOpen={isSignupOpen} onClose={closeSignupModal} isDarkMode={isDarkMode}>
+<Modal isOpen={isSignupOpen} onClose={closeSignupModal} >
         <label htmlFor="username"><h1>SignUp</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -350,7 +335,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
           <button type="submit" className="authButton">Submit</button>
         </form>
       </Modal>
-      <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} isDarkMode={isDarkMode}>
+      <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} >
         <label htmlFor="username"><h1>Forget Password</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
         {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -373,7 +358,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
           )}
         </form>
       </Modal>
-      <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} isDarkMode={isDarkMode}>
+      <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} >
         <h1>Login</h1>
         {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
         <form onSubmit={handleLoginSubmit}>

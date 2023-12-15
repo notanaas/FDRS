@@ -5,17 +5,12 @@ import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 const WelcomingPage = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const { authToken } = useContext(AuthContext);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    
 
     
 
@@ -24,7 +19,7 @@ const WelcomingPage = () => {
     }, 4000); // Message disappears after 4 seconds
 
     return () => clearTimeout(timer); // Clear timer on unmount
-  }, [authToken, isDarkMode]);
+  }, [authToken]);
 
   return (
     <div >

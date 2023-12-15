@@ -8,17 +8,30 @@ import {jwtDecode} from 'jwt-decode';
 import { CSSTransition } from 'react-transition-group';
 
 const FacultyPage = () => {
-  const [resources, setResources] = useState([]);
-  const [userFavorites, setUserFavorites] = useState([]);
-  const [error, setError] = useState('');
-  const history = useHistory();
-  const backendURL = 'http://localhost:3002';
-  const { facultyId } = useParams();
-  const { authToken, refreshTokenFunc } = useContext(AuthContext);
   const { setRouteParams } = useContext(RouteParamsContext);
   const location = useLocation();
 const facultyName = location.state?.facultyName || 'Faculty'; 
+const [resources, setResources] = useState([]);
+const [userFavorites, setUserFavorites] = useState([]);
+const [error, setError] = useState('');
+const history = useHistory();
+const backendURL = 'http://localhost:3002';
+const { facultyId } = useParams();
+const { authToken, refreshTokenFunc } = useContext(AuthContext);
 
+
+
+const facultyImageFilename = facultyName.toLowerCase().replace(/ /g, '-');
+
+// Construct the background image URL
+const backgroundImage = `/images/${facultyImageFilename}.png`;
+const pageStyle = {
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  minHeight: '100vh',
+};
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
@@ -90,29 +103,29 @@ const facultyName = location.state?.facultyName || 'Faculty';
   }
 
   return (
-    <CSSTransition in={true}appear={true} timeout={300} classNames="fade">
-    <div className='root-faculty'>
-      <h1>Resources for {facultyName}</h1>
-      <div className="faculty-container">
-        {resources.length > 0 ? (
-          resources.map((resource) => (
-            <DocumentCard
-            cardType="faculty"
-              key={resource._id}
-              document={resource}
-              onClick={() => handleCardClick(resource._id)}
-              isFavorited={isResourceFavorited(resource._id)}
-              onToggleFavorite={() => toggleFavorite(resource._id)}
-            />
-          ))
-        ) : (
-          <p>No resources found for this faculty.</p>
-        )}
+    <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
+      <div style={pageStyle} className="faculty-page">
+        <h1>Resources for {facultyName}</h1>
+        <div className="faculty-container">
+          {resources.length > 0 ? (
+            resources.map((resource) => (
+              <DocumentCard
+                cardType="faculty"
+                key={resource._id}
+                document={resource}
+                onClick={() => handleCardClick(resource._id)}
+                isFavorited={isResourceFavorited(resource._id)}
+                onToggleFavorite={() => toggleFavorite(resource._id)}
+              />
+            ))
+          ) : (
+            <p>No resources found for this faculty.</p>
+          )}
+        </div>
       </div>
-    </div>
     </CSSTransition>
-
   );
 };
+
 
 export default FacultyPage;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect,useContext } from 'react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { Link } from 'react-router-dom';
 import './App.css';
@@ -7,6 +8,7 @@ import './App.css';
 const FacultyButtons = () => {
   const [faculties, setFaculties] = useState([]);
   const [loading, setLoading] = useState(false);
+  const history = useHistory();
   const [error, setError] = useState('');
   const { user, authToken,refreshTokenFunc } = useContext(AuthContext);
 
@@ -33,6 +35,15 @@ const FacultyButtons = () => {
   if (loading) return <div>Loading faculties...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const goToFacultyPage = (faculty) => {
+    history.push({
+      pathname: `/faculty/${faculty._id}`,
+      state: { 
+        facultyName: faculty.FacultyName,
+        backgroundImage: `images/${faculty.backgroundImage}` // Assuming you've added backgroundImage field to your faculty objects
+      }
+    });
+  };
   return (
     <div className='sides'>
       <h1>Faculties</h1>

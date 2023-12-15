@@ -6,6 +6,7 @@ import "./styles.css";
 import image1 from "./1.jpg";
 import image2 from "./2.jpg";
 import image3 from "./3.jpg";
+import FacultyButtons from '../FacultyButtons'; // Make sure to import your FacultyButtons component
 
 const gsapInit = () => {
   gsap.registerPlugin(Observer);
@@ -61,25 +62,27 @@ const gsapInit = () => {
 };
 
 const sections = [
-  { title: "Infinite", image: image1 },
-  { title: "Scrolling", image: image2 },
-  { title: "Website", image: image3 },
+  { title: 'Infinite', image: image1, component: null },
+  { title: 'Explore Our Faculties', image: image2, component: <FacultyButtons /> },
+  { title: 'Website', image: image3, component: null },
 ];
+
 
 export const Parallax = () => {
   useEffect(() => {
     gsapInit();
   }, []);
 
-  return sections.map((section) => (
+  return sections.map((section, index) => (
     <section key={section.title}>
       <div className="outer">
         <div className="inner">
           <div
-            className="bg one"
+            className="bg"
             style={{ backgroundImage: `url(${section.image})` }}
           >
             <h2>{section.title}</h2>
+            {index === 1 && <FacultyButtons />}
           </div>
         </div>
       </div>

@@ -26,7 +26,7 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 );
 
 
-const Header = ({ setIsModalOpen }) => {
+const Header = ({ setIsModalOpen,isLoading }) => {
   const backendURL = 'http://localhost:3002';
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
@@ -69,7 +69,7 @@ const Header = ({ setIsModalOpen }) => {
     if (location.pathname.includes('/faculty')) {
       setIsSidebarOpen(false);
     } else {
-      setIsSidebarOpen(true);
+      setIsSidebarOpen(false);
 
     }
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -290,7 +290,7 @@ const Header = ({ setIsModalOpen }) => {
 
 
   return (
-    <header className={`headerContainer ${isDarkMode ? 'dark' : 'light'}`}>
+    <header className={`headerContainer ${isLoading ? 'loading' : ''} ${isDarkMode ? 'dark' : 'light'}`}>
       <div className='left'>
         <button className="sidebarToggle" onClick={toggleSidebar}>☰</button>
         <div className="logoContainer">
@@ -321,7 +321,7 @@ const Header = ({ setIsModalOpen }) => {
         {isLoggedIn ? (
           <div className='button'>
         
-            <button className="authButton" onClick={handleLogout}>Logout
+            <button className="authButtonL" onClick={handleLogout}>🔚
             </button>
             <button onClick={goToUserProfile} className="profile-button">
               <img src={`${process.env.PUBLIC_URL}/img_avatar.png`} alt="Profile" />
@@ -329,8 +329,8 @@ const Header = ({ setIsModalOpen }) => {
           </div>
         ) : (
           <div className='logoReg'>
-            <button className="authButton" onClick={handleLoginModalOpen}>Login</button>
-            <button className="authButton" onClick={handleSignupModalOpen}>Sign Up</button>
+            <button className="authButtonL" onClick={handleLoginModalOpen}>Login</button>
+            <button className="authButtonL" onClick={handleSignupModalOpen}>Sign Up</button>
         </div>
         )}
       </div>

@@ -2,33 +2,68 @@
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  white-space: nowrap;
-  overflow: hidden;
   justify-content: center;
 }
 
 /* Individual card */
 .card {
-  flex: 1;
-  /* Allow the card to grow and shrink as needed */
-  min-width: 250px;
-  /* Minimum width of a card */
-  max-width: 300px;
-  /* Maximum width to ensure readability */
+  position: relative;
+  flex: 0 1 calc(33.333% - 1rem); /* 3 cards per row, accounting for margin */
   background-color: transparent;
-  /* Transparent background */
   padding: 15px;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  /* Subtle shadow for depth */
   transition: all 0.3s ease;
-  /* Smooth transition for hover effects */
   border: 1px solid;
-  /* Default border color, will be overridden by color scheme */
-  margin-bottom: 1rem;
-  /* Spacing at the bottom of each card */
+  overflow: hidden;
+  cursor: pointer;
+}
 
+.card-description {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  color: white;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0; /* Hide by default */
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1; /* Above the card content but below the actions */
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+}
+
+.card-cover {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px; /* Optional: if you want rounded corners on the image */
+}
+
+.card-content,
+.card-actions {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: 1;
+}
+
+.card:hover .card-description {
+  opacity: 1; /* Show description on hover */
+}
+.card:hover .card-content,
+.card:hover .card-actions {
+  opacity: 0;
+  transform: translateY(20px); /* Move down to ensure they are not visible */
 }
 
 .card:hover {
@@ -56,9 +91,10 @@
 .card-actions {
   display: flex;
   justify-content: space-between;
-  /* Align buttons to each side of the card */
   gap: 0.5rem;
   margin-top: 15px;
+  position: relative; /* Ensure actions stay on top */
+  z-index: 3;
 }
 
 .card-actions .authButton {
@@ -130,17 +166,16 @@
 @media (max-width: 768px) {
   .card-container {
     grid-template-columns: 1fr;
-    /* Stack cards in a single column on small screens */
     flex-direction: column;
-    /* Stack cards in a single column on small screens */
 
   }
 
   .card .authButton {
     max-width: 100%;
-    /* Cards take full width on small screens */
+    flex-basis: auto; 
   }
 }
+
 button.trashButton {
   background-color: transparent !important; 
   border: none;

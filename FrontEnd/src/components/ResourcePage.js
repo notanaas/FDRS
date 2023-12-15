@@ -118,37 +118,45 @@ const ResourcePage = () => {
 
   return (
     <CSSTransition in={inProp} timeout={300} classNames="fade" appear>
-
-      <div className="resource-page">
-
-        <section className="resource-header">
+      <div className="resource-container">
+        <div className="resource-header">
           {resourceDetails.Cover && (
-            <div className="resource-cover">
-              <img src={`${backendURL}/api_resource/cover/${resourceId}`} alt={resourceDetails.Title || "Document cover"} className="resource-cover" />
-            </div>
+            <img 
+              src={`${backendURL}/api_resource/cover/${resourceId}`} 
+              alt={resourceDetails.Title || "Resource cover"} 
+              className="resource-cover-img" 
+            />
           )}
-          <div className="resource-details">
-            <h1 className="resource-title">{resourceDetails.Title}</h1>
-            <h1 className="resource-title"><strong>Author:</strong> {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</h1>
-            <h1 className="resource-title"><strong>Description:</strong> {resourceDetails.Description}</h1>
-            <h1 className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</h1>
-            <h1 className="file-size"><strong>File Size:</strong> {resourceDetails.file_size} bytes</h1>
-            <h1 className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</h1>
-            <h1 className="user-email">{resourceDetails.User.Email}</h1>
+          <h1>{resourceDetails.Title}</h1>
+          <p className="author">Author: {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
+          <p className="description">{resourceDetails.Description}</p>
+          <p className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
+          <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
+          <p className="user-email">{resourceDetails.User.Email}</p>
 
-            <a onClick={(e) => { e.stopPropagation(); }} href={`${backendURL}/api_resource/download/${resourceId}`} target='_blank' className="downloadButton">Download</a>
-            <button className="favorite-button" onClick={handleFavButtonClick}>
-              {isFavorited ? '\u2605' : '\u2606'}
-              {showLoginPrompt && (
-                <span className="login-tooltip">Log in to add</span>
-              )}
-            </button>
-          </div>
-        </section>
+        </div>
+
+        <div className="resource-actions">
+          <a 
+            href={`${backendURL}/api_resource/download/${resourceId}`} 
+            target='_blank' 
+            rel="noopener noreferrer" 
+            className="download-button"
+          >
+            Download
+          </a>
+          <button 
+            className={`favorite-button ${isFavorited ? 'active' : ''}`} 
+            onClick={handleFavButtonClick}
+          >
+            {isFavorited ? '★' : '☆'}
+            {showLoginPrompt && <span className="login-tooltip">Log in to add</span>}
+          </button>
+        </div>
+
         <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />
       </div>
     </CSSTransition>
-
   );
 };
 

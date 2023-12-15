@@ -180,20 +180,21 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
       case 'faculty':
         return (
           <div className={cardClassName} onClick={onClick}>
-            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-            <div className="card-content">
-              <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
-            </div>
-            <div className="card-actions">
-              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+          <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
+          <div className="card-content">
+            <h3 className="card-title">{document.Title || "Untitled"}</h3>
+            <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
+          </div>
+          <div className="card-description">
+            {document.Description || "No description provided"}
               <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
                 {isFavorited ? '\u2605' : '\u2606'}
                 {showLoginPrompt && (
                   <span className="login-tooltip">Log in to add</span>
                 )}
               </button>
-            </div>
+          </div>
+            
           </div>
         );
       case 'feedback':

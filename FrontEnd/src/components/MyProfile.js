@@ -5,10 +5,12 @@ import DocumentCard from './DocumentCard'; // Ensure this is the correct path
 import './MyProfile.css';
 import { useHistory, useLocation } from 'react-router-dom';
 import Accordion from './Accordion'; // Make sure to create this component
+import Header from './Header'; // Ensure this is the correct path
 
 
 const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
+  const [loading, setLoading] = useState(true);//////////
   const [documents, setDocuments] = useState([]);
   const { authToken, isAdmin } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
@@ -44,6 +46,7 @@ const MyProfile = () => {
 
   const fetchProfileData = async () => {
     try {
+      setLoading(true); ///////////
       const response = await axios.get(`${backendURL}/api_user/profile`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
@@ -61,6 +64,9 @@ const MyProfile = () => {
       }
     } catch (error) {
       console.error('Error fetching profile data:', error);
+    }
+    finally {
+      setLoading(false); 
     }
   };
 
@@ -196,20 +202,7 @@ const MyProfile = () => {
       fetchUnauthorizedResources();
     }
   }, [profile.isAdmin, authToken, backendURL]);
-  if (!profile.username) {
-    return <div className="center">
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-    </div>;
-  }
+  
   const deleteFeedback = async (feedbackId) => {
     try {
       const response = await axios.delete(`${backendURL}/api_feedback/delete-feedback/${feedbackId}`, {
@@ -246,6 +239,8 @@ const MyProfile = () => {
   };
   return (
     <div className="my-profile">
+          <Header isLoading={loading} /> {/* @saif */}
+
       {showSuccessMessage && (
         <div className="success-message-header">{successMessage}</div>
       )}

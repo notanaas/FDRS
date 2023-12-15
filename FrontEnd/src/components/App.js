@@ -62,8 +62,10 @@ function App() {
     <Router>
       <AuthProvider>
         <RouteParamsProvider>
+
           <div className="App">
             <Header setIsModalOpen={setIsModalOpen} isFacultyPage={isFacultyPage} />
+
             {isModalOpen && (
               <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
             )}

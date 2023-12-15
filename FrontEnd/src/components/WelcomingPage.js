@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Header from './Header';
+import { Parallax } from "./parallax-4/Parallax";
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 const WelcomingPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [message, setMessage] = useState(''); // Define message state
-  const [showMessage, setShowMessage] = useState(false); // Define showMessage state
+  const [message, setMessage] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
   const { authToken } = useContext(AuthContext);
 
   useEffect(() => {
@@ -16,27 +17,21 @@ const WelcomingPage = () => {
       document.documentElement.classList.remove('dark');
     }
 
-    if (authToken) {
-      setMessage('Welcome, you are logged in!');
-      setShowMessage(true);
-    } else {
-      setMessage('You are not logged in.');
-      setShowMessage(true);
-    }
+    
 
     const timer = setTimeout(() => {
       setShowMessage(false);
-    }, 4000); // Message will disappear after 4 seconds
+    }, 4000); // Message disappears after 4 seconds
 
-    return () => clearTimeout(timer); // Clear the timer if the component unmounts
+    return () => clearTimeout(timer); // Clear timer on unmount
   }, [authToken, isDarkMode]);
 
   return (
-    <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
-      <main className='welcome'>
-        {showMessage && <div className="header-message">{message}</div>}
-        <h1>Welcome to the page!</h1>
-      </main>
+    <div >
+      <Header />
+      {showMessage && <div className="header-message">{message}</div>}
+      <Parallax /> {/* Include the Parallax component */}
+
     </div>
   );
 };

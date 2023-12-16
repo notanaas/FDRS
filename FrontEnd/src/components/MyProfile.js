@@ -246,7 +246,7 @@ const MyProfile = () => {
     }
   };
   return (
-    <div style={pageStyle}className="my-profile">
+    <div style={pageStyle}>
           <Header isLoading={loading} /> {/* @saif */}
 
       {showSuccessMessage && (

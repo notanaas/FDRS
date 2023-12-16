@@ -1,15 +1,14 @@
 body, html {
   overflow: auto; /* or 'scroll' */
 }
-
-
 .my-profile {
-  
+  background-image: url('/public/my-profile.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  height: 100%;
 }
+
+
 .profile-sections {
   display: flex;
   flex-direction: column;

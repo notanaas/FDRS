@@ -31,7 +31,6 @@ const resourcesContainerStyle = {
 };
 const backgroundImage = `/images/${facultyImageFilename}.png`;
 const pageStyle = {
-  backgroundImage: `url(${backgroundImage})`,
   // backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center center',

@@ -24,15 +24,62 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
+  const [validationErrors, setValidationErrors] = useState({});
   const backendURL = 'http://localhost:3002';
   const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
-
+  const validateField = (fieldName, value) => {
+    let errors = { ...validationErrors };
+    const alphaRegex = /^[a-zA-Z ]+$/; // Only letters and spaces
+    const invalidPatternRegex = /^[-_ ]+$/; // Matches strings of only dashes, underscores, or spaces
+  
+    switch (fieldName) {
+      case 'title':
+      case 'authorFirstName':
+      case 'authorLastName':
+        if (!value.trim() || !alphaRegex.test(value) || invalidPatternRegex.test(value)) {
+          errors[fieldName] = "Invalid input. Ensure it's not empty, only contains letters and spaces, and is not a repetitive pattern.";
+        } else {
+          delete errors[fieldName];
+        }
+        break;
+      case 'description':
+        if (!value.trim() || value.length < 10 || value.length > 200 || invalidPatternRegex.test(value)) {
+          errors['description'] = "Invalid description. Ensure it's 10-200 characters long, not empty, and not a repetitive pattern.";
+        } else {
+          delete errors['description'];
+        }
+        break;
+      default:
+        break;
+    }
+    setValidationErrors(errors);
+  };
+  
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleAuthorFirstNameChange = (e) => setAuthorFirstName(e.target.value);
   const handleAuthorLastNameChange = (e) => setAuthorLastName(e.target.value);
   const handleDescriptionChange = (e) => setDescription(e.target.value);
-
- 
+  const validateAllFields = () => {
+    validateField('title', title);
+    validateField('authorFirstName', authorFirstName);
+    validateField('authorLastName', authorLastName);
+    validateField('description', description);
+    validateFileInput();
+  };
+  const validateFileInput = () => {
+    let errors = { ...validationErrors };
+    if (!file) {
+      errors.file = "Document file is required";
+    } else {
+      delete errors.file;
+    }
+    if (!img) {
+      errors.img = "Image file is required";
+    } else {
+      delete errors.img;
+    }
+    setValidationErrors(errors);
+  };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -48,11 +95,12 @@ const handleImgChange = (e) => {
   }
 };
   const handleUpload = async () => {
-    if (!title || !authorFirstName || !authorLastName || !description || !file || !img) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-
+    
+    validateAllFields();
+  if (Object.keys(validationErrors).length > 0 || !title || !authorFirstName || !authorLastName || !description || !file || !img) {
+    setError('Please correct the errors before submitting.');
+    return;
+  }
     const formData = new FormData();
     formData.append('title', title);
     formData.append('firstname', authorFirstName);

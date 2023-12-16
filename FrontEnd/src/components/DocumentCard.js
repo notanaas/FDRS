@@ -14,8 +14,6 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
   const location = useLocation();
-  const isFacultyPage = location.pathname.includes(`/faculty/`);
-  const isProfilePage = location.pathname.includes(`/my-profile`);
 
   
   useEffect(() => {
@@ -149,7 +147,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
          </button>
          
             )}
-                          </div>
+</div>
             </div>
           );
       case 'favorite':

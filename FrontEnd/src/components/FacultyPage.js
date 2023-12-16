@@ -27,11 +27,13 @@ const facultyImageFilename = facultyName.toLowerCase().replace(/ /g, '-');
 const backgroundImage = `/images/${facultyImageFilename}.png`;
 const pageStyle = {
   backgroundImage: `url(${backgroundImage})`,
-  backgroundSize: 'cover',
+  // backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   minHeight: '100vh',
+  transform: 'scale(1.0)',
   backgroundAttachment: 'fixed',
+
 };
   useEffect(() => {
     setRouteParams({ facultyId });
@@ -106,7 +108,9 @@ const pageStyle = {
   return (
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">
+        <div className='ResourcesfacultyName'>
         <h1>Resources for {facultyName}</h1>
+        </div>
         <div className="faculty-container">
           {resources.length > 0 ? (
             resources.map((resource) => (

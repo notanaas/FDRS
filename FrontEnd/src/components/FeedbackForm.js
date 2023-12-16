@@ -112,7 +112,7 @@ const FeedbackForm = ({ authToken }) => {
                 borderRadius: '5px',
                 border: 'none',
                 cursor: 'pointer',
-                backgroundColor: '#28a745',
+                backgroundColor: 'green',
                 color: 'white'
               }}
             >

@@ -11,6 +11,21 @@
     visibility: hidden;
   }
 }
+
+.ResourcesfacultyName{
+  border: 3px solid rgba(0, 0, 0, 0);
+  background: rgb(0 0 0 / 40%);
+  position: fixed;
+  width: 99.6%;
+  z-index: 10;
+}
+
+.ResourcesfacultyName h1 {
+  text-align:center;
+}
+
+
+
 .header-message {
   position: absolute;
   top: 0;

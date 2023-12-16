@@ -153,8 +153,9 @@
   display: inline-block;
   position: relative;
   transition: all 0.3s ease;
-  background-color: transparent;
-  border: #f5f5f5;
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid white;
+  margin-right: 5px;
 }
 
 @media screen and (max-width: 600px) {
@@ -166,8 +167,12 @@
 .authButton:hover,
 .authButtonL:hover,
 .sidebarToggle:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  background: transparent;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.507);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.action-buttons .authButton:hover {
+  background: rgba(0, 0, 0, 0.8);
 }
 
 /* Input Bar Styles with focus effect */
@@ -265,13 +270,13 @@
 }
 
 .upload-modal-content .authButton {
-  margin-top: 5px;
+  margin-top: 15px;
   width: 100%;
   background-color: #ffffff;
   color: #080710;
   font-size: 18px;
   font-weight: 600;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
 }
 
@@ -303,4 +308,11 @@
   position: absolute;
   background-color: #6a0000;
   margin-top: 2px;
+}
+
+.action-buttons h1{
+  font-size: x-large;
+  position: fixed;
+  left:0%;
+  width: 100%;
 }

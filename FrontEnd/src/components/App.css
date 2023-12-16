@@ -38,7 +38,14 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .login-prompt {
-  color: red; 
+  color: rgb(255, 255, 255);
+  background-color: rgb(197, 14, 1);
+  position: fixed;
+  top: 9%;
+  left: 37%;
+  height: 35px;
+  padding: 10px;
+  z-index: 10000;
 }
 .scrollable-container {
   max-height: 500px; 

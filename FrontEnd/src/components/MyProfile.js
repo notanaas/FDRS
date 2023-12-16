@@ -39,7 +39,6 @@ const MyProfile = () => {
     document.body.style.backgroundRepeat = 'no-repeat';
     document.body.style.backgroundPosition = 'center center';
     document.body.style.backgroundAttachment = 'fixed';
-    document.body.style.overflow = 'hidden'; // Prevent scrolling on body
 
     // Cleanup function to revert styles
     return () => {

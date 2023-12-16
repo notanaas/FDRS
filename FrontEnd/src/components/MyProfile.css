@@ -50,10 +50,6 @@ body, html {
   height: 20px;
 }
 
-.authButton:hover {
-  background:transparent;
-}
-
 /* Success and error message styling */
 .success-message-header, .error-message-header {
   color: #fff;
@@ -128,9 +124,11 @@ body {
 }
 
 .accordion-content.open {
-  max-height: 100%; 
-  width: 70%; 
+  max-height: 100%;
+  width: 70%;
   box-sizing: border-box;
+  border: 1px solid black;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* Style for the content inside the accordion */

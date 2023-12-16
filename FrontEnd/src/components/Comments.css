@@ -61,11 +61,17 @@
   margin-top: 20px;
 }
 
-.sortButton {
-  margin-bottom: 10px; /* Add some space above the sort button */
-  /* Add any additional styles you want for the button */
+.sortButton:hover {
+  background: #a1a1a1f5
 }
 
+.add-comment .authButton:hover{
+  background: #a1a1a1;
+}
+
+.sortButton {
+  margin-bottom: 10px;
+}
 
 
 

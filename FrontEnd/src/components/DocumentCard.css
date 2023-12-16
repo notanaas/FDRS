@@ -7,7 +7,7 @@
 .card {
   position: relative;
   flex: 0 1 calc(33.333% - 1rem); /* 3 cards per row, accounting for margin */
-  background-color: rgb(0 0 0 / 78%);
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 15px;
   border-radius: 8px;
   margin: 0.5rem;
@@ -112,14 +112,9 @@
   font-size: 16px;
 }
 
-
 .favorite-button.favorited {
   color: #d9534f;
 }
-
-
-
- 
 
 @media (max-width: 992px) {
   .card-container {
@@ -151,7 +146,6 @@ button.trashButton {
   color: inherit;
 }
 
-
 button.trashButton:hover {
   background-color:transparent;
 }
@@ -171,4 +165,3 @@ button.trashButton:hover {
     z-index: 0;
   }
 }
-

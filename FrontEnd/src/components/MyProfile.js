@@ -26,7 +26,15 @@ const MyProfile = () => {
   const location = useLocation(); // This hook gets the current location object
   const history = useHistory();
   const isProfilePage = location.pathname.includes(`/my-profile`);
-
+  const backgroundImage = `/my-profile.png`;
+  const pageStyle = {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+    minHeight: '100vh',
+    backgroundAttachment: 'fixed',
+  };
   useEffect(() => {
     const fetchFeedbacks = async () => {
       if (isProfilePage) {
@@ -238,7 +246,7 @@ const MyProfile = () => {
     }
   };
   return (
-    <div className="my-profile">
+    <div style={pageStyle}className="my-profile">
           <Header isLoading={loading} /> {/* @saif */}
 
       {showSuccessMessage && (

@@ -31,6 +31,7 @@ const pageStyle = {
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   minHeight: '100vh',
+  backgroundAttachment: 'fixed',
 };
   useEffect(() => {
     setRouteParams({ facultyId });

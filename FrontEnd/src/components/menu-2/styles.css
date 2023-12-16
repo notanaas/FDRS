@@ -37,6 +37,7 @@ button {
   background-image: url("./menu.svg");
   background-repeat: no-repeat;
   background-position: center;
+  background-attachment: fixed;
 }
 
 .burger.open {

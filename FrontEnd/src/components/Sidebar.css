@@ -41,14 +41,13 @@
 
 /* Media query for screens smaller than 768px (adjust as needed) */
 @media (max-width: 768px) {
-  .sidebar {
+  .sidebar a {
     width: 100%;
     /* Full width */
-    height: 100%;
-    /* Full height */
     margin-top: 0;
     /* No top margin */
-    background: transparent;
+    background: #1d1d1db7;
+    color: #fff;
   }
 }
 
@@ -58,6 +57,51 @@
     margin-right: 220px;
     width: 50%;
     height: 100%;
-    background: #33333385;
+    background: #9197998f;
+  }
+}
+
+.sides {
+  margin: 0;
+  padding: 0;
+  width: 250px;
+  background-color: transparent;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sides a {
+  display: block;
+  color: rgb(255, 255, 255);
+  padding: 16px;
+  text-decoration: none;
+}
+
+.sides h1 {
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+.sides a {
+  display: block;
+  color: rgb(255, 255, 255);
+  padding: 16px;
+  text-decoration: none;
+}
+@media screen and (max-width: 760px) {
+  .sides a {
+    display: block;
+    color: rgb(255, 255, 255);
+
   }
 }

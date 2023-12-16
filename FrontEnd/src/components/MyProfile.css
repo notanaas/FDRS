@@ -17,10 +17,10 @@ body, html {
 
 .contentContainer P{
   width: 100%;
-  color: #000;
+  color: #ffffff;
 }
 .contentContainer{
-  margin-top: 130px;
+  margin-top: 70px;
 }
 
 .contentContainer .my-profile  {

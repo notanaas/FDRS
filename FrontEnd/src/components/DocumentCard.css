@@ -7,7 +7,7 @@
 .card {
   position: relative;
   flex: 0 1 calc(33.333% - 1rem); /* 3 cards per row, accounting for margin */
-  background-color: transparent;
+  background-color: rgb(0 0 0 / 78%);
   padding: 15px;
   border-radius: 8px;
   margin: 0.5rem;
@@ -166,7 +166,7 @@ button.trashButton:hover {
     padding: 10px;
     font-size: medium;
     display: inline-block;
-    background: linear-gradient(45deg, rgb(185, 4, 4) 0%, #000000 100%);
+    background: linear-gradient(45deg, rgb(4, 52, 185) 0%, #3885e9 100%);
     position: relative;
     z-index: 0;
   }

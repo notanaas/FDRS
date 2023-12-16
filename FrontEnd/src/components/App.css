@@ -92,7 +92,7 @@ bodY {
 .wave {
   width: 5px;
   height: 100px;
-  background: linear-gradient(45deg, rgb(255, 0, 0), #000000);
+  background: linear-gradient(45deg, rgb(0, 119, 255), #b6b6b6);
   margin: 10px;
   animation: wave 1s linear infinite;
   border-radius: 20px;

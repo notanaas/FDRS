@@ -5,6 +5,7 @@ body {
   color: #ffffff;
   background: black;
   font-family: "Euclid Circular A", "Poppins";
+  overflow: auto;
 }
 
 section {

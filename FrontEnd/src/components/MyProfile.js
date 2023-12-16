@@ -27,14 +27,26 @@ const MyProfile = () => {
   const history = useHistory();
   const isProfilePage = location.pathname.includes(`/my-profile`);
   const backgroundImage = `/my-profile.png`;
-  const pageStyle = {
-    backgroundImage: `url(${backgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    minHeight: '100vh',
-    backgroundAttachment: 'fixed',
-  };
+  useEffect(() => {
+    const originalStyle = {
+      overflow: document.body.style.overflow,
+      backgroundImage: document.body.style.backgroundImage
+    };
+
+    // Apply styles
+    document.body.style.backgroundImage = `url(${backgroundImage})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundPosition = 'center center';
+    document.body.style.backgroundAttachment = 'fixed';
+    document.body.style.overflow = 'hidden'; // Prevent scrolling on body
+
+    // Cleanup function to revert styles
+    return () => {
+      document.body.style.overflow = originalStyle.overflow;
+      document.body.style.backgroundImage = originalStyle.backgroundImage;
+    };
+  }, [backgroundImage]);
   useEffect(() => {
     const fetchFeedbacks = async () => {
       if (isProfilePage) {
@@ -246,8 +258,9 @@ const MyProfile = () => {
     }
   };
   return (
-    <div style={pageStyle}>
+    <div className="profile-container">
           <Header isLoading={loading} /> {/* @saif */}
+          <div className="profile-content">
 
       {showSuccessMessage && (
         <div className="success-message-header">{successMessage}</div>
@@ -365,7 +378,7 @@ const MyProfile = () => {
           </div>
         </Accordion>
       )}
-
+</div>
     </div>
   );
 };

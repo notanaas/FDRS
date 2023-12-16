@@ -60,6 +60,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
   const tokenFromLink = location.state?.token;
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
+  const facultyName = location.state?.facultyName || 'Faculty'; 
 
   const goToUserProfile = () => {
     history.push('/my-profile');
@@ -298,6 +299,8 @@ const Header = ({ setIsModalOpen,isLoading }) => {
       <button onClick={handleUploadButtonClick} className="authButton">
         Upload
       </button>
+      <h1>{facultyName}</h1>
+
       {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
     </div>
   </div>

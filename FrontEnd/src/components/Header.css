@@ -13,7 +13,15 @@
   }
 }
 
-/* Base styles for headerContainer, including gradient and animation */
+.faculty-header-name {
+  /* add your styles here */
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 10px;
+  color: white; /* choose the color that fits your design */
+  /* other styles as needed */
+}
 .headerContainer {
   position: fixed;
   top: 0;

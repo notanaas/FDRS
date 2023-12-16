@@ -115,7 +115,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <h3>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</h3>
               <h3 className="card-uploader">Uploader: {document.User.Email}</h3>
             </div>
-            <div className="card-actions">
+            <div className="card-description">
               <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">
                 <span>
                   Download
@@ -139,7 +139,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
                 <h3 className="card-title">{document.Title || "Untitled"}</h3>
                 <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
               </div>
-              <div className="card-actions">
+              <div className="card-description">
                 <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
                 {onDelete && (
              <button className="trashButton" onClick={(e) => { e.stopPropagation(); onDelete(document._id); }}>
@@ -158,7 +158,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <h3 className="card-title">{document.Title || "Untitled"}</h3>
               <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
             </div>
-            <div className="card-actions">
+            <div className="card-description">
               <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
               <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
                 {isFavorited ? '\u2605' : '\u2606'}
@@ -190,10 +190,10 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
       case 'feedback':
         return (
           <div className={cardClassName}>
-            <div className="card-content">
+            <div >
               <h3><strong>Email:</strong> {document.User.Email}</h3>
               <h3><strong>Feedback:</strong> {document.SearchText}</h3>
-              <div className="card-actions">
+              <div >
                 <button className="authButton" onClick={(e) => { e.stopPropagation(); deleteFeedback(document._id); }}>
                   Delete Feedback
                 </button>

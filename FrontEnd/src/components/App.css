@@ -178,3 +178,12 @@ bodY {
   margin: 0 auto;
   text-align: center;
 }
+
+
+.resources-container {
+  position: relative;
+  z-index: 2; /* Above the fixed background */
+  overflow-y: auto; /* Enables scrolling */
+  max-height: 100vh; /* Adjust if necessary to fit within the viewport */
+}
+

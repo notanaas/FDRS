@@ -23,18 +23,42 @@ const { authToken, refreshTokenFunc } = useContext(AuthContext);
 
 const facultyImageFilename = facultyName.toLowerCase().replace(/ /g, '-');
 
-// Construct the background image URL
+const resourcesContainerStyle = {
+  position: 'relative', // This ensures the resources are positioned above the background
+  zIndex: 2, // Higher z-index to ensure the resources are above the fixed background
+  overflowY: 'scroll', // Allows for vertical scrolling
+  maxHeight: '100vh', // Optional: ensures the container does not exceed the height of the viewport
+};
 const backgroundImage = `/images/${facultyImageFilename}.png`;
 const pageStyle = {
   backgroundImage: `url(${backgroundImage})`,
   // backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
+  backgroundPosition: 'center center',
+  backgroundAttachment: 'fixed', // This will keep the background fixed during scrolling
   minHeight: '100vh',
   transform: 'scale(1.0)',
   backgroundAttachment: 'fixed',
 
 };
+useEffect(() => {
+  // Set the background style when the component mounts
+  document.body.style.backgroundImage = `url(${backgroundImage})`;
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundRepeat = 'no-repeat';
+  document.body.style.backgroundAttachment = 'fixed';
+  document.body.style.backgroundPosition = 'center center';
+  document.body.style.overflow = 'hidden';
+  document.body.style.margin = '0';
+  document.body.style.padding = '0';
+  document.body.style.height = '100vh';
+
+  // Reset the background style when the component unmounts
+  return () => {
+    document.body.style.background = '';
+    document.body.style.overflow = '';
+  };
+}, [backgroundImage]);
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
@@ -104,7 +128,7 @@ const pageStyle = {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
+  
   return (
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">

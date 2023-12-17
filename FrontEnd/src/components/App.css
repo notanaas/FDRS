@@ -60,6 +60,10 @@
   text-align: center;
 }
 
+.App .faculty-container p {
+  margin-top: 150px;
+}
+
 .form {
   display: flex;
   align-items: center;
@@ -213,7 +217,7 @@ body, html {
 /* Add styles for your headings or any additional elements */
 h1 {
   text-align: center;
-  color: #333; /* Heading color */
+  color: #ffffff; /* Heading color */
 }
 
 

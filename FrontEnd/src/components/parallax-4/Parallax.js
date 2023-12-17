@@ -66,8 +66,8 @@ const gsapInit = () => {
 
 // Array with section data
 const sectionsData = [
-  { title: 'Infinite', image: image1 },
-  { title: 'Explore Our Faculties', image: image2 },
+  { title: 'Explore our FDRS', image: image1 },
+  { title: 'Explore Our Faculties',image:image2},
   { title: 'Website', image: image3 },
 ];
 
@@ -87,7 +87,6 @@ export const Parallax = () => {
                 style={{ backgroundImage: `url(${section.image})` }}
               >
                 <h2>{section.title}</h2>
-                {/* Render the FacultyButtons component only in the second section */}
                 {index === 1 ? <FacultyButtons /> : null}
               </div>
             </div>

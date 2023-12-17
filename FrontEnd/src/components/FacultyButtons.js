@@ -11,7 +11,7 @@ const FacultyButtons = () => {
   const history = useHistory();
   const [error, setError] = useState('');
   const { user, authToken,refreshTokenFunc } = useContext(AuthContext);
-
+  
   useEffect(() => {
     setLoading(true);
     const fetchFaculties = async () => {
@@ -45,23 +45,25 @@ const FacultyButtons = () => {
     });
   };
   return (
-    <div className='sides'>
-      <h1>Faculties</h1>
+    <div className='faculty-buttons-container'>
       {faculties.length > 0 ? (
-        faculties.map(faculty => (
-          <Link 
-          key={faculty._id}
-          to={{
-            pathname: `/faculty/${faculty._id}`,
-            state: { facultyName: faculty.FacultyName } // Ensure this matches your data structure
-          }}
-          className="facultyauthButtonLink"
-        >
-          {faculty.FacultyName}
-        </Link>
-        
-        
-        ))
+        faculties.map(faculty => {
+          // Convert faculty name to kebab-case for the image filename
+          const imageUrl = `/images/${faculty.FacultyName.toLowerCase().replace(/ /g, '-')}.png`;
+          return (
+            <Link 
+              key={faculty._id}
+              to={{
+                pathname: `/faculty/${faculty._id}`,
+                state: { facultyName: faculty.FacultyName }
+              }}
+              className="faculty-button"
+              style={{ backgroundImage: `url(${imageUrl})` }}
+            >
+              {faculty.FacultyName}
+            </Link>
+          );
+        })
       ) : (
         <p>No faculties found.</p>
       )}

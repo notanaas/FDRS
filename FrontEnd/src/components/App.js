@@ -17,6 +17,7 @@ function App() {
   const location = useLocation();
   const isFacultyPage = location.pathname.includes('/faculty/');
   const backendURL = 'http://localhost:3002';
+  const [loading, setLoading] = useState(true);//////////
 
   useEffect(() => {
     // Configure Axios defaults for every request
@@ -64,7 +65,7 @@ function App() {
         <RouteParamsProvider>
 
           <div className="App">
-            <Header setIsModalOpen={setIsModalOpen} isFacultyPage={isFacultyPage} />
+          <Header setIsModalOpen={setIsModalOpen} />
 
             {isModalOpen && (
               <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />

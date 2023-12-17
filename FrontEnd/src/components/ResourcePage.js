@@ -4,6 +4,7 @@ import axios from 'axios';
 import Comments from './Comments';
 import { AuthContext } from './context/AuthContext';
 import { CSSTransition } from 'react-transition-group';
+import Header from './Header';
 import './ResourcePage.css';
 
 const ResourcePage = () => {
@@ -17,6 +18,7 @@ const ResourcePage = () => {
 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [inProp, setInProp] = useState(false);
+  const [loading, setLoading] = useState(true);//////////
 
     
   useEffect(() => {
@@ -43,6 +45,8 @@ const ResourcePage = () => {
   useEffect(() => {
     const fetchResourceDetails = async () => {
       try {
+        setLoading(true); ///////////
+
         const response = await axios.get(`${backendURL}/api_resource/resource-detail/${resourceId}`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
@@ -54,6 +58,9 @@ const ResourcePage = () => {
       } catch (error) {
         console.error('Error fetching resource details:', error);
       }
+      finally {
+        setLoading(false); 
+      }
     };
 
     if (resourceId) {
@@ -63,17 +70,8 @@ const ResourcePage = () => {
   if (!document) return null;
 
   if (!resourceDetails) {
-    return <div className="center">
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
-      <div className="wave"></div>
+    return <div>
+      <Header isLoading={loading} /> 
     </div>;
   }
   const promptLogin = () => {

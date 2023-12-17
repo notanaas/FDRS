@@ -66,7 +66,7 @@ const gsapInit = () => {
 
 // Array with section data
 const sectionsData = [
-  { title: 'Explore our FDRS', image: image1 },
+  { title: 'Explore our FDRS', image: image2 },
   { title: 'Explore Our Faculties',image:image2},
   { title: 'Website', image: image3 },
 ];
@@ -74,6 +74,7 @@ const sectionsData = [
 export const Parallax = () => {
   useEffect(() => {
     gsapInit();
+    gsap.to(".arrow", { y: 20, duration: 1, yoyo: true, repeat: -1 });
   }, []);
 
   return (
@@ -88,6 +89,12 @@ export const Parallax = () => {
               >
                 <h2>{section.title}</h2>
                 {index === 1 ? <FacultyButtons /> : null}
+                {index === 0 ?  <div className="explore-arrow">
+  <span className="arrow"></span>
+  <span>Explore our faculties</span>
+</div>
+: null}
+
               </div>
             </div>
           </div>

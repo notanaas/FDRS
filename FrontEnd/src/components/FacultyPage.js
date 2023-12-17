@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import DocumentCard from './DocumentCard';
+import Header from './Header';
 import axios from 'axios';
 import { useParams, useHistory,useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
@@ -13,22 +14,17 @@ const FacultyPage = () => {
 const facultyName = location.state?.facultyName || 'Faculty'; 
 const [resources, setResources] = useState([]);
 const [userFavorites, setUserFavorites] = useState([]);
+const [loading, setLoading] = useState(true);//////////
 const [error, setError] = useState('');
 const history = useHistory();
 const backendURL = 'http://localhost:3002';
 const { facultyId } = useParams();
 const { authToken, refreshTokenFunc } = useContext(AuthContext);
 
+const [isModalOpen, setIsModalOpen] = useState(false);
 
 
 const facultyImageFilename = facultyName.toLowerCase().replace(/ /g, '-');
-
-const resourcesContainerStyle = {
-  position: 'relative', // This ensures the resources are positioned above the background
-  zIndex: 2, // Higher z-index to ensure the resources are above the fixed background
-  overflowY: 'scroll', // Allows for vertical scrolling
-  maxHeight: '100vh', // Optional: ensures the container does not exceed the height of the viewport
-};
 const backgroundImage = `/images/${facultyImageFilename}.png`;
 const pageStyle = {
   backgroundRepeat: 'no-repeat',
@@ -40,7 +36,6 @@ const pageStyle = {
 
 };
 useEffect(() => {
-  // Set the background style when the component mounts
   document.body.style.backgroundImage = `url(${backgroundImage})`;
   document.body.style.backgroundSize = 'cover';
   document.body.style.backgroundRepeat = 'no-repeat';
@@ -51,7 +46,6 @@ useEffect(() => {
   document.body.style.padding = '0';
   document.body.style.height = '100vh';
 
-  // Reset the background style when the component unmounts
   return () => {
     document.body.style.background = '';
     document.body.style.overflow = '';
@@ -64,12 +58,17 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchResources = async () => {
+
       try {
+        setLoading(true); ///////////
         const resourcesResponse = await axios.get(`${backendURL}/api_resource/faculty/${facultyId}`);
         setResources(resourcesResponse.data.resource_list);
       } catch (err) {
         console.error('Error fetching faculty resources:', err);
         setError(err.response?.data?.error || 'An error occurred while fetching resources.');
+      }
+      finally {
+        setLoading(false); 
       }
     };
 
@@ -130,7 +129,9 @@ useEffect(() => {
   return (
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">
+
         <div className="faculty-container">
+
           {resources.length > 0 ? (
             resources.map((resource) => (
               <DocumentCard

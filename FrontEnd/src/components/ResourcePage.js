@@ -137,7 +137,7 @@ const ResourcePage = () => {
             Download
           </a>
           <button 
-            className={`favorite-button ${isFavorited ? 'active' : ''}`} 
+            className={`favorite-button ${isFavorited ? '\u2605' : '\u2606'}`} 
             onClick={handleFavButtonClick}
           >
             {isFavorited ? '★' : '☆'}

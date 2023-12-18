@@ -177,7 +177,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
           </div>
           <div className="card-description">
             {document.Description || "No description provided"}
-              <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
+            <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
                 {isFavorited ? '\u2605' : '\u2606'}
                 {showLoginPrompt && (
                   <span className="login-tooltip">Log in to add</span>

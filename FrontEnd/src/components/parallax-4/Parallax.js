@@ -68,7 +68,7 @@ const gsapInit = () => {
 const sectionsData = [
   { title: 'Explore our FDRS', image: image2 },
   { title: 'Explore Our Faculties',image:image2},
-  { title: 'Website', image: image3 },
+  { title: 'Top favioarted resources ', image: image2 },
 ];
 
 export const Parallax = () => {

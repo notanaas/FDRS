@@ -33,7 +33,7 @@ const FacultyButtons = () => {
     fetchFaculties();
   }, []);
 
-  if (loading) return <div>          <Header isLoading={loading} /> {/* @saif */}  </div>;
+  if (loading) return <div> <Header isLoading={loading} /> {/* @saif */}  </div>;
   if (error) return <div>Error: {error}</div>;
 
   const goToFacultyPage = (faculty) => {
@@ -41,7 +41,7 @@ const FacultyButtons = () => {
       pathname: `/faculty/${faculty._id}`,
       state: { 
         facultyName: faculty.FacultyName,
-        backgroundImage: `images/${faculty.backgroundImage}` // Assuming you've added backgroundImage field to your faculty objects
+        backgroundImage: `images/${faculty.backgroundImage}` 
       }
     });
   };

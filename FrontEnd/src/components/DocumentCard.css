@@ -2,22 +2,71 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  padding-top: 50px; /* Adds space at the top */
+  align-content: flex-start; /* Aligns content to the top, leaving space at the bottom */
 }
 
 .card {
   position: relative;
   flex: 0 1 calc(33.333% - 1rem); /* 3 cards per row, accounting for margin */
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 15px;
-  border-radius: 8px;
   margin: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  border: 1px solid;
-  overflow: hidden;
+  border-radius: 8px;
   cursor: pointer;
-  border-color: #fff;
-  color: #fff;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 200px; /* Larger fixed height for cards */
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-cover {
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: 8px; /* Rounded corners for the image */
+}
+
+
+.card-content {
+  z-index: 2;
+  position: absolute;
+  top: 50%; /* Vertically center */
+  left: 50%; /* Horizontally center */
+  transform: translate(-50%, -50%); /* Offset the positioning */
+  padding: 15px; /* Padding inside the card */
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.5rem; /* Adjustable font size */
+  font-weight: bold;
+  color: #ffffff; /* White text color */
 }
 
 .card-description {
@@ -80,12 +129,7 @@
   margin-bottom: 15px;
 }
 
-.card-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
+
 
 .card-actions {
   display: flex;
@@ -116,22 +160,7 @@
   color: #d9534f;
 }
 
-@media (max-width: 992px) {
-  .card-container {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
 
-@media (max-width: 768px) {
-  .card-container {
-    grid-template-columns: 1fr;
-    flex-direction: column;
-  }
-  .card .authButton {
-    max-width: 100%;
-    flex-basis: auto; 
-  }
-}
 
 button.trashButton {
   background-color: transparent !important; 
@@ -163,5 +192,25 @@ button.trashButton:hover {
     background: linear-gradient(45deg, rgb(4, 52, 185) 0%, #3885e9 100%);
     position: relative;
     z-index: 0;
+  }
+}
+@media (max-width: 992px) {
+  .card {
+    flex: 0 1 calc(50% - 1rem); 
+  }
+}
+
+@media (max-width: 768px) {
+  .card-container {
+    padding-top: 20px; 
+  }
+
+  .card {
+    flex: 0 1 100%; 
+    height: 200px; 
+  }
+
+  .card-cover {
+    height: 200px; 
   }
 }

@@ -3,11 +3,8 @@ import gsap from 'gsap';
 import { Observer } from 'gsap/all';
 import './styles.css';
 
-// Placeholder images, replace these imports with your actual images
-import image1 from './1.jpg';
 import image2 from './2.jpg';
-import image3 from './3.jpg';
-import FacultyButtons from '../FacultyButtons'; // Make sure to import your FacultyButtons component
+import FacultyButtons from '../FacultyButtons'; 
 
 // Function to initialize GSAP animations
 const gsapInit = () => {

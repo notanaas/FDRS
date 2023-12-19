@@ -185,13 +185,7 @@ bodY {
   position: relative;
   z-index: 1;
 }
-.faculty-buttons {
-  height: 100vh; /* Full height of the viewport */
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Center the buttons vertically */
-  align-items: center; /* Center the buttons horizontally */
-}
+
 .faculty-button::before {
   content: '';
   background: rgba(0, 0, 0, 0.5); /* Adjust black overlay opacity as needed */

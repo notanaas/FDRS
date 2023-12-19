@@ -101,17 +101,17 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   };
     const stopPropagation = (e) => e.stopPropagation();
     const CardContent = () => {
-
+      const cardStyle = {
+        backgroundImage: `url(${backendURL}/api_resource/cover/${document._id})`
+      };
+    
     switch (cardType) {
       case 'adminActions':
         return (
-          <div className={cardClassName} onClick={onClick}>
-            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-            <div className="card-content">
-              <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <h3 className="card-author">
-                Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}
-              </h3>
+          <div className="card" style={cardStyle} onClick={goToResourceDetail}>
+      <div className="card-content">
+        <h3 className="card-title">{document.Title || "Untitled"}</h3>
+             
               <h3>Faculty: {document.Faculty?.FacultyName || "No faculty name provided"}</h3>
               <h3 className="card-uploader">Uploader: {document.User.Email}</h3>
             </div>
@@ -133,11 +133,9 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
 
         case 'resource':
           return (
-            <div className="card" onClick={onClick}>
-              <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-              <div className="card-content">
-                <h3 className="card-title">{document.Title || "Untitled"}</h3>
-                <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
+            <div className="card" style={cardStyle} onClick={goToResourceDetail}>
+            <div className="card-content">
+              <h3 className="card-title">{document.Title || "Untitled"}</h3>
               </div>
               <div className="card-description">
                 <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
@@ -152,11 +150,9 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
           );
       case 'favorite':
         return (
-          <div className={cardClassName} onClick={onClick}>
-            <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-            <div className="card-content">
-              <h3 className="card-title">{document.Title || "Untitled"}</h3>
-              <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
+          <div className="card" style={cardStyle} onClick={goToResourceDetail}>
+      <div className="card-content">
+        <h3 className="card-title">{document.Title || "Untitled"}</h3>
             </div>
             <div className="card-description">
               <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
@@ -169,11 +165,9 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
 
       case 'faculty':
         return (
-          <div className={cardClassName} onClick={onClick}>
-          <img src={`${backendURL}/api_resource/cover/${document._id}`} alt={document.Title || "Document cover"} className="card-cover" />
-          <div className="card-content">
-            <h3 className="card-title">{document.Title || "Untitled"}</h3>
-            <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
+          <div className="card" style={cardStyle} onClick={goToResourceDetail}>
+      <div className="card-content">
+        <h3 className="card-title">{document.Title || "Untitled"}</h3>
           </div>
           <div className="card-description">
             {document.Description || "No description provided"}

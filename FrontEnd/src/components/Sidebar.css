@@ -34,6 +34,17 @@
   height: 35px;
 }
 
+@media (max-width: 768px) {
+  .profile-button img {
+    margin-right: 10px;
+    height: 24px;
+    border-radius: 50px;
+    width: 35px;
+    height: 35px;
+    z-index: 1;
+  }
+} 
+
 .profile-button:hover {
   background-color: #ffffff0c;
 }

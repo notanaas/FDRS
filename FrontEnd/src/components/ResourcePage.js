@@ -5,6 +5,15 @@ import Comments from './Comments';
 import { AuthContext } from './context/AuthContext';
 import { CSSTransition } from 'react-transition-group';
 import Header from './Header';
+import {
+  FacebookShareButton,
+  LinkedinShareButton,
+  TwitterShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  LinkedinIcon
+} from 'react-share';
+
 import './ResourcePage.css';
 
 const ResourcePage = () => {
@@ -18,7 +27,9 @@ const ResourcePage = () => {
 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [inProp, setInProp] = useState(false);
-  const [loading, setLoading] = useState(true);//////////
+  const [loading, setLoading] = useState(true);
+  const shareUrl = window.location.href;
+  const title = 'Check out this resource!';
 
     
   useEffect(() => {
@@ -106,6 +117,14 @@ const ResourcePage = () => {
     }
     toggleFavorite();
   };
+  const copyToClipboard = () => {
+    const url = window.location.href; 
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link copied to clipboard!');
+    }, (err) => {
+      console.error('Could not copy text: ', err);
+    });
+  };
 
   return (
     <CSSTransition in={inProp} timeout={300} classNames="fade" appear>
@@ -126,6 +145,15 @@ const ResourcePage = () => {
           <p className="user-email">{resourceDetails.User.Email}</p>
 
         </div>
+        <div className="share-buttons">
+        <FacebookShareButton url={shareUrl} quote={title}>
+          <FacebookIcon size={32} round />
+        </FacebookShareButton>
+        <button onClick={copyToClipboard}>Copy Link</button>
+        <LinkedinShareButton url={shareUrl}>
+          <LinkedinIcon size={32} round />
+        </LinkedinShareButton>
+      </div>
 
         <div className="resource-actions">
           <a 

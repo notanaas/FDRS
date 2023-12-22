@@ -130,3 +130,21 @@ body {
     font-size: 14px;
   }
 }
+.share-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+button {
+  /* Add your button styling here */
+  padding: 10px 15px;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect,useLocation} from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import ResourcePage from './ResourcePage';
 import FacultyPage from './FacultyPage';
@@ -17,10 +17,9 @@ function App() {
   const location = useLocation();
   const isFacultyPage = location.pathname.includes('/faculty/');
   const backendURL = 'http://localhost:3002';
-  const [loading, setLoading] = useState(true);//////////
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Configure Axios defaults for every request
     const configureAxios = () => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -28,7 +27,6 @@ function App() {
       }
     };
 
-    // Add Axios response interceptor
     const setupAxiosInterceptors = () => {
       axios.interceptors.response.use(response => {
         return response;
@@ -38,17 +36,14 @@ function App() {
           originalRequest._retry = true;
           try {
             const refreshToken = localStorage.getItem('refreshToken');
-            // Call your refresh token endpoint
             const tokenResponse = await axios.post(`${backendURL}/api_auth/refreshToken`, { refreshToken });
             const { accessToken } = tokenResponse.data;
-            // Update the local storage and original request with new token
             localStorage.setItem('token', accessToken);
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
             originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-            return axios(originalRequest); // Retry the original request with the new token
+            return axios(originalRequest);
           } catch (refreshError) {
             console.error('Error refreshing token:', refreshError);
-            // Handle token refresh error (e.g., logout user, redirect to login)
           }
         }
         return Promise.reject(error);
@@ -59,14 +54,30 @@ function App() {
     setupAxiosInterceptors();
   }, []);
 
+  // ProtectedRoute component
+  const ProtectedRoute = ({ component: Component, ...rest }) => {
+    const isAuthenticated = localStorage.getItem('token') ? true : false;
+
+    return (
+      <Route
+        {...rest}
+        render={props =>
+          isAuthenticated ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to="/welcomingpage" />
+          )
+        }
+      />
+    );
+  };
+
   return (
     <Router>
       <AuthProvider>
         <RouteParamsProvider>
-
           <div className="App">
-          <Header setIsModalOpen={setIsModalOpen} />
-
+            <Header setIsModalOpen={setIsModalOpen} />
             {isModalOpen && (
               <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
             )}
@@ -74,7 +85,7 @@ function App() {
               <Switch>
                 <Route path="/welcomingpage" exact component={WelcomingPage} />
                 <Route path="/reset-password" component={PasswordReset} />
-                <Route path="/my-profile" component={MyProfile} />
+                <ProtectedRoute path="/my-profile" component={MyProfile} />
                 <Route path="/faculty/:facultyId" component={FacultyPage} />
                 <Route path="/resource/:resourceId" component={ResourcePage} />
               </Switch>

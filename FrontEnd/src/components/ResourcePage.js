@@ -149,7 +149,7 @@ const ResourcePage = () => {
         <FacebookShareButton url={shareUrl} quote={title}>
           <FacebookIcon size={32} round />
         </FacebookShareButton>
-        <button onClick={copyToClipboard}>Copy Link</button>
+        <button className='btncopy' onClick={copyToClipboard}>Copy Link</button>
         <LinkedinShareButton url={shareUrl}>
           <LinkedinIcon size={32} round />
         </LinkedinShareButton>

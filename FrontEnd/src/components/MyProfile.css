@@ -128,7 +128,7 @@ body {
   width: 70%;
   box-sizing: border-box;
   border: 1px solid black;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 /* Style for the content inside the accordion */
@@ -179,13 +179,17 @@ body {
   display: grid;
   width: 50%;
   justify-content: center;
-  margin: 5px;
+  margin: 15px;
   margin-left: 276px;
 }
 
 .edit-profile .inputBar {
   padding: 7px;
   font-size: large;
+}
+
+.edit-profile label {
+  font-size: medium;
 }
 
 .edit-profile .authButton {

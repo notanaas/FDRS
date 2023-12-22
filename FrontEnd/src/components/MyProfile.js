@@ -270,9 +270,9 @@ const MyProfile = () => {
       <Accordion title="User Profile Information">
         {isEditMode ? (
           <div className="edit-profile">
-            <label htmlFor="username">Username:</label>
+            <label htmlFor="username"><b>Username:</b></label>
             <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email"><b>Email:</b></label>
             <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
             <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
             <button className="authButton" onClick={handleEditToggle}>Cancel</button>

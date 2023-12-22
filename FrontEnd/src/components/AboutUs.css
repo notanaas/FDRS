@@ -1,0 +1,20 @@
+/* AboutUs.css */
+.about-us-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+.about-us-page section {
+  margin-bottom: 20px;
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+

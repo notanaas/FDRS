@@ -13,3 +13,7 @@
 .about-us, .contact-us {
   flex-basis: 45%;
 }
+.footer a {
+  color: #fff; 
+  text-decoration: none;
+}

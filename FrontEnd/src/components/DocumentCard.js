@@ -99,11 +99,18 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
       onDelete(document._id);
     }
   };
+  const handleDeleteFeedback = async (e, feedbackId) => {
+    e.stopPropagation(); // Stop click event from bubbling up
+    console.log(`Attempting to delete feedback with ID: ${feedbackId}`); // Debugging log
+    await deleteFeedback(feedbackId);
+  };
     const stopPropagation = (e) => e.stopPropagation();
     const CardContent = () => {
       const cardStyle = {
         backgroundImage: `url(${backendURL}/api_resource/cover/${document._id})`
       };
+    
+    
     
     switch (cardType) {
       case 'adminActions':
@@ -184,13 +191,15 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
       case 'feedback':
         return (
           <div className={cardClassName}>
-            <div >
-              <h3><strong>Email:</strong> {document.User.Email}</h3>
-              <h3><strong>Feedback:</strong> {document.SearchText}</h3>
-              <div >
-                <button className="authButton" onClick={(e) => { e.stopPropagation(); deleteFeedback(document._id); }}>
-                  Delete Feedback
-                </button>
+          <div>
+            <h3><strong>Email:</strong> {document.User.Email}</h3>
+            <h3><strong>Feedback:</strong> {document.SearchText}</h3>
+            <div>
+              <button 
+                className="authButton" 
+                onClick={(e) => handleDeleteFeedback(e, document._id)}>
+                Delete Feedback
+              </button>
                 <button onClick={() => sendEmail(document.User.Email)} className="authButton">
                   Send Email
                 </button>

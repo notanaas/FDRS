@@ -146,6 +146,7 @@ useEffect(() => {
             <p>No resources found for this faculty.</p>
           )}
         </div>
+        
       </div>
     </CSSTransition>
   );

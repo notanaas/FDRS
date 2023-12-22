@@ -9,6 +9,8 @@ import MyProfile from './MyProfile';
 import { AuthProvider } from './context/AuthContext';
 import FileUpload from './FileUpload';
 import Header from './Header';
+import Footer from './Footer';
+import AboutUs from './AboutUs';
 import { RouteParamsProvider } from './context/RouteParamsContext';
 import './App.css';
 
@@ -84,12 +86,15 @@ function App() {
             <div className="contentContainer">
               <Switch>
                 <Route path="/welcomingpage" exact component={WelcomingPage} />
+                <Route path="/about-us" exact component={AboutUs} />
+
                 <Route path="/reset-password" component={PasswordReset} />
                 <ProtectedRoute path="/my-profile" component={MyProfile} />
                 <Route path="/faculty/:facultyId" component={FacultyPage} />
                 <Route path="/resource/:resourceId" component={ResourcePage} />
               </Switch>
             </div>
+            <Footer/>
           </div>
         </RouteParamsProvider>
       </AuthProvider>

@@ -1,0 +1,15 @@
+.footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+}
+
+.about-us, .contact-us {
+  flex-basis: 45%;
+}

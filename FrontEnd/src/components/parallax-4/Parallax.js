@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import gsap from 'gsap';
 import { Observer } from 'gsap/all';
 import './styles.css';
+import Footer from '../Footer'; // Adjust the path as necessary
 
 import image2 from './2.jpg';
 import FacultyButtons from '../FacultyButtons'; 
@@ -91,6 +92,7 @@ export const Parallax = () => {
   <span>Explore our faculties</span>
 </div>
 : null}
+                {index === 2 ? <Footer /> : null}
 
               </div>
             </div>

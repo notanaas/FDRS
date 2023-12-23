@@ -33,6 +33,7 @@ section .bg {
 }
 section .bg h2 {
   z-index: 2;
+  margin-top: 100px;
 }
 section .bg .clip-text {
   overflow: hidden;

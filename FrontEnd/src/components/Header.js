@@ -63,7 +63,7 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState(''); 
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [setLoading] = useState(true);//////////
+  const [loading,setLoading] = useState(true);//////////
   const PASSWORD_VISIBILITY_TIMEOUT = 5000;
 
   const goToUserProfile = () => {

@@ -137,14 +137,14 @@ const Header = ({ setIsModalOpen,isLoading }) => {
   
     setTimeout(() => {
       setShowLoginPassword(false);
-    }, 5000); // 5000 milliseconds = 5 seconds
+    }, 5000); 
   };
   const toggleSignupPasswordVisibility = () => {
     setShowSignupPassword(true);
   
     setTimeout(() => {
       setShowSignupPassword(false);
-    }, 5000); // 5000 milliseconds = 5 seconds
+    }, 5000); 
   };
   
   const handleSignupSubmit = async (e) => {

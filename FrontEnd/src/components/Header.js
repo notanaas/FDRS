@@ -64,7 +64,9 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState(''); 
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
-  
+  const [loading, setLoading] = useState(true);//////////
+  const PASSWORD_VISIBILITY_TIMEOUT = 5000;
+
   const goToUserProfile = () => {
     history.push('/my-profile');
   };
@@ -121,10 +123,6 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     clearFormFields();
   };
 
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-    clearFormFields();
-  };
   const handleForgotPassword = () => {
     setPasswordResetEmail(email);
     setPassword('');
@@ -132,22 +130,24 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     setIsSignupOpen(false); 
     setIsForgotPasswordOpen(true);
   };
-  const toggleLoginPasswordVisibility = () => {
+  const toggleLoginPasswordVisibility = (event) => {
+    event.preventDefault(); 
     setShowLoginPassword(true);
-  
     setTimeout(() => {
       setShowLoginPassword(false);
-    }, 5000); 
+    }, PASSWORD_VISIBILITY_TIMEOUT);
   };
-  const toggleSignupPasswordVisibility = () => {
-    setShowSignupPassword(true);
   
-    setTimeout(() => {
+  const toggleSignupPasswordVisibility = (event) => {
+    event.preventDefault(); 
+    setShowSignupPassword(true);
+      setTimeout(() => {
       setShowSignupPassword(false);
-    }, 5000); 
+    }, PASSWORD_VISIBILITY_TIMEOUT);
   };
   
   const handleSignupSubmit = async (e) => {
+    setLoading(true); 
     e.preventDefault();
   
     if (!signupData.username.trim() || signupData.username.length < 3) {
@@ -182,12 +182,16 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
         setSignupErrorMessage('Signup failed. Please try again.');
       }
     }
+    finally{
+      setLoading(false);
+    }
   };
   
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
     setLoginErrorMessage('');
+    setLoading(true); 
 
     if (!usernameOrEmail || !password) {
       setLoginErrorMessage('Username/Email and password are required.');
@@ -231,6 +235,9 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
         : 'Login failed. Please try again later.';
       setLoginErrorMessage(errorMessage);
     }
+    finally {
+      setLoading(false); // End loading
+    }
 };
 
   const handleLogout = async () => {
@@ -240,6 +247,7 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     e.preventDefault();
     setForgotPasswordErrorMessage('');
     setSuccessMessage('');
+    setLoading(true); // Start loading
 
     if (!forgotPasswordData.email) {
       setForgotPasswordErrorMessage('Email is required.');
@@ -258,6 +266,9 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     } catch (error) {
       handleAPIError(error);
       setForgotPasswordData({ email: '' });
+    }
+    finally{
+      setLoading(false);
     }
   };
   const handleAPIError = (error) => {
@@ -284,21 +295,10 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     setSuccessMessage('');
     setErrorMessage('');
   };
-  const handleBackToLogin = () => {
-    setPasswordResetEmail(false);
-    setPassword('');
-    setIsForgotPasswordOpen(false);
-    setIsLoginModalOpen(true);
-  };
   
-
   const handleForgotPasswordInputChange = (e) => {
     setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
   };
-
-
-  
-
   const closeFileUpload = () => {
     setIsFileUploadOpen(false); 
   };
@@ -310,7 +310,6 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     }
     setIsModalOpen(true); 
   };
-
   const handleSearchUpdate = (searchResults) => {
     onSearch(searchResults);
   };
@@ -391,9 +390,10 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
           onChange={handleSignupInputChange}
           placeholder="Password"
         />
-        <button onClick={toggleSignupPasswordVisibility} className="password-toggle">
-          {showSignupPassword ? 'Hide' : 'Show'}
-        </button>
+       <button onClick={(e) => toggleSignupPasswordVisibility(e)} className="password-toggle">
+  {showSignupPassword ? 'Hide' : 'Show'}
+</button>
+
       <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
     <button type="submit" className="authButton">Submit</button>
   </form>
@@ -452,9 +452,9 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
               required
             />
           </div>
-          <button onClick={toggleLoginPasswordVisibility} className="password-toggle">
-          {showLoginPassword ? 'Hide' : 'Show'}
-        </button>
+          <button onClick={(e) => toggleLoginPasswordVisibility(e)} className="password-toggle">
+  {showLoginPassword ? 'Hide' : 'Show'}
+</button>
           <button type="submit" className="authButton" onClick={handleLoginSubmit}>Login</button>
           <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
         </form>

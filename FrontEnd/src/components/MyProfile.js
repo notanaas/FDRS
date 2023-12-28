@@ -105,6 +105,7 @@ const MyProfile = () => {
 
   const handlePasswordResetRequest = async () => {
     try {
+      setLoading(true); ///////////
       const response = await axios.post(`${backendURL}/api_auth/forgot-password`, { email: profile.email }, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
@@ -119,6 +120,8 @@ const MyProfile = () => {
       setErrorMessage(error.response?.data?.message || 'Failed to request password reset.');
       setShowErrorMessage(true);
       setTimeout(() => setShowErrorMessage(false), 5000);
+    }finally {
+      setLoading(false); 
     }
   };
 
@@ -154,6 +157,7 @@ const MyProfile = () => {
     };
 
     try {
+      setLoading(true); ///////////
       const response = await axios.put(`${backendURL}/api_user/update_profile`, updateData, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
@@ -178,6 +182,8 @@ const MyProfile = () => {
       setErrorMessage(error.response?.data?.message || 'Failed to update profile.');
       setShowErrorMessage(true);
       setTimeout(() => setShowErrorMessage(false), 5000);
+    }finally {
+      setLoading(false); 
     }
   };
 

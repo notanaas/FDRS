@@ -213,7 +213,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
         setIsLoggedIn(true);
         setIsAdmin(user.isAdmin);
         setUser(user); 
-
+        setSuccessMessage('Login Successful');
         setIsLoginModalOpen(false);
         setEmail('');
         setPassword('');

@@ -101,14 +101,29 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
     validateField('authorFirstName', authorFirstName);
     validateField('authorLastName', authorLastName);
     validateField('description', description);
-
+  
+    // Validate file and image fields
+    let fileErrors = {};
+    if (!file) {
+      fileErrors.file = "Document file is required";
+    }
+    if (!img) {
+      fileErrors.img = "Image file is required";
+    }
+    setValidationErrors(prevErrors => ({ ...prevErrors, ...fileErrors }));
+  
+    // Check for any validation errors
+    const hasErrors = () => {
+      return Object.keys(validationErrors).length > 0 || fileErrors.file || fileErrors.img;
+    };
+  
     // Wait for a tick to ensure state updates
     setTimeout(async () => {
-      if (Object.keys(validationErrors).length > 0 || !file || !img) {
+      if (hasErrors()) {
         setError('Please correct the errors before submitting.');
         return;
       }
-
+  
       // Proceed with form submission...
       const formData = new FormData();
       formData.append('title', title);
@@ -117,11 +132,11 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
       formData.append('description', description);
       formData.append('file', file);
       formData.append('img', img);
-
+  
       if (isAdmin) {
         formData.append('isApproved', true);
       }
-
+  
       try {
         const response = await axios.post(uploadURL, formData, {
           headers: {
@@ -129,7 +144,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
             'Authorization': `Bearer ${authToken}`
           }
         });
-
+  
         if (response.status === 201) {
           setSuccessMessage('Document uploaded successfully');
           setError('');
@@ -145,6 +160,8 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
       }
     }, 0);
   };
+  
+
 
   const closeModal = () => {
     setIsModalOpen(false); 

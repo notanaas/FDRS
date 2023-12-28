@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useHistory } from 'react-router-dom'; // Import useHistory
+import { useLocation, useHistory } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'; // Corrected import statement
 import './App.css';
 
 const PasswordReset = () => {
@@ -10,24 +11,35 @@ const PasswordReset = () => {
   const [message, setMessage] = useState('');
   const [userId, setUserId] = useState('');
   const [token, setToken] = useState('');
+  const [isTokenValid, setIsTokenValid] = useState(true); // State to track token validity
   const location = useLocation();
-  const history = useHistory(); 
+  const history = useHistory();
+  const [showPassword, setShowPassword] = useState(false);
   const url = `${backendURL}/api_auth/post_reset-password/${userId}/${token}`;
 
-  // Extract id and token from URL
   useEffect(() => {
-    // Assuming the URL is "/reset-password/:userId/:token"
     const pathSegments = location.pathname.split('/');
     if (pathSegments.length >= 4) {
-      const userIdFromURL = pathSegments[2]; // '65488aaeae5efb44d9d76136'
-      const tokenFromURL = pathSegments[3]; // The JWT token part
+      const userIdFromURL = pathSegments[2];
+      const tokenFromURL = pathSegments[3];
       setUserId(userIdFromURL);
       setToken(tokenFromURL);
+
+      // Decode the token
+      try {
+        const decodedToken = jwtDecode(tokenFromURL);
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp < currentTime) {
+          setIsTokenValid(false);
+          setMessage("This password reset link has expired. Please request a new one.");
+        }
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        setIsTokenValid(false);
+        setMessage("Invalid token. Please check your link or request a new one.");
+      }
     }
   }, [location]);
-  
-
-  // ... rest of the imports and component
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,64 +49,65 @@ const PasswordReset = () => {
     }
   
     try {
-      // The URL here should match the POST route defined in your Express router
       const response = await axios.post(url, {
         password,
       });
       setMessage(response.data.message);
-      history.push('/WelcomingPage'); 
+      history.push('/WelcomingPage'); // Redirect to welcoming page after successful password reset
     } catch (error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error('Error data:', error.response.data);
-        console.error('Error status:', error.response.status);
-        console.error('Error headers:', error.response.headers);
         setMessage(error.response.data.message || 'Failed to reset password. Please try again later.');
       } else if (error.request) {
-        // The request was made but no response was received
-        console.error('Error request:', error.request);
         setMessage('No response received. Please try again later.');
       } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error message:', error.message);
         setMessage('Error sending request. Please try again later.');
       }
     }
   };
+  const togglePasswordVisibility = () => {
+    setShowPassword(true);
   
+    setTimeout(() => {
+      setShowPassword(false);
+    }, 5000); 
+  };
   
-
-
   return (
     <div className="password-reset-container">
       <h1>Reset Your Password</h1>
       {message && <div className="message">{message}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group1">
-          <label className='input-Box' htmlFor="password">New Password:</label>
-          <input
-            type="password"
-            placeholder='New Password:'
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group1">
-          <label className='input-Box' htmlFor="confirmPassword">Confirm New Password:</label>
-          <input
-            type="password"
-            placeholder='Confirm New Password:'
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="submit-button">Reset Password</button>
-      </form>
+      {!isTokenValid ? (
+        <p>Token is invalid or expired. Please request a new password reset.</p>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div className="form-group1">
+            <label className='input-Box' htmlFor="password">New Password:</label>
+            <input
+          type={showPassword ? "text" : "password"}
+          placeholder='New Password:'
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button onClick={togglePasswordVisibility} className="password-toggle">
+          {showPassword ? 'Hide' : 'Show'}
+        </button>
+          </div>
+          <div className="form-group1">
+            <label className='input-Box' htmlFor="confirmPassword">Confirm New Password:</label>
+            <input
+              type="password"
+              placeholder='Confirm New Password:'
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="submit-button">Reset Password</button>
+        </form>
+      )}
     </div>
   );
 };

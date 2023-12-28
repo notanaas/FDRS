@@ -56,10 +56,8 @@ function App() {
     setupAxiosInterceptors();
   }, []);
 
-  // ProtectedRoute component
   const ProtectedRoute = ({ component: Component, ...rest }) => {
     const isAuthenticated = localStorage.getItem('token') ? true : false;
-
     return (
       <Route
         {...rest}
@@ -73,7 +71,6 @@ function App() {
       />
     );
   };
-
   return (
     <Router>
       <AuthProvider>
@@ -85,9 +82,11 @@ function App() {
             )}
             <div className="contentContainer">
               <Switch>
+                <Route exact path="/">
+                  <Redirect to="/welcomingpage" />
+                </Route>
                 <Route path="/welcomingpage" exact component={WelcomingPage} />
                 <Route path="/about-us" exact component={AboutUs} />
-
                 <Route path="/reset-password" component={PasswordReset} />
                 <ProtectedRoute path="/my-profile" component={MyProfile} />
                 <Route path="/faculty/:facultyId" component={FacultyPage} />

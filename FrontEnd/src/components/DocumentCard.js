@@ -175,6 +175,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
           <div className="card" style={cardStyle} onClick={goToResourceDetail}>
       <div className="card-content">
         <h3 className="card-title">{document.Title || "Untitled"}</h3>
+        <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
           </div>
           <div className="card-description">
             {document.Description || "No description provided"}

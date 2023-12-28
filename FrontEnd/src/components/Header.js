@@ -61,7 +61,10 @@ const Header = ({ setIsModalOpen,isLoading }) => {
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
   const facultyName = location.state?.facultyName || 'Faculty'; 
-
+  const [usernameOrEmail, setUsernameOrEmail] = useState(''); // New state for combined username/email input
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  
   const goToUserProfile = () => {
     history.push('/my-profile');
   };
@@ -126,36 +129,74 @@ const Header = ({ setIsModalOpen,isLoading }) => {
     setPasswordResetEmail(email);
     setPassword('');
     setIsLoginModalOpen(false);
-    setIsSignupOpen(false); // Close signup modal if open
+    setIsSignupOpen(false); 
     setIsForgotPasswordOpen(true);
   };
+  const toggleLoginPasswordVisibility = () => {
+    setShowLoginPassword(true);
+  
+    setTimeout(() => {
+      setShowLoginPassword(false);
+    }, 5000); // 5000 milliseconds = 5 seconds
+  };
+  const toggleSignupPasswordVisibility = () => {
+    setShowSignupPassword(true);
+  
+    setTimeout(() => {
+      setShowSignupPassword(false);
+    }, 5000); // 5000 milliseconds = 5 seconds
+  };
+  
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    if (passwordConfirm !== signupData.password) {
-      setLoginErrorMessage('Email and password are required.');
+  
+    if (!signupData.username.trim() || signupData.username.length < 3) {
+      setSignupErrorMessage('Username must be at least 3 characters long.');
       return;
     }
-
+  
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(signupData.email)) {
+      setSignupErrorMessage('Invalid email format.');
+      return;
+    }
+  
+    if (signupData.password.length < 6) {
+      setSignupErrorMessage('Password must be at least 6 characters long.');
+      return;
+    }
+    if (passwordConfirm !== signupData.password) {
+      setSignupErrorMessage('Passwords do not match.');
+      return;
+    }
+  
     try {
       const response = await axiosInstance.post(`${backendURL}/api_auth/register`, signupData);
       setSuccessMessage('Registration successful: ' + response.data.message);
       closeSignupModal();
     } catch (error) {
-      setLoginErrorMessage('Login failed. Please try again.');
+      if (error.response && error.response.data && error.response.data.errors) {
+        const backendErrors = error.response.data.errors.map(err => err.msg).join(", ");
+        setSignupErrorMessage(backendErrors);
+      } else {
+        setSignupErrorMessage('Signup failed. Please try again.');
+      }
     }
   };
+  
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
     setLoginErrorMessage('');
 
-    if (!email || !password) {
-      setLoginErrorMessage('Email and password are required.');
+    if (!usernameOrEmail || !password) {
+      setLoginErrorMessage('Username/Email and password are required.');
       return;
     }
 
     const loginData = {
-      email: email,
+      username: usernameOrEmail, 
+      email: usernameOrEmail,    
       password: password,
     };
 
@@ -164,24 +205,19 @@ const Header = ({ setIsModalOpen,isLoading }) => {
       const { token, refreshToken, user } = response.data;
 
       if (token) {
-        // Store the token, refresh token, and isAdmin status in localStorage
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isAdmin', user.isAdmin.toString());
 
-        // Update the AuthContext with the new user information
         setAuthToken(token);
         setIsLoggedIn(true);
         setIsAdmin(user.isAdmin);
-        setUser(user); // This updates the user information in the context
+        setUser(user); 
 
-        // Close the modal and clear form fields
         setIsLoginModalOpen(false);
         setEmail('');
         setPassword('');
 
-        // If you have a function that updates the login status in the context, use it
-        // Otherwise, you can directly set the states as shown above
         if (updateLoginStatus) {
           updateLoginStatus(true, user.isAdmin, user);
         }
@@ -190,12 +226,13 @@ const Header = ({ setIsModalOpen,isLoading }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      const errorMessage = error.response?.data?.errors?.length > 0
-        ? `Login failed: ${error.response.data.errors[0].msg}`
+      const errorMessage = error.response?.data?.message
+        ? error.response.data.message
         : 'Login failed. Please try again later.';
       setLoginErrorMessage(errorMessage);
     }
-  };
+};
+
   const handleLogout = async () => {
  logout();
   };
@@ -326,18 +363,40 @@ const Header = ({ setIsModalOpen,isLoading }) => {
         <FileUpload facultyId={facultyId} />
       )}
 
-<Modal isOpen={isSignupOpen} onClose={closeSignupModal} >
-        <label htmlFor="username"><h1>SignUp</h1></label>
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
-        <form onSubmit={handleSignupSubmit}>
-          <Input type="text" id="username" name="username" value={signupData.username} onChange={handleSignupInputChange} placeholder="Username" />
-          <Input type="email" id="email" name="email" value={signupData.email} onChange={handleSignupInputChange} placeholder="Email" />
-          <Input type="password" id="password" name="password" value={signupData.password} onChange={handleSignupInputChange} placeholder="Password" />
-          <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
-          <button type="submit" className="authButton">Submit</button>
-        </form>
-      </Modal>
+<Modal isOpen={isSignupOpen} onClose={closeSignupModal}>
+  <label htmlFor="username"><h1>SignUp</h1></label>
+
+  {successMessage && (
+    <div className="success-message">
+      {successMessage}
+    </div>
+  )}
+
+  {signupErrorMessage && (
+    <div className="error-message">
+      {signupErrorMessage}
+    </div>
+  )}
+
+  <form onSubmit={handleSignupSubmit}>
+    <Input type="text" id="username" name="username" value={signupData.username} onChange={handleSignupInputChange} placeholder="Username" />
+    <Input type="email" id="email" name="email" value={signupData.email} onChange={handleSignupInputChange} placeholder="Email" />
+    <Input 
+          type={showSignupPassword ? "text" : "password"}
+          id="password"
+          name="password"
+          value={signupData.password}
+          onChange={handleSignupInputChange}
+          placeholder="Password"
+        />
+        <button onClick={toggleSignupPasswordVisibility} className="password-toggle">
+          {showSignupPassword ? 'Hide' : 'Show'}
+        </button>
+      <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
+    <button type="submit" className="authButton">Submit</button>
+  </form>
+</Modal>
+
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} >
         <label htmlFor="username"><h1>Forget Password</h1></label>
         {successMessage && <div className="success-message">{successMessage}</div>}
@@ -354,18 +413,16 @@ const Header = ({ setIsModalOpen,isLoading }) => {
             </div>
           )}
           <button type="submit" className="authButton">
-            {passwordResetEmail ? 'Reset Password' : 'Send Verification Code'}
+            Send Reset Password Email
           </button>
-          {passwordResetEmail && (
-            <button className="authButton" onClick={handleBackToLogin}> Back to Login </button>
-          )}
+          
         </form>
       </Modal>
       <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} >
         <h1>Login</h1>
         {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
         <form onSubmit={handleLoginSubmit}>
-     
           <div className="form-group">
             <label htmlFor="usernameOrEmail">Username or Email:</label>
             <input
@@ -374,8 +431,8 @@ const Header = ({ setIsModalOpen,isLoading }) => {
               name="usernameOrEmail"
               className="inputBarH"
               placeholder="Username or Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={usernameOrEmail}
+              onChange={(e) => setUsernameOrEmail(e.target.value)}
               required
             />
           </div>
@@ -383,7 +440,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
           <div className="form-group">
             <label htmlFor="password">Password:</label>
             <input
-              type="password"
+              type={showLoginPassword ? "text" : "password"}
               id="password"
               name="password"
               className="inputBarH"
@@ -393,6 +450,9 @@ const Header = ({ setIsModalOpen,isLoading }) => {
               required
             />
           </div>
+          <button onClick={toggleLoginPasswordVisibility} className="password-toggle">
+          {showLoginPassword ? 'Hide' : 'Show'}
+        </button>
           <button type="submit" className="authButton">Login</button>
           <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
         </form>

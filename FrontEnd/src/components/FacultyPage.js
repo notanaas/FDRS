@@ -1,73 +1,68 @@
 import React, { useState, useEffect, useContext } from 'react';
 import DocumentCard from './DocumentCard';
-import Header from './Header';
 import axios from 'axios';
-import { useParams, useHistory,useLocation } from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
-import {jwtDecode} from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode'; 
 import { CSSTransition } from 'react-transition-group';
 
-const FacultyPage = () => {
+const FacultyPage = ({ searchTerm }) => {
   const { setRouteParams } = useContext(RouteParamsContext);
   const location = useLocation();
-const facultyName = location.state?.facultyName || 'Faculty'; 
-const [resources, setResources] = useState([]);
-const [userFavorites, setUserFavorites] = useState([]);
-const [loading, setLoading] = useState(true);//////////
-const [error, setError] = useState('');
-const history = useHistory();
-const backendURL = 'http://localhost:3002';
-const { facultyId } = useParams();
-const { authToken, refreshTokenFunc } = useContext(AuthContext);
+  const facultyName = location.state?.facultyName || 'Faculty'; 
+  const [resources, setResources] = useState([]);
+  const [filteredResources, setFilteredResources] = useState([]); // State for filtered resources
+  const [userFavorites, setUserFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const history = useHistory();
+  const backendURL = 'http://localhost:3002';
+  const { facultyId } = useParams();
+  const { authToken, refreshTokenFunc } = useContext(AuthContext);
 
-const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-const facultyImageFilename = facultyName.toLowerCase().replace(/ /g, '-');
-const backgroundImage = `/images/${facultyImageFilename}.png`;
-const pageStyle = {
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center center',
-  backgroundAttachment: 'fixed', // This will keep the background fixed during scrolling
-  minHeight: '100vh',
-  transform: 'scale(1.0)',
-  backgroundAttachment: 'fixed',
-
-};
-useEffect(() => {
-  document.body.style.backgroundImage = `url(${backgroundImage})`;
-  document.body.style.backgroundSize = 'cover';
-  document.body.style.backgroundRepeat = 'no-repeat';
-  document.body.style.backgroundAttachment = 'fixed';
-  document.body.style.backgroundPosition = 'center center';
-  document.body.style.margin = '0';
-  document.body.style.padding = '0';
-  document.body.style.height = '100vh';
-
-  return () => {
-    document.body.style.background = '';
-    document.body.style.overflow = '';
+  const facultyImageFilename = facultyName.toLowerCase().replace(/ /g, '-');
+  const backgroundImage = `/images/${facultyImageFilename}.png`;
+  const pageStyle = {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    backgroundAttachment: 'fixed', // This will keep the background fixed during scrolling
+    minHeight: '100vh',
+    transform: 'scale(1.0)',
+    backgroundAttachment: 'fixed',
   };
-}, [backgroundImage]);
+
+  useEffect(() => {
+    document.body.style.backgroundImage = `url(${backgroundImage})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundAttachment = 'fixed';
+    document.body.style.backgroundPosition = 'center center';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.height = '100vh';
+
+    return () => {
+      document.body.style.background = '';
+      document.body.style.overflow = '';
+    };
+  }, [backgroundImage]);
+
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
 
-
   useEffect(() => {
     const fetchResources = async () => {
-
       try {
-        setLoading(true); ///////////
-        const resourcesResponse = await axios.get(`${backendURL}/api_resource/faculty/${facultyId}`);
-        setResources(resourcesResponse.data.resource_list);
+        setLoading(true);
+        const response = await axios.get(`${backendURL}/api_resource/faculty/${facultyId}`);
+        setResources(response.data.resource_list);
+        setLoading(false);
       } catch (err) {
         console.error('Error fetching faculty resources:', err);
         setError(err.response?.data?.error || 'An error occurred while fetching resources.');
-      }
-      finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -93,6 +88,14 @@ useEffect(() => {
     }
   }, [authToken, backendURL]);
 
+  useEffect(() => {
+    const term = searchTerm ? searchTerm.toString().toLowerCase() : '';
+    const filtered = term
+      ? resources.filter(resource => resource.Title.toLowerCase().includes(term))
+      : resources;
+    setFilteredResources(filtered);
+  }, [searchTerm, resources]);
+
   const isResourceFavorited = resourceId => authToken && userFavorites.includes(resourceId);
 
   const handleCardClick = resourceId => {
@@ -100,7 +103,6 @@ useEffect(() => {
   };
 
   const toggleFavorite = async (resourceId) => {
-    // Refresh token if needed
     if (jwtDecode(authToken).exp < Date.now() / 1000) {
       await refreshTokenFunc();
     }
@@ -113,13 +115,17 @@ useEffect(() => {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
-      setUserFavorites(currentFavorites => isAlreadyFavorited
-        ? currentFavorites.filter(id => id !== resourceId)
-        : [...currentFavorites, resourceId]);
+      setUserFavorites(currentFavorites =>
+        isAlreadyFavorited ? currentFavorites.filter(id => id !== resourceId) : [...currentFavorites, resourceId]
+      );
     } catch (err) {
       console.error('Error toggling favorite:', err);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -128,11 +134,9 @@ useEffect(() => {
   return (
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">
-
         <div className="faculty-container">
-
-          {resources.length > 0 ? (
-            resources.map((resource) => (
+          {filteredResources.length > 0 ? (
+            filteredResources.map((resource) => (
               <DocumentCard
                 cardType="faculty"
                 key={resource._id}
@@ -146,11 +150,9 @@ useEffect(() => {
             <p>No resources found for this faculty.</p>
           )}
         </div>
-        
       </div>
     </CSSTransition>
   );
 };
-
 
 export default FacultyPage;

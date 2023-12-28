@@ -16,7 +16,27 @@ const PasswordReset = () => {
   const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
   const url = `${backendURL}/api_auth/post_reset-password/${userId}/${token}`;
+  const isProfilePage = location.pathname.includes(`/reset-password`);
+  const backgroundImage = `/my-profile.png`;
+  useEffect(() => {
+    const originalStyle = {
+      overflow: document.body.style.overflow,
+      backgroundImage: document.body.style.backgroundImage
+    };
 
+    // Apply styles
+    document.body.style.backgroundImage = `url(${backgroundImage})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundPosition = 'center center';
+    document.body.style.backgroundAttachment = 'fixed';
+
+    // Cleanup function to revert styles
+    return () => {
+      document.body.style.overflow = originalStyle.overflow;
+      document.body.style.backgroundImage = originalStyle.backgroundImage;
+    };
+  }, [backgroundImage]);
   useEffect(() => {
     const pathSegments = location.pathname.split('/');
     if (pathSegments.length >= 4) {

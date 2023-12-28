@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
@@ -10,7 +10,7 @@ import './Header.css';
 import { RouteParamsContext } from './context/RouteParamsContext';
 import './Sidebar.css';
 
-const Sidebar = ({ }) => {
+const Sidebar = () => {
   return (
     <div className="sidebar">
       <FacultyButtons />
@@ -31,7 +31,7 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const { updateLoginStatus, isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin, user, setUser, authToken, setAuthToken, refreshToken,logout } = useContext(AuthContext);
+  const { updateLoginStatus, isLoggedIn, setIsLoggedIn, setIsAdmin, setUser, authToken, setAuthToken,logout } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -46,13 +46,12 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     email: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginError, setLoginError] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [passwordResetEmail, setPasswordResetEmail] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [signupErrorMessage, setSignupErrorMessage] = useState('');
-  const [ForgotPasswordErrorMessage, setForgotPasswordErrorMessage] = useState('');
+  const [setForgotPasswordErrorMessage] = useState('');
   const history = useHistory();
   const [successMessage, setSuccessMessage] = useState(null);
   const location = useLocation();
@@ -64,7 +63,7 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState(''); 
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [loading, setLoading] = useState(true);//////////
+  const [setLoading] = useState(true);//////////
   const PASSWORD_VISIBILITY_TIMEOUT = 5000;
 
   const goToUserProfile = () => {
@@ -77,12 +76,10 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
       setIsSidebarOpen(false);
 
     }
-
-    
     if (tokenFromLink) {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`${backendURL}/api_faculty/${facultyId}`, {
+          await axios.get(`${backendURL}/api_faculty/${facultyId}`, {
             headers: {
               Authorization: `Bearer ${tokenFromLink}`
             }

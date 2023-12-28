@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Switch, Redirect,useLocation} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
 import WelcomingPage from './WelcomingPage';
 import ResourcePage from './ResourcePage';
 import FacultyPage from './FacultyPage';
@@ -16,10 +16,7 @@ import './App.css';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const location = useLocation();
-  const isFacultyPage = location.pathname.includes('/faculty/');
   const backendURL = 'http://localhost:3002';
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(''); // Add state for search term
 
   useEffect(() => {

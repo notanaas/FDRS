@@ -82,7 +82,6 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
             onChange={handleInputChange}
             style={{
               borderRadius: '10px 0 0 10px',
-              border: '1px solid #ccc',
               flexGrow: 1,
               fontSize: 'medium',
               fontWeight: '600',

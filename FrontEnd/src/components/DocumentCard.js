@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import './DocumentCard.css';
 
-const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, onDelete }) => {
-  const [documents, setDocuments] = useState([]);
-  const [userFavorites, setUserFavorites] = useState([]);
+const DocumentCard = ({ cardType, document, deleteFeedback, sendEmail, onDelete }) => {
+  const [ setDocuments] = useState([]);
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
   const { authToken, isLoggedIn } = useContext(AuthContext);
   const backendURL = 'http://localhost:3002';
-  const [feedbacks, setFeedbacks] = useState([]);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
-  const location = useLocation();
-
   
   useEffect(() => {
     if (authToken && document && document._id) {
@@ -43,11 +39,10 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
       setTimeout(() => setShowLoginPrompt(false), 4000);
       return;
     }
-
     const action = isFavorited ? 'unfavorite' : 'favorite';
     try {
       const method = isFavorited ? 'delete' : 'post';  // Use delete for unfavorite
-      const response = await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
+       axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setIsFavorited(!isFavorited);
@@ -90,18 +85,10 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
     }
     toggleFavorite();
   };
-  const cardClassName = "card"; // This is the new class name for all card types
+  const cardClassName = "card"; 
 
-  
-  
-  const handleDelete = () => {
-    if(onDelete) {
-      onDelete(document._id);
-    }
-  };
   const handleDeleteFeedback = async (e, feedbackId) => {
-    e.stopPropagation(); // Stop click event from bubbling up
-    console.log(`Attempting to delete feedback with ID: ${feedbackId}`); // Debugging log
+    e.stopPropagation(); 
     await deleteFeedback(feedbackId);
   };
     const stopPropagation = (e) => e.stopPropagation();
@@ -123,7 +110,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <h3 className="card-uploader">Uploader: {document.User.Email}</h3>
             </div>
             <div className="card-description">
-              <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">
+              <a onClick={stopPropagation} href={`${backendURL}/api_resource/download/${document._id}`} className="downloadButton">
                 <span>
                   Download
                 </span>
@@ -145,7 +132,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <h3 className="card-title">{document.Title || "Untitled"}</h3>
               </div>
               <div className="card-description">
-                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+                <a href={`${backendURL}/api_resource/download/${document._id}`}  className="downloadButton">Download</a>
                 {onDelete && (
              <button className="trashButton" onClick={(e) => { e.stopPropagation(); onDelete(document._id); }}>
              🗑️ 
@@ -162,7 +149,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
         <h3 className="card-title">{document.Title || "Untitled"}</h3>
             </div>
             <div className="card-description">
-              <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+              <a href={`${backendURL}/api_resource/download/${document._id}`} className="downloadButton">Download</a>
               <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
                 {isFavorited ? '\u2605' : '\u2606'}
               </button>

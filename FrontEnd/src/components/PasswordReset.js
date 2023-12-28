@@ -16,7 +16,6 @@ const PasswordReset = () => {
   const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
   const url = `${backendURL}/api_auth/post_reset-password/${userId}/${token}`;
-  const isProfilePage = location.pathname.includes(`/reset-password`);
   const backgroundImage = `/my-profile.png`;
   useEffect(() => {
     const originalStyle = {

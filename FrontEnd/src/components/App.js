@@ -20,6 +20,7 @@ function App() {
   const isFacultyPage = location.pathname.includes('/faculty/');
   const backendURL = 'http://localhost:3002';
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(''); // Add state for search term
 
   useEffect(() => {
     const configureAxios = () => {
@@ -55,7 +56,9 @@ function App() {
     configureAxios();
     setupAxiosInterceptors();
   }, []);
-
+  const handleSearch = (searchResults) => {
+    setSearchTerm(searchResults);
+  };
   const ProtectedRoute = ({ component: Component, ...rest }) => {
     const isAuthenticated = localStorage.getItem('token') ? true : false;
     return (
@@ -76,7 +79,7 @@ function App() {
       <AuthProvider>
         <RouteParamsProvider>
           <div className="App">
-            <Header setIsModalOpen={setIsModalOpen} />
+          <Header setIsModalOpen={setIsModalOpen} onSearch={handleSearch} />
             {isModalOpen && (
               <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
             )}
@@ -89,7 +92,7 @@ function App() {
                 <Route path="/about-us" exact component={AboutUs} />
                 <Route path="/reset-password" component={PasswordReset} />
                 <ProtectedRoute path="/my-profile" component={MyProfile} />
-                <Route path="/faculty/:facultyId" component={FacultyPage} />
+                <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} searchTerm={searchTerm} />} />
                 <Route path="/resource/:resourceId" component={ResourcePage} />
               </Switch>
             </div>

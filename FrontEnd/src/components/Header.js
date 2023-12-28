@@ -26,7 +26,7 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 );
 
 
-const Header = ({ setIsModalOpen,isLoading }) => {
+const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
   const backendURL = 'http://localhost:3002';
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
@@ -61,7 +61,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
   const facultyName = location.state?.facultyName || 'Faculty'; 
-  const [usernameOrEmail, setUsernameOrEmail] = useState(''); // New state for combined username/email input
+  const [usernameOrEmail, setUsernameOrEmail] = useState(''); 
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   
@@ -311,7 +311,9 @@ const Header = ({ setIsModalOpen,isLoading }) => {
     setIsModalOpen(true); 
   };
 
-
+  const handleSearchUpdate = (searchResults) => {
+    onSearch(searchResults);
+  };
   return (
     <header className={`headerContainer ${isLoading ? 'loading' : ''}`}>
       <div className='left'>
@@ -330,7 +332,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
 {isFacultyPage && (
   <div className="search-upload-container">
     <div className="search-container">  
-      {<FeedbackForm user={user} authToken={authToken} />}
+      {      <FeedbackForm authToken={authToken} onSearchResults={handleSearchUpdate}  />}
     </div>
     <div className="action-buttons">
       <button onClick={handleUploadButtonClick} className="authButton">
@@ -445,7 +447,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
               name="password"
               className="inputBarH"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} // Changed setPasswordConfirm to setPassword
+              onChange={(e) => setPassword(e.target.value)} 
               placeholder="Password"
               required
             />
@@ -453,7 +455,7 @@ const Header = ({ setIsModalOpen,isLoading }) => {
           <button onClick={toggleLoginPasswordVisibility} className="password-toggle">
           {showLoginPassword ? 'Hide' : 'Show'}
         </button>
-          <button type="submit" className="authButton">Login</button>
+          <button type="submit" className="authButton" onClick={handleLoginSubmit}>Login</button>
           <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
         </form>
       </Modal>

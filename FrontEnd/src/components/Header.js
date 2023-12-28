@@ -65,6 +65,7 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [loading,setLoading] = useState(true);//////////
   const PASSWORD_VISIBILITY_TIMEOUT = 5000;
+  const [searchResults, setSearchResults] = useState([]);
 
   const goToUserProfile = () => {
     history.push('/my-profile');
@@ -307,9 +308,13 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
     }
     setIsModalOpen(true); 
   };
-  const handleSearchUpdate = (searchResults) => {
-    onSearch(searchResults);
+  const handleSearchUpdate = (results) => {
+    setSearchResults(results); // This updates the local state
+    if (onSearch) {
+      onSearch(results); // This lifts the state up to App.js
+    }
   };
+
   return (
     <header className={`headerContainer ${isLoading ? 'loading' : ''}`}>
       <div className='left'>
@@ -328,14 +333,13 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
 {isFacultyPage && (
   <div className="search-upload-container">
     <div className="search-container">  
-      {      <FeedbackForm authToken={authToken} onSearchResults={handleSearchUpdate}  />}
+      {                 <FeedbackForm authToken={authToken} onSearchResults={handleSearchUpdate} />}
     </div>
     <div className="action-buttons">
       <button onClick={handleUploadButtonClick} className="authButton">
         Upload
       </button>
       <h1>{facultyName}</h1>
-
       {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
     </div>
   </div>
@@ -343,7 +347,6 @@ const Header = ({ setIsModalOpen,isLoading,onSearch }) => {
       <div className="authButtons">
         {isLoggedIn ? (
           <div className='button'>
-        
             <button className="authButtonL" onClick={handleLogout}>🔚
             </button>
             <button onClick={goToUserProfile} className="profile-button">

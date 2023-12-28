@@ -17,7 +17,7 @@ import './App.css';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const backendURL = 'http://localhost:3002';
-  const [searchTerm, setSearchTerm] = useState(''); // Add state for search term
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const configureAxios = () => {
@@ -53,8 +53,8 @@ function App() {
     configureAxios();
     setupAxiosInterceptors();
   }, []);
-  const handleSearch = (searchResults) => {
-    setSearchTerm(searchResults);
+  const handleSearchResults = (results) => {
+    setSearchResults(results);
   };
   const ProtectedRoute = ({ component: Component, ...rest }) => {
     const isAuthenticated = localStorage.getItem('token') ? true : false;
@@ -73,31 +73,34 @@ function App() {
   };
   return (
     <Router>
-      <AuthProvider>
-        <RouteParamsProvider>
-          <div className="App">
-          <Header setIsModalOpen={setIsModalOpen} onSearch={handleSearch} />
-            {isModalOpen && (
-              <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-            )}
-            <div className="contentContainer">
-              <Switch>
-                <Route exact path="/">
-                  <Redirect to="/welcomingpage" />
-                </Route>
-                <Route path="/welcomingpage" exact component={WelcomingPage} />
-                <Route path="/about-us" exact component={AboutUs} />
-                <Route path="/reset-password" component={PasswordReset} />
-                <ProtectedRoute path="/my-profile" component={MyProfile} />
-                <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} searchTerm={searchTerm} />} />
-                <Route path="/resource/:resourceId" component={ResourcePage} />
-              </Switch>
-            </div>
-            <Footer/>
+    <AuthProvider>
+      <RouteParamsProvider>
+        <div className="App">
+          <Header setIsModalOpen={setIsModalOpen} onSearch={handleSearchResults} />
+          {isModalOpen && (
+            <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+          )}
+          <div className="contentContainer">
+            <Switch>
+              <Route exact path="/">
+                <Redirect to="/welcomingpage" />
+              </Route>
+              <Route path="/welcomingpage" exact component={WelcomingPage} />
+              <Route path="/about-us" exact component={AboutUs} />
+              <Route path="/reset-password" component={PasswordReset} />
+              <ProtectedRoute path="/my-profile" component={MyProfile} />
+              <Route path="/faculty/:facultyId" render={(props) => (
+                <FacultyPage {...props} searchResults={searchResults} />
+              )} />
+              <Route path="/resource/:resourceId" component={ResourcePage} />
+            </Switch>
           </div>
-        </RouteParamsProvider>
-      </AuthProvider>
-    </Router>
+          <Footer/>
+        </div>
+      </RouteParamsProvider>
+    </AuthProvider>
+  </Router>
+  
   );
 }
 

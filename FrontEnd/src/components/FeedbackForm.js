@@ -31,16 +31,16 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
   };
 
   const handleSearch = async () => {
-    setSearchPerformed(true); 
+    setSearchPerformed(true);
     try {
       const response = await axios.get(`${backendURL}/api_resource/search`, {
         params: { term: searchTerm },
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setSearchResults(response.data);
-      onSearchResults(response.data); 
+      onSearchResults(response.data); // Pass the filtered results to the FacultyPage
     } catch (error) {
       console.error('Search error:', error);
+      // Optionally handle error state
     }
   };
 
@@ -139,13 +139,7 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
           <p>No results found. Would you like to submit your search as feedback?</p>
         </div>
       )}
-      {searchPerformed && searchResults.length > 0 && (
-        <div>
-          {searchResults.map((result) => (
-            <div key={result.id}>{result.title}</div>
-          ))}
-        </div>
-      )}
+      
     </div>
   );
 };

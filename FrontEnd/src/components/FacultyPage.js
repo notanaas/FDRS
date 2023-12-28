@@ -12,7 +12,7 @@ const FacultyPage = ({ searchTerm }) => {
   const location = useLocation();
   const facultyName = location.state?.facultyName || 'Faculty'; 
   const [resources, setResources] = useState([]);
-  const [filteredResources, setFilteredResources] = useState([]); 
+  const [filteredResources, setFilteredResources] = useState([]); // State for filtered resources
   const [userFavorites, setUserFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -26,15 +26,17 @@ const FacultyPage = ({ searchTerm }) => {
   const pageStyle = {
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center center',
-    backgroundAttachment: 'fixed', 
+    backgroundAttachment: 'fixed', // This will keep the background fixed during scrolling
     minHeight: '100vh',
     transform: 'scale(1.0)',
+    backgroundAttachment: 'fixed',
   };
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${backgroundImage})`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundAttachment = 'fixed';
     document.body.style.backgroundPosition = 'center center';
     document.body.style.margin = '0';
     document.body.style.padding = '0';

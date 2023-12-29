@@ -52,7 +52,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [signupErrorMessage, setSignupErrorMessage] = useState('');
-  const [setForgotPasswordErrorMessage] = useState('');
+  const [forgotPasswordErrorMessage,setForgotPasswordErrorMessage] = useState('');
   const history = useHistory();
   const [successMessage, setSuccessMessage] = useState(null);
   const location = useLocation();
@@ -67,6 +67,8 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
   const [loading, setLoading] = useState(true);//////////
   const PASSWORD_VISIBILITY_TIMEOUT = 5000;
   const [searchResults, setSearchResults] = useState([]);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+
 
   const goToUserProfile = () => {
     history.push('/my-profile');
@@ -244,6 +246,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
   };
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
+    setIsResettingPassword(true);
     setForgotPasswordErrorMessage('');
     setSuccessMessage('');
     setLoading(true); // Start loading
@@ -267,7 +270,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
       setForgotPasswordData({ email: '' });
     }
     finally {
-      setLoading(false);
+        setIsResettingPassword(false);;
     }
   };
   const handleAPIError = (error) => {
@@ -422,9 +425,11 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
               <input type="email" id="email" name="email" className="inputBarH" placeholder="Email" value={forgotPasswordData.email} onChange={handleForgotPasswordInputChange} required />
             </div>
           )}
-          <button type="submit" className="authButton">
-            Send Reset Password Email
+          <button type="submit" className="authButton" disabled={isResettingPassword}>
+          {isResettingPassword ? 'Sending...' : 'Send Reset Password Email'}
           </button>
+
+          {isResettingPassword && <div className="loading-message">Please wait...</div>}
 
         </form>
       </Modal>

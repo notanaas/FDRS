@@ -255,6 +255,7 @@
   padding: 50px 35px;
 }
 
+
 @media (max-width: 768px) {
   .upload-modal-content {
     width: 200px;
@@ -416,4 +417,23 @@
   justify-content: center;
   width: 40px; /* Width of the icon container */
   cursor: pointer;
+}
+
+
+.loading-message {
+  margin-top: 20px;
+  text-align: center;
+}
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid blue;
+  width: 36px;
+  height: 36px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -1,5 +1,5 @@
 body, html {
-  overflow: auto; /* or 'scroll' */
+  overflow: auto;
 }
 
 .profile-sections {
@@ -7,7 +7,6 @@ body, html {
   flex-direction: column;
 }
 
-/* If you want them to wrap when the screen size is small */
 @media (max-width: 768px) {
   .profile-sections {
     flex-wrap: wrap;
@@ -31,14 +30,12 @@ body, html {
 
 .contentContainer .my-profile .profile-sections .f
 
-/* Style for individual sections */
 .section {
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #f9f9f9;
 }
 
-/* Styling for buttons */
 .document-actions .authButton {
   border: none;
   color: rgb(0, 0, 0);
@@ -50,7 +47,6 @@ body, html {
   height: 20px;
 }
 
-/* Success and error message styling */
 .success-message-header, .error-message-header {
   color: #fff;
   padding: 10px;
@@ -59,11 +55,11 @@ body, html {
 }
 
 .success-message-header {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
 }
 
 .error-message-header {
-  background-color: #f44336; /* Red */
+  background-color: #f44336;
 }
 
 
@@ -77,10 +73,10 @@ body {
   overflow: auto; 
 }
 
-/* Add a media query for screens smaller than 768 pixels */
+
 @media (max-width: 768px) {
   body {
-      font-size: 14px; /* Adjust the font size for smaller screens */
+      font-size: 14px;
       margin-top: 50px;
       overflow: auto;
   }
@@ -92,35 +88,33 @@ body {
   border-radius: 5px;
   cursor: pointer;
   align-items: center;
-  height: 80px; /* Increased button height */
-  padding: 10px 20px; /* Add padding for bigger button size */
-  margin: 10px auto; /* Center your button with automatic horizontal margins */
-  margin-bottom: 15px; /* Increased bottom margin for better spacing between buttons */
+  height: 80px;
+  padding: 10px 20px;
+  margin: 10px auto;
+  margin-bottom: 15px; 
   font-size: large;
-  display: block; /* Make the buttons stack vertically */
-  width: 80%; /* Set width to a percentage of the container for consistent sizing */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  position: relative;
+  display: block;
+  width: 80%; 
+  box-sizing: border-box;
   z-index: 0;
-  text-align: center; /* Center the text inside the button */
+  text-align: center;
   left: 60px;
   overflow: auto; 
 }
 
 @media (max-width: 768px) {
   .accordion-title {
-    width: 336px;
-    margin-right:200px ;
+    display: flex;
+    width: 300px;
   }
 
 }
 
 .accordion-content {
-  /* Styles for the accordion content */
-  max-height: 0; /* Use max-height for a smooth animation */
+  max-height: 0; 
   overflow: hidden;
-  width: 90%; /* Match the width to the accordion title */
-  margin: 0 auto; /* Center the content */
+  width: 90%; 
+  margin: 0 auto; 
 }
 
 .accordion-content.open {
@@ -131,7 +125,7 @@ body {
   background: rgba(0, 0, 0, 0.6);
 }
 
-/* Style for the content inside the accordion */
+
 .panel {
   padding: 0 18px;
   background-color: white;
@@ -139,7 +133,7 @@ body {
   transition: max-height 0.2s ease-out;
 }
 
-/* Additional styles may follow */
+
 .user-info {
   margin: 3px;
 }
@@ -153,7 +147,7 @@ body {
 
 @media (max-width: 768px) {
   .accordion{
-    width: 510px; /* Set a fixed width for smaller screens */
+    width: 380px;
     margin-top: 0 auto;
     
   }

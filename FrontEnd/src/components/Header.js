@@ -426,7 +426,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
             </div>
           )}
           <button type="submit" className="authButton" disabled={isResettingPassword}>
-          {isResettingPassword ? 'Sending...' : 'Send Reset Password Email'}
+          {isResettingPassword ? 'Sending...' : 'Reset Password'}
           </button>
 
           {isResettingPassword && <div className="loading-message">Please wait...</div>}

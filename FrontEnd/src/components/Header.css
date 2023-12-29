@@ -376,3 +376,44 @@
     padding-top: 30px;
   }
 }
+
+.input-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputBarH {
+  width: 100%;
+  padding-right: 30px; /* Adjust the padding to ensure text doesn't go under the icon */
+}
+
+.icon {
+  position: absolute;
+  right: 10px; /* Adjust this value as needed */
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-container .Input {
+  width: 100%; /* Take full width of the container */
+}
+
+.password-input-container .icon {
+  position: absolute;
+  right: -15px; /* Align to the right inside the container */
+  top: 0;
+  margin-top: 15px;
+  height: 100%; /* Match the height of the input */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Width of the icon container */
+  cursor: pointer;
+}

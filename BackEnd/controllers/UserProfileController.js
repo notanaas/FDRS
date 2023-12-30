@@ -5,6 +5,7 @@ const asyncHandler = require("express-async-handler")
 const { body, validationResult } = require("express-validator"); // validator and sanitizer
 const fsPromises = require("fs").promises
 const path = require("path");
+const nodemailer = require('nodemailer');
 
 
 
@@ -42,30 +43,106 @@ exports.admin_acceptance = asyncHandler(async (req, res, next) => {
     try {
         let flag = false;
         const btnAccept = req.body.accept;
-
+    
         if (flag !== btnAccept) {
             flag = true;
-            const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).exec();
-            return res.status(200).json({ accepted: "resource accepted", data: resource });
+            const resource = await Resource.findByIdAndUpdate(req.params.id, { isAuthorized: flag }, { new: true }).populate("User").exec();
+    
+            // Ensure that resource.User is defined and has a populated Email property
+            if (resource.User && resource.User.Email) {
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'FDRS1697@gmail.com',
+                        pass: process.env.pass
+                    }
+                });
+    
+                const mailOptions = {
+                    from: 'FDRS1697@gmail.com',
+                    to: resource.User.Email,
+                    subject: 'Resource Approval Status',
+                    attachments: [{
+                        filename: 'logo.png',
+                        path: './LOGO/anas logo red png.png',
+                        cid: 'logo'
+                    }],
+                };
+    
+                // Set the email message based on the value of flag
+                if (flag) {
+                    mailOptions.text = 'Your resource has been approved.';
+                } else {
+                    mailOptions.text = 'Your resource has been declined.';
+                }
+    
+                // Use a try-catch block to handle potential asynchronous issues
+                try {
+                    const info = await transporter.sendMail(mailOptions);
+                    console.log('Email sent:', info.response);
+                    return res.status(200).json({ accepted: "Resource accepted", data: resource, message: "Email sent to the user" });
+                } catch (error) {
+                    console.error(error);
+                    return res.status(500).json({ message: "Email sending failed. Please try again later." });
+                }
+            } else {
+                return res.status(500).json({ message: "User email not found or empty. Email sending failed." });
+            }
         }
-
-        const resource = await Resource.findByIdAndDelete(req.params.id).exec();
-
+    
+        const resource = await Resource.findByIdAndDelete(req.params.id).populate("User").exec();
+    
         if (!resource) {
             return res.status(404).json({ message: "Resource not found" });
         }
-        console.log(resource.file_path)
+    
+        // Assuming resource.file_path contains the full path
         await fsPromises.unlink(resource.file_path);
-        console.log(resource.Cover)
+    
         // Assuming resource.Cover contains the full path
         await fsPromises.unlink(resource.Cover);
-
-        res.status(200).json({ declined: "resource declined" });
+    
+        // Ensure that resource.User is defined and has a populated Email property
+        if (resource.User && resource.User.Email) {
+            // Send an email to the user for declined resource
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'FDRS1697@gmail.com',
+                    pass: process.env.pass
+                }
+            });
+    
+            const mailOptions = {
+                from: 'FDRS1697@gmail.com',
+                to: resource.User.Email,
+                subject: 'Resource Approval Status',
+                attachments: [{
+                    filename: 'logo.png',
+                    path: './LOGO/anas logo red png.png',
+                    cid: 'logo'
+                }],
+                text: 'Your resource has been declined.'
+            };
+    
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.error(error);
+                    return res.status(500).json({ message: "Email sending failed. Please try again later." });
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    return res.status(200).json({ declined: "Resource declined", message: "Email sent to the user" });
+                }
+            });
+        } else {
+            return res.status(500).json({ message: "User email not found or empty. Email sending failed." });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
-});
+})    
+
 
 
 exports.updateProfile = [

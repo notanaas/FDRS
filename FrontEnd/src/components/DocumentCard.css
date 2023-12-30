@@ -105,22 +105,22 @@
 .card-actions {
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   opacity: 1;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .card:hover .card-description {
-  opacity: 1; /* Show description on hover */
+  opacity: 1;
 }
 .card:hover .card-content,
 .card:hover .card-actions {
   opacity: 0;
-  transform: translateY(20px); /* Move down to ensure they are not visible */
+  transform: translateY(20px);
 }
 
 .card:hover {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  /* Enhanced shadow on hover */
   transform: scale(1.02);
-  /* Slight increase in size on hover */
+  
 }
 
 .card-cover {

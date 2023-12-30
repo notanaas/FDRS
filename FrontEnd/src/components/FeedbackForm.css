@@ -1,7 +1,7 @@
 .feedback-form-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Adjust the space between elements */
+  gap: 10px;
 }
 
 .search-input {
@@ -9,7 +9,7 @@
   border: 2px solid #000000;
   border-radius: 4px;
   font-size: larger;
-  width: 100%; /* You can adjust this as needed */
+  width: 100%;
 }
 
 .search-button, .feedback-button {
@@ -33,7 +33,7 @@
   border-radius: 4px;
   display: none;
   position: absolute;
-  right: 0; /* Positioning the prompt */
+  right: 0;
   left: 0;
   margin-right: auto;
   margin-left: auto;
@@ -42,10 +42,10 @@
   text-align: center;
 }
 
-/* Show the prompt when the class 'show' is added */
+
 .no-results-prompt.show {
   display: block;
-  animation: fadeOut 4s forwards; /* Fade out after 4 seconds */
+  animation: fadeOut 4s forwards;
 }
 
 @keyframes fadeOut {
@@ -54,7 +54,7 @@
     visibility: visible;
   }
   90% {
-    opacity: 0.5; /* Start fading out */
+    opacity: 0.5;
   }
   100% {
     opacity: 0;

@@ -14,6 +14,7 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   // State declarations
   const [title, setTitle] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [authorFirstName, setAuthorFirstName] = useState('');
   const [authorLastName, setAuthorLastName] = useState('');
   const [description, setDescription] = useState('');
@@ -95,6 +96,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleUpload = async () => {
+    setIsLoading(true); 
     setError('');
     setSuccessMessage('');
     validateField('title', title);
@@ -158,7 +160,11 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
       } catch (error) {
         setError(error.response?.data?.message || 'An error occurred while uploading the document.');
       }
+      finally {
+        setIsLoading(false); // This will execute after try or catch block
+      }
     }, 0);
+    
   };
   
 
@@ -194,9 +200,11 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
           <Input placeholder="Related Image" type="file" id="imageFile" name="img" accept="image/jpeg, image/jpg, image/png" onChange={handleImgChange} />
           {validationErrors.img && <div className="error-message">{validationErrors.img}</div>}
 
+          {isLoading && <div>Loading...</div>}
+
           <div className="modal-footer">
             <button onClick={closeModal} className="authButton">Close</button>
-            <button onClick={handleUpload} className="authButton">Upload</button>
+            <button onClick={handleUpload} className="authButton">{isLoading ? 'Uploading...' : 'Upload'}</button>
           </div>
         </Modal>
       )}

@@ -18,7 +18,7 @@
   width: 100%;
   z-index: 10;
   position: fixed;
-  top: 0; /* Ensures the element sticks to the top of the page */
+  top: 0;
   
 }
 
@@ -116,10 +116,8 @@ bodY {
 
 
 .root-faculty h1 {
-  /* Positioning and styling for the title */
-  margin-top: 20px; /* Adjust the value as needed to position under the header */
+  margin-top: 20px;
   text-align: center;
-  /* Add more styles as needed */
 }
 
 .fade-appear,
@@ -144,28 +142,28 @@ bodY {
 
 .resources-container {
   position: relative;
-  z-index: 2; /* Above the fixed background */
-  overflow-y: auto; /* Enables scrolling */
-  max-height: 100vh; /* Adjust if necessary to fit within the viewport */
+  z-index: 2;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjust minmax values as needed */
-  grid-gap: 10px; /* Adjust the gap size as needed */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-gap: 10px;
   width: 100%;
-  height: 100vh; /* This will make the container take the full viewport height */
-  padding: 10px; /* Add some padding */
-  box-sizing: border-box; /* Include padding in the box size */
-  overflow-y: auto; /* Allows scrolling if content is taller than the screen */
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .faculty-buttons-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* This will create as many columns as can fit with a minimum width of 200px */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   grid-gap: 10px;
   padding: 10px;
-  width: 100%; /* Ensure the container fills the width of its parent */
-  height: 100%; /* Ensure the container fills the height of its parent */
+  width: 100%;
+  height: 100%;
   align-items: stretch;
   justify-items: stretch;
 }
@@ -177,18 +175,18 @@ bodY {
   background-size: cover;
   background-position: center;
   text-decoration: none;
-  color: white; /* Adjust the text color as needed */
-  height: 100%; /* Make each button fill the height of the grid cell */
+  color: white;
+  height: 100%;
   border-radius: 4px;
   position: relative;
-  overflow: hidden; /* Hide overflow to maintain border radius */
+  overflow: hidden;
   position: relative;
   z-index: 1;
 }
 
 .faculty-button::before {
   content: '';
-  background: rgba(0, 0, 0, 0.5); /* Adjust black overlay opacity as needed */
+  background: rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 0;
   right: 0;
@@ -199,19 +197,17 @@ bodY {
 }
 
 .faculty-button:hover {
-  transform: scale(1.05); /* Slightly enlarge buttons on hover */
+  transform: scale(1.05);
 }
 
-/* Ensure the rest of your page content uses the full height */
 body, html {
   height: 100%;
   margin: 0;
 }
 
-/* Add styles for your headings or any additional elements */
 h1 {
   text-align: center;
-  color: #ffffff; /* Heading color */
+  color: #ffffff;
 }
 
 

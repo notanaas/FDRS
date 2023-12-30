@@ -1,4 +1,3 @@
-/* Sidebar.css */
 .profile-button {
   background-color: transparent;
   color: #fff;
@@ -50,13 +49,10 @@
 }
 
 
-/* Media query for screens smaller than 768px (adjust as needed) */
 @media (max-width: 768px) {
   .sidebar a {
     width: 100%;
-    /* Full width */
     margin-top: 0;
-    /* No top margin */
     background: #1d1d1db7;
     color: #fff;
   }

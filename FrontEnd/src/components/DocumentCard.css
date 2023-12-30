@@ -2,13 +2,12 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding-top: 50px; /* Adds space at the top */
-  align-content: flex-start; /* Aligns content to the top, leaving space at the bottom */
+  align-content: flex-start;
 }
 
 .card {
   position: relative;
-  flex: 0 1 calc(33.333% - 1rem); /* 3 cards per row, accounting for margin */
+  flex: 0 1 calc(33.333% - 1rem); 
   margin: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -22,7 +21,7 @@
   text-decoration: none;
   color: white;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 200px; /* Larger fixed height for cards */
+  height: 200px;
 }
 
 .card::before {
@@ -50,24 +49,24 @@
   top: 0;
   left: 0;
   z-index: 0;
-  border-radius: 8px; /* Rounded corners for the image */
+  border-radius: 8px;
 }
 
 
 .card-content {
   z-index: 2;
   position: absolute;
-  top: 50%; /* Vertically center */
-  left: 50%; /* Horizontally center */
-  transform: translate(-50%, -50%); /* Offset the positioning */
-  padding: 15px; /* Padding inside the card */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px;
   text-align: center;
 }
 
 .card-title {
-  font-size: 1.5rem; /* Adjustable font size */
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #ffffff; /* White text color */
+  color: #ffffff;
 }
 
 .card-description {
@@ -76,7 +75,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 10px;
   box-sizing: border-box;
@@ -84,9 +83,9 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  opacity: 0; /* Hide by default */
+  opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  z-index: 1; /* Above the card content but below the actions */
+  z-index: 1;
 }
 
 .card:hover {
@@ -98,7 +97,7 @@
   width: 100%;
   height: auto;
   object-fit: cover;
-  border-radius: 8px; /* Optional: if you want rounded corners on the image */
+  border-radius: 8px;
 }
 
 .card-content,
@@ -139,7 +138,7 @@
   justify-content: space-between;
   gap: 0.5rem;
   margin-top: 15px;
-  position: relative; /* Ensure actions stay on top */
+  position: relative;
   z-index: 3;
 }
 

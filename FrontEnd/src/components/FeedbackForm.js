@@ -65,8 +65,7 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
       setSearchTerm('');
       setFeedbackSuccess(response.data.message); // Set success message from response
     } catch (error) {
-      console.error('Feedback submission error:', error);
-      setFeedbackError(error.response?.data?.message || 'An error occurred while submitting feedback.');
+      setFeedbackError('You need to add more than 5 character.');
     }
   };
 

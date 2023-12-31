@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import Modal from './Modal';
-import { RouteParamsContext } from './context/RouteParamsContext'; 
+import { RouteParamsContext } from './context/RouteParamsContext';
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">
@@ -32,7 +32,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   const validateField = (fieldName, value) => {
     let errors = { ...validationErrors };
     const alphaRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/; // Regex for names (letters, spaces, hyphens)
-  
+
     switch (fieldName) {
       case 'title':
         if (!value.trim() || value.length < 3) {
@@ -61,7 +61,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
     }
     setValidationErrors(errors);
   };
-  
+
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
@@ -96,14 +96,14 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleUpload = async () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     setError('');
     setSuccessMessage('');
     validateField('title', title);
     validateField('authorFirstName', authorFirstName);
     validateField('authorLastName', authorLastName);
     validateField('description', description);
-  
+
     // Validate file and image fields
     let fileErrors = {};
     if (!file) {
@@ -113,19 +113,19 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
       fileErrors.img = "Image file is required";
     }
     setValidationErrors(prevErrors => ({ ...prevErrors, ...fileErrors }));
-  
+
     // Check for any validation errors
     const hasErrors = () => {
       return Object.keys(validationErrors).length > 0 || fileErrors.file || fileErrors.img;
     };
-  
+
     // Wait for a tick to ensure state updates
     setTimeout(async () => {
       if (hasErrors()) {
         setError('Please correct the errors before submitting.');
         return;
       }
-  
+
       // Proceed with form submission...
       const formData = new FormData();
       formData.append('title', title);
@@ -134,11 +134,11 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
       formData.append('description', description);
       formData.append('file', file);
       formData.append('img', img);
-  
+
       if (isAdmin) {
         formData.append('isApproved', true);
       }
-  
+
       try {
         const response = await axios.post(uploadURL, formData, {
           headers: {
@@ -146,7 +146,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
             'Authorization': `Bearer ${authToken}`
           }
         });
-  
+
         if (response.status === 201) {
           setSuccessMessage('Document uploaded successfully');
           setError('');
@@ -164,13 +164,13 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
         setIsLoading(false); // This will execute after try or catch block
       }
     }, 0);
-    
+
   };
-  
+
 
 
   const closeModal = () => {
-    setIsModalOpen(false); 
+    setIsModalOpen(false);
     setError('');
     setSuccessMessage('');
   };
@@ -203,8 +203,9 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
           {isLoading && <div>Loading...</div>}
 
           <div className="modal-footer">
-            <button onClick={closeModal} className="authButton">Close</button>
             <button onClick={handleUpload} className="authButton">{isLoading ? 'Uploading...' : 'Upload'}</button>
+            <button onClick={closeModal} className="authButton">Close</button>
+
           </div>
         </Modal>
       )}

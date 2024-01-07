@@ -429,7 +429,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
           {isResettingPassword ? 'Sending...' : 'Reset Password'}
           </button>
 
-          {isResettingPassword && <div className="loading-message">Please wait...</div>}
+          {isResettingPassword && <div className="loading-message">Please wait then check your email...</div>}
 
         </form>
       </Modal>

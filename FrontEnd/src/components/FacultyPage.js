@@ -7,17 +7,16 @@ import { RouteParamsContext } from './context/RouteParamsContext';
 import { jwtDecode } from 'jwt-decode'; 
 import { CSSTransition } from 'react-transition-group';
 
-const FacultyPage = ({ searchTerm }) => {
+const FacultyPage = ({ searchResults }) => {
   const { setRouteParams } = useContext(RouteParamsContext);
   const location = useLocation();
   const facultyName = location.state?.facultyName || 'Faculty'; 
   const [resources, setResources] = useState([]);
-  const [filteredResources, setFilteredResources] = useState([]); // State for filtered resources
   const [userFavorites, setUserFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const history = useHistory();
-  const backendURL = 'http://localhost:3002';
+  const backendURL = 'https://fdrs-backend.up.railway.app';
   const { facultyId } = useParams();
   const { authToken, refreshTokenFunc } = useContext(AuthContext);
 
@@ -47,11 +46,9 @@ const FacultyPage = ({ searchTerm }) => {
       document.body.style.overflow = '';
     };
   }, [backgroundImage]);
-
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
-
   useEffect(() => {
     const fetchResources = async () => {
       try {
@@ -68,7 +65,6 @@ const FacultyPage = ({ searchTerm }) => {
 
     fetchResources();
   }, [facultyId, backendURL]);
-
   useEffect(() => {
     const fetchFavorites = async () => {
       if (authToken) {
@@ -87,21 +83,10 @@ const FacultyPage = ({ searchTerm }) => {
       fetchFavorites();
     }
   }, [authToken, backendURL]);
-
-  useEffect(() => {
-    const term = searchTerm ? searchTerm.toString().toLowerCase() : '';
-    const filtered = term
-      ? resources.filter(resource => resource.Title.toLowerCase().includes(term))
-      : resources;
-    setFilteredResources(filtered);
-  }, [searchTerm, resources]);
-
   const isResourceFavorited = resourceId => authToken && userFavorites.includes(resourceId);
-
   const handleCardClick = resourceId => {
     history.push(`/resource/${resourceId}`);
   };
-
   const toggleFavorite = async (resourceId) => {
     if (jwtDecode(authToken).exp < Date.now() / 1000) {
       await refreshTokenFunc();
@@ -123,6 +108,8 @@ const FacultyPage = ({ searchTerm }) => {
     }
   };
 
+  const showSearchResults = searchResults && searchResults.length > 0;
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -135,8 +122,21 @@ const FacultyPage = ({ searchTerm }) => {
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">
         <div className="faculty-container">
-          {filteredResources.length > 0 ? (
-            filteredResources.map((resource) => (
+          {showSearchResults ? (
+            // Display search results using DocumentCard
+            searchResults.map((result) => (
+              <DocumentCard
+                cardType="search"
+                key={result._id}
+                document={result}
+                onClick={() => handleCardClick(result._id)}
+                isFavorited={isResourceFavorited(result._id)}
+                onToggleFavorite={() => toggleFavorite(result._id)}
+              />
+            ))
+          ) : (
+            // Display standard faculty resources using DocumentCard
+            resources.map((resource) => (
               <DocumentCard
                 cardType="faculty"
                 key={resource._id}
@@ -146,7 +146,9 @@ const FacultyPage = ({ searchTerm }) => {
                 onToggleFavorite={() => toggleFavorite(resource._id)}
               />
             ))
-          ) : (
+          )}
+
+          {(!showSearchResults && resources.length === 0) && (
             <p>No resources found for this faculty.</p>
           )}
         </div>

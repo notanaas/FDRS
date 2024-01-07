@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect,useContext} from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
+
 import WelcomingPage from './WelcomingPage';
 import ResourcePage from './ResourcePage';
 import FacultyPage from './FacultyPage';
 import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile';
-import { AuthProvider } from './context/AuthContext';
-import FileUpload from './FileUpload';
+import AboutUs from './AboutUs';
 import Header from './Header';
 import Footer from './Footer';
-import AboutUs from './AboutUs';
-import { RouteParamsProvider } from './context/RouteParamsContext';
+import FileUpload from './FileUpload';
+
+import { AuthProvider } from './context/AuthContext';
+import { RouteParamsProvider} from './context/RouteParamsContext';
+
 import './App.css';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const backendURL = 'http://localhost:3002';
-  const [searchResults, setSearchResults] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [searchResults, setSearchResults] = useState([]); // State to store search results
+  const [showFeedbackButton, setShowFeedbackButton] = useState(false);
+  const backendURL = 'https://fdrs-backend.up.railway.app';
+  
   useEffect(() => {
     const configureAxios = () => {
       const token = localStorage.getItem('token');
@@ -53,9 +58,28 @@ function App() {
     configureAxios();
     setupAxiosInterceptors();
   }, []);
-  const handleSearchResults = (results) => {
-    setSearchResults(results);
+
+  const handleSearch = async (searchTerm, facultyId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${backendURL}/api_resource/search/${facultyId}`, {
+        params: { term: searchTerm }
+      });
+      setSearchResults(response.data);
+      setShowFeedbackButton(response.data.length === 0); // Show button if no results
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setShowFeedbackButton(true); // Show button on 404 error
+      } else {
+        setShowFeedbackButton(false); // Don't show button for other errors
+      }
+    } finally {
+      setLoading(false);
+    }
   };
+  
+
+
   const ProtectedRoute = ({ component: Component, ...rest }) => {
     const isAuthenticated = localStorage.getItem('token') ? true : false;
     return (
@@ -76,10 +100,12 @@ function App() {
     <AuthProvider>
       <RouteParamsProvider>
         <div className="App">
-          <Header setIsModalOpen={setIsModalOpen} onSearch={handleSearchResults} />
-          {isModalOpen && (
-            <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-          )}
+        <Header 
+              setIsModalOpen={setIsModalOpen} 
+              onSearch={handleSearch} 
+              showFeedbackButton={showFeedbackButton}
+            />
+          {isModalOpen && <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
           <div className="contentContainer">
             <Switch>
               <Route exact path="/">
@@ -88,10 +114,8 @@ function App() {
               <Route path="/welcomingpage" exact component={WelcomingPage} />
               <Route path="/about-us" exact component={AboutUs} />
               <Route path="/reset-password" component={PasswordReset} />
-              <ProtectedRoute path="/my-profile" component={MyProfile} />
-              <Route path="/faculty/:facultyId" render={(props) => (
-                <FacultyPage {...props} searchResults={searchResults} />
-              )} />
+              <Route path="/my-profile" component={MyProfile} />
+              <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} searchResults={searchResults} />} />
               <Route path="/resource/:resourceId" component={ResourcePage} />
             </Switch>
           </div>
@@ -100,8 +124,7 @@ function App() {
       </RouteParamsProvider>
     </AuthProvider>
   </Router>
-  
-  );
+);
 }
 
 export default App;

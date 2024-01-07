@@ -21,8 +21,7 @@ const ResourcePage = () => {
   const [resourceDetails, setResourceDetails] = useState(null);
   const [comments, setComments] = useState([]);
   const { authToken, isLoggedIn, user, isAdmin } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002';
-  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
+  const backendURL = 'https://fdrs-backend.up.railway.app';  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
   const history = useHistory();
 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -30,8 +29,10 @@ const ResourcePage = () => {
   const [loading, setLoading] = useState(true);
   const shareUrl = window.location.href;
   const title = 'Check out this resource!';
-
-    
+  const [errorMessage, setErrorMessage] = useState('');
+  const [actionSuccess, setActionSuccess] = useState('');
+  const [actionError, setActionError] = useState('');
+  const [messageTimeout, setMessageTimeout] = useState(null);
   useEffect(() => {
     setInProp(true);
   }, []);
@@ -85,30 +86,39 @@ const ResourcePage = () => {
       <Header isLoading={loading} /> 
     </div>;
   }
-  const promptLogin = () => {
+  const setMessageWithTimer = (successMsg, errorMsg) => {
+    setActionSuccess(successMsg);
+    setActionError(errorMsg);
+    clearTimeout(messageTimeout);
+    const newTimeout = setTimeout(() => {
+        setActionSuccess('');
+        setActionError('');
+    }, 3000);
+    setMessageTimeout(newTimeout);
+};
+const resetMessages = () => {
+  setActionSuccess('');
+  setActionError('');
+};
+const toggleFavorite = async () => {
+  resetMessages();
+  if (!isLoggedIn) {
     setShowLoginPrompt(true);
-    setTimeout(() => setShowLoginPrompt(false), 4000); // Hide prompt after 4 seconds
-  };
-  const toggleFavorite = async () => {
-    if (!isLoggedIn) {
-      setShowLoginPrompt(true);
-      setTimeout(() => setShowLoginPrompt(false), 4000);
-      return;
-    }
-
-    const action = isFavorited ? 'unfavorite' : 'favorite';
-    try {
-      const method = isFavorited ? 'delete' : 'post';  // Use delete for unfavorite
-      const response = await axios[method](`${backendURL}/api_favorite/resources/${resourceId}/${action}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      setIsFavorited(!isFavorited);
-    } catch (error) {
-      console.error(`Error toggling favorite status: ${error}`);
-    }
-  };
-
-
+    setTimeout(() => setShowLoginPrompt(false), 4000);
+    return;
+  }
+  const action = isFavorited ? 'unfavorite' : 'favorite';
+  try {
+    const method = isFavorited ? 'delete' : 'post';
+    await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+    setMessageWithTimer(`Resource has been ${isFavorited ? 'removed from' : 'added to'} favorites.`, '');
+    setIsFavorited(!isFavorited);
+  } catch (error) {
+    setMessageWithTimer('', 'Failed to update favorite status.');
+  }
+};
   const handleFavButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -117,6 +127,7 @@ const ResourcePage = () => {
     }
     toggleFavorite();
   };
+  
   const copyToClipboard = () => {
     const url = window.location.href; 
     navigator.clipboard.writeText(url).then(() => {
@@ -125,10 +136,11 @@ const ResourcePage = () => {
       console.error('Could not copy text: ', err);
     });
   };
-
+ 
   return (
     <CSSTransition in={inProp} timeout={300} classNames="fade" appear>
-      <div className="resource-container">
+   <div className="resource-container">
+  
         <div className="resource-header">
           {resourceDetails.Cover && (
             <img 
@@ -145,6 +157,7 @@ const ResourcePage = () => {
           <p className="user-email">{resourceDetails.User.Email}</p>
 
         </div>
+        
         <div className="share-buttons">
         <FacebookShareButton url={shareUrl} quote={title}>
           <FacebookIcon size={32} round />
@@ -164,13 +177,13 @@ const ResourcePage = () => {
           >
             Download
           </a>
-          <button 
-            className={`favorite-button ${isFavorited ? '\u2605' : '\u2606'}`} 
-            onClick={handleFavButtonClick}
-          >
-            {isFavorited ? '★' : '☆'}
-            {showLoginPrompt && <span className="login-tooltip">Log in to add</span>}
-          </button>
+          <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
+                  {isFavorited ? '\u2605' : '\u2606'}
+                </button>
+                {showLoginPrompt && (
+                  <div className="error-message">Please log in to add to favorites.</div>
+                )}
+
         </div>
 
         <Comments resourceId={resourceId} userId={user?._id} isLoggedIn={isLoggedIn} isAdmin={isAdmin} authToken={authToken} />

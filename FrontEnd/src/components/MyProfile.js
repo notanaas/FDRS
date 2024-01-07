@@ -12,9 +12,8 @@ const MyProfile = () => {
   const [profile, setProfile] = useState({ username: '', email: '', isAdmin: false });
   const [loading, setLoading] = useState(true);//////////
   const [documents, setDocuments] = useState([]);
-  const { authToken } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002';
-  const [isEditMode, setIsEditMode] = useState(false);
+  const { authToken, isAdmin } = useContext(AuthContext);
+  const backendURL = 'https://fdrs-backend.up.railway.app';  const [isEditMode, setIsEditMode] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -24,9 +23,21 @@ const MyProfile = () => {
   const [userResources, setUserResources] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const location = useLocation(); // This hook gets the current location object
+  const [validationErrors, setValidationErrors] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState('');
+  const [updateError, setUpdateError] = useState('');
   const history = useHistory();
   const isProfilePage = location.pathname.includes(`/my-profile`);
   const backgroundImage = `/my-profile.png`;
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return emailRegex.test(email);
+  };
+
+  // Validation function for username
+  const validateUsername = (username) => {
+    return username.trim().length >= 3;
+  };
   useEffect(() => {
     const originalStyle = {
       overflow: document.body.style.overflow,
@@ -151,7 +162,20 @@ const MyProfile = () => {
   };
 
   const handleProfileUpdate = async () => {
-    const updateData = {
+    // Reset validation errors
+    setValidationErrors({});
+
+    // Validate fields
+    const isUsernameValid = validateUsername(editedProfile.username);
+    const isEmailValid = validateEmail(editedProfile.email);
+    if (!isUsernameValid || !isEmailValid) {
+      setValidationErrors({
+        username: !isUsernameValid ? "Username must be at least 3 characters long." : "",
+        email: !isEmailValid ? "Invalid email format." : "",
+      });
+      return;
+    }
+      const updateData = {
       newUsername: editedProfile.username.trim(),
       newEmail: editedProfile.email.trim(),
     };
@@ -278,8 +302,10 @@ const MyProfile = () => {
           <div className="edit-profile">
             <label htmlFor="username"><b>Username:</b></label>
             <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
+            {validationErrors.username && <div className="error-message">{validationErrors.username}</div>}
             <label htmlFor="email"><b>Email:</b></label>
             <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
+            {validationErrors.email && <div className="error-message">{validationErrors.email}</div>}
             <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
             <button className="authButton" onClick={handleEditToggle}>Cancel</button>
             {successMessage && <div className="success-message">{successMessage}</div>}

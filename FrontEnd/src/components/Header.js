@@ -27,8 +27,8 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 );
 
 
-const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
-  const backendURL = 'http://localhost:3002';
+const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => {
+  const backendURL = 'https://fdrs-backend.up.railway.app';
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -68,8 +68,17 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
   const PASSWORD_VISIBILITY_TIMEOUT = 5000;
   const [searchResults, setSearchResults] = useState([]);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [loginValidationErrors, setLoginValidationErrors] = useState({});
+  const [signupValidationErrors, setSignupValidationErrors] = useState({});
+  const [loginSuccessMessage, setLoginSuccessMessage] = useState('');
+  const [signupSuccessMessage, setSignupSuccessMessage] = useState('');
+  const [forgotPasswordSuccessMessage, setForgotPasswordSuccessMessage] = useState('');
 
-
+  const isValidEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return emailRegex.test(email);
+  };
+  
   const goToUserProfile = () => {
     history.push('/my-profile');
   };
@@ -123,7 +132,14 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
     setIsSignupOpen(false);
     clearFormFields();
   };
-
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setUsernameOrEmail(''); // Clear username or email
+    setPassword(''); // Clear password
+    setLoginErrorMessage(''); // Clear any login error messages
+    setLoginValidationErrors({}); // Clear validation errors
+  };
+  
   const handleForgotPassword = () => {
     setPasswordResetEmail(email);
     setPassword('');
@@ -131,25 +147,34 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
     setIsSignupOpen(false);
     setIsForgotPasswordOpen(true);
   };
-  const toggleLoginPasswordVisibility = (event) => {
-    event.preventDefault();
-    setShowLoginPassword(true);
-    setTimeout(() => {
-      setShowLoginPassword(false);
-    }, PASSWORD_VISIBILITY_TIMEOUT);
+  const validateLogin = () => {
+    let errors = {};
+    if (!usernameOrEmail.trim()) {
+      errors.usernameOrEmail = "Username or email is required.";
+    }
+    if (!password) {
+      errors.password = "Password is required.";
+    }
+    setLoginValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
-
-  const toggleSignupPasswordVisibility = (event) => {
-    event.preventDefault();
-    setShowSignupPassword(true);
-    setTimeout(() => {
-      setShowSignupPassword(false);
-    }, PASSWORD_VISIBILITY_TIMEOUT);
+  
+  const validateSignup = () => {
+    let errors = {};
+    // Add your validation logic for signup fields
+    // Similar to validateLogin, but for signupData fields
+    setSignupValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
+  
 
   const handleSignupSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
+    if (!validateSignup()) {
+      setLoading(false);
+      return;
+    }
 
     if (!signupData.username.trim() || signupData.username.length < 3) {
       setSignupErrorMessage('Username must be at least 3 characters long.');
@@ -173,8 +198,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
 
     try {
       const response = await axiosInstance.post(`${backendURL}/api_auth/register`, signupData);
-      setSuccessMessage('Registration successful: ' + response.data.message);
-      closeSignupModal();
+      setSignupSuccessMessage('Registration successful!');
     } catch (error) {
       if (error.response && error.response.data && error.response.data.errors) {
         const backendErrors = error.response.data.errors.map(err => err.msg).join(", ");
@@ -190,10 +214,11 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setLoginErrorMessage('');
     setLoading(true);
-
+    if (!validateLogin()) {
+      setLoading(false);
+      return;
+    }
     if (!usernameOrEmail || !password) {
       setLoginErrorMessage('Username/Email and password are required.');
       return;
@@ -218,41 +243,51 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
         setIsLoggedIn(true);
         setIsAdmin(user.isAdmin);
         setUser(user);
-        setSuccessMessage('Login Successful');
-        setIsLoginModalOpen(false);
+        setLoginSuccessMessage('Login Successful');
         setEmail('');
         setPassword('');
 
         if (updateLoginStatus) {
           updateLoginStatus(true, user.isAdmin, user);
+
         }
       } else {
         setLoginErrorMessage('Login response did not include the token.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      const errorMessage = error.response?.data?.message
-        ? error.response.data.message
-        : 'Login failed. Please try again later.';
-      setLoginErrorMessage(errorMessage);
+      // Set a specific error message for incorrect username/password
+      if (error.response && error.response.status === 401) { // Assuming 401 is the status code for unauthorized access
+        setLoginErrorMessage('Incorrect username or password.');
+      } else {
+        // Generic error message for other types of errors
+        setLoginErrorMessage('Login failed. Please try again later.');
+      }
     }
     finally {
       setLoading(false); // End loading
     }
   };
-
   const handleLogout = async () => {
     logout();
   };
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
-    setIsResettingPassword(true);
-    setForgotPasswordErrorMessage('');
-    setSuccessMessage('');
-    setLoading(true); // Start loading
+  setIsResettingPassword(true);
+  setForgotPasswordErrorMessage('');
+  setSuccessMessage('');
+  setLoading(true);
+
 
     if (!forgotPasswordData.email) {
       setForgotPasswordErrorMessage('Email is required.');
+      setIsResettingPassword(false);
+      return;
+    }
+
+    if (!isValidEmail(forgotPasswordData.email)) {
+      setForgotPasswordErrorMessage('Email is not valid.');
+      setIsResettingPassword(false);
       return;
     }
 
@@ -266,20 +301,22 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
         setIsForgotPasswordOpen(false);
       }
     } catch (error) {
-      handleAPIError(error);
-      setForgotPasswordData({ email: '' });
-    }
-    finally {
-        setIsResettingPassword(false);;
+      if (error.response) {
+        // Specific error message based on the response
+        const errorMessage = error.response.data.message || 'An error occurred. Please try again later.';
+        setForgotPasswordErrorMessage(errorMessage);
+      } else {
+        setForgotPasswordErrorMessage('An error occurred. Please try again later.');
+      }
+    } finally {
+      setIsResettingPassword(false);
     }
   };
   const handleAPIError = (error) => {
     if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
       setErrorMessage('Operation failed: ' + error.response.data.errors[0].msg);
-      console.error('Operation failed:', error.response.data.errors);
     } else {
       setErrorMessage('Operation failed. Please try again later.');
-      console.error('Operation failed:', error);
     }
   };
   const toggleSidebar = () => {
@@ -294,16 +331,15 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
   };
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
+    setForgotPasswordData({ email: '' }); // Reset the forgot password data
+    setForgotPasswordErrorMessage(''); // Clear any error messages
     setSuccessMessage('');
-    setErrorMessage('');
   };
-
+  
   const handleForgotPasswordInputChange = (e) => {
     setForgotPasswordData({ ...forgotPasswordData, email: e.target.value });
   };
-  const closeFileUpload = () => {
-    setIsFileUploadOpen(false);
-  };
+
   const handleUploadButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -312,12 +348,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
     }
     setIsModalOpen(true);
   };
-  const handleSearchUpdate = (results) => {
-    setSearchResults(results); // This updates the local state
-    if (onSearch) {
-      onSearch(results); // This lifts the state up to App.js
-    }
-  };
+
 
   return (
     <header className={`headerContainer ${isLoading ? 'loading' : ''}`}>
@@ -337,14 +368,19 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
       {isFacultyPage && (
         <div className="search-upload-container">
           <div className="search-container">
-            {<FeedbackForm authToken={authToken} onSearchResults={handleSearchUpdate} />}
+            { <FeedbackForm 
+              authToken={authToken} 
+              onSearch={onSearch}
+              showFeedbackButton={showFeedbackButton}
+            />
+            }
           </div>
           <div className="action-buttons">
             <button onClick={handleUploadButtonClick} className="authButton">
               Upload
             </button>
             <h1>{facultyName}</h1>
-            {isFileUploadOpen && <FileUpload facultyId={facultyId} closeFileUpload={closeFileUpload} />}
+            {isFileUploadOpen && <FileUpload facultyId={facultyId}  />}
           </div>
         </div>
       )}
@@ -365,7 +401,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
         )}
       </div>
       {isFileUploadOpen && (
-        <FileUpload facultyId={facultyId} />
+        <FileUpload facultyId={facultyId} setIsModalOpen={setIsFileUploadOpen} />
       )}
 
       <Modal isOpen={isSignupOpen} onClose={closeSignupModal}>
@@ -386,6 +422,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
 <form onSubmit={handleSignupSubmit}>
     <Input type="text" id="username" name="username" value={signupData.username} onChange={handleSignupInputChange} placeholder="Username" />
     <Input type="email" id="email" name="email" value={signupData.email} onChange={handleSignupInputChange} placeholder="Email" />
+    {signupSuccessMessage && <div className="success-message">{signupSuccessMessage}</div>}
 
     <div className="password-input-container">
         <Input
@@ -412,8 +449,8 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
 
       <Modal isOpen={isForgotPasswordOpen} onClose={closeForgotPasswordModal} >
         <label htmlFor="username"><h1>Forget Password</h1></label>
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
+        {forgotPasswordSuccessMessage && <div className="success-message">{forgotPasswordSuccessMessage}</div>}
+        {forgotPasswordErrorMessage && <div className="error-message">{forgotPasswordErrorMessage}</div>}
         <form onSubmit={handleForgotPasswordSubmit}>
           {passwordResetEmail ? (
             <div className="form-group">
@@ -429,14 +466,16 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
           {isResettingPassword ? 'Sending...' : 'Reset Password'}
           </button>
 
-          {isResettingPassword && <div className="loading-message">Please wait then check your email...</div>}
+          {isResettingPassword && <div className="loading-message">Please wait...</div>}
 
         </form>
       </Modal>
-      <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} >
+      <Modal isOpen={isLoginModalOpen} onClose={closeLoginModal}>
         <h1>Login</h1>
         {loginErrorMessage && <div className="error-message">{loginErrorMessage}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
+        {loginValidationErrors.usernameOrEmail && <div className="error-message">{loginValidationErrors.usernameOrEmail}</div>}
+        {loginValidationErrors.password && <div className="error-message">{loginValidationErrors.password}</div>}
+        {loginSuccessMessage && <div className="success-message">{loginSuccessMessage}</div>}
         <form onSubmit={handleLoginSubmit}>
           <div className="form-group">
             <label htmlFor="usernameOrEmail">Username or Email:</label>
@@ -474,9 +513,6 @@ const Header = ({ setIsModalOpen, isLoading, onSearch }) => {
             </div>
           </div>
 
-          {/* <button onClick={(e) => toggleLoginPasswordVisibility(e)} className="password-toggle">
-  {showLoginPassword ? 'Hide' : 'Show'} */}
-          {/* </button> */}
           <button type="submit" className="authButton" onClick={handleLoginSubmit}>Login</button>
           <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
         </form>

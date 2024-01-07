@@ -2,8 +2,9 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
+import { RouteParamsContext } from './context/RouteParamsContext';
 
-const FeedbackForm = ({ authToken, onSearchResults }) => {
+const FeedbackForm = ({ authToken, onSearch, showFeedbackButton }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -11,12 +12,14 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
   const [showButton, setShowButton] = useState(true);
   const location = useLocation();
   const isFacultyPage = location.pathname.includes('/faculty/');
-  const backendURL = 'http://localhost:3002';
+  const backendURL = 'https://fdrs-backend.up.railway.app';
   const authContext = useContext(AuthContext);
   const [feedbackSuccess, setFeedbackSuccess] = useState('');
   const [feedbackError, setFeedbackError] = useState('');
+  const { routeParams } = useContext(RouteParamsContext);
+  const facultyId = routeParams ? routeParams.facultyId : null;
   useEffect(() => {
-    if (searchPerformed && searchResults.length === 0) {
+    if (showFeedbackButton) {
       setShowSearchPrompt(true);
       setShowButton(true); 
       const timer = setTimeout(() => {
@@ -24,25 +27,16 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
       }, 4000);
       return () => clearTimeout(timer);
     }
-  }, [searchPerformed, searchResults]);
+  }, [showFeedbackButton]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const handleSearch = async () => {
-    setSearchPerformed(true);
-    try {
-      const response = await axios.get(`${backendURL}/api_resource/search`, {
-        params: { term: searchTerm },
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      onSearchResults(response.data); // Pass the filtered results to the FacultyPage
-    } catch (error) {
-      console.error('Search error:', error);
-      // Optionally handle error state
-    }
+    onSearch(searchTerm,facultyId);
   };
+  
 
   const submitFeedback = async () => {
     const { user } = authContext;
@@ -103,23 +97,24 @@ const FeedbackForm = ({ authToken, onSearchResults }) => {
           >
             <svg height="17" viewBox="0 0 1792 1792" width="17" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z" /></svg>
           </button>
-          {searchPerformed && searchResults.length === 0 && showButton && (
-            <button
-              className="authButton"
-              onClick={submitFeedback}
-              style={{
-                padding: '10px 20px',
-                margin: '5px',
-                borderRadius: '5px',
-                border: 'none',
-                cursor: 'pointer',
-                backgroundColor: 'green',
-                color: 'white'
-              }}
-            >
-              Submit Feedback
-            </button>
-          )}
+          {showFeedbackButton && (
+                <button
+                    className="authButton"
+                    onClick={submitFeedback}
+                    style={{
+                        padding: '10px 20px',
+                        margin: '5px',
+                        borderRadius: '5px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        backgroundColor: 'green',
+                        color: 'white'
+                    }}
+                >
+                    Submit Feedback
+                </button>
+            )}
+
         </div>
       )}
        {feedbackSuccess && (

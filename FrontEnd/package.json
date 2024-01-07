@@ -16,6 +16,7 @@
     "lodash.debounce": "^4.0.8",
     "luxon": "^3.4.4",
     "mongoose": "^X.X.X",
+    "pdfjs-dist": "^4.0.379",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",
     "react-dom": "^18.2.0",
@@ -55,7 +56,8 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "worker-loader": "^3.0.8"
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",

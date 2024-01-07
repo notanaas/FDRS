@@ -8,8 +8,7 @@ const Comments = ({ resourceId }) => {
     const [comments, setComments] = useState([]);
     const [editing, setEditing] = useState({ id: null, text: '' });
     const [newComment, setNewComment] = useState('');
-    const backendURL = 'http://localhost:3002';
-    const userId = user?._id;
+    const backendURL = 'https://fdrs-backend.up.railway.app';    const userId = user?._id;
     const [sortOrder, setSortOrder] = useState('newest'); // State to control sort order
     const handleSort = () => {
       // Toggle sort order between 'newest' and 'oldest'

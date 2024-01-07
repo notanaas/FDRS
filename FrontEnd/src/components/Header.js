@@ -28,7 +28,7 @@ const Input = ({ type, id, name, value, onChange, placeholder }) => (
 
 
 const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => {
-  const backendURL = 'https://fdrs-backend.up.railway.app';
+  const backendURL = 'http://localhost:3002';
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);

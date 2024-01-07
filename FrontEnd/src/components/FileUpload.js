@@ -28,7 +28,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   const { routeParams } = useContext(RouteParamsContext);
   const facultyId = routeParams ? routeParams.facultyId : null;
   const [validationErrors, setValidationErrors] = useState({});
-  const backendURL = 'https://fdrs-backend.up.railway.app';  
+  const backendURL = 'http://localhost:3002';  
   const uploadURL = facultyId ? `${backendURL}/api_resource/create/${facultyId}` : null;
 
   const convertPdfToImage = (file) => {

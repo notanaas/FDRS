@@ -22,7 +22,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState([]); // State to store search results
   const [showFeedbackButton, setShowFeedbackButton] = useState(false);
-  const backendURL = 'https://fdrs-backend.up.railway.app';
+  const backendURL = 'http://localhost:3002';
   
   useEffect(() => {
     const configureAxios = () => {

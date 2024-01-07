@@ -9,7 +9,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   const [userFavorites, setUserFavorites] = useState([]);
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
   const { authToken, isLoggedIn } = useContext(AuthContext);
-  const backendURL = 'https://fdrs-backend.up.railway.app';  const [feedbacks, setFeedbacks] = useState([]);
+  const backendURL = 'http://localhost:3002';  const [feedbacks, setFeedbacks] = useState([]);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
   const location = useLocation();

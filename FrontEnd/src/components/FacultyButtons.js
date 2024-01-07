@@ -17,7 +17,7 @@ const FacultyButtons = () => {
     const fetchFaculties = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('https://fdrs-backend.up.railway.app/api_faculty/Faculties', {
+        const response = await axios.get('http://localhost:3002/api_faculty/Faculties', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setFaculties(response.data.facultyNames);

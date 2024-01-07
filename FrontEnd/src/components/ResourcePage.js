@@ -21,7 +21,7 @@ const ResourcePage = () => {
   const [resourceDetails, setResourceDetails] = useState(null);
   const [comments, setComments] = useState([]);
   const { authToken, isLoggedIn, user, isAdmin } = useContext(AuthContext);
-  const backendURL = 'https://fdrs-backend.up.railway.app';  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
+  const backendURL = 'http://localhost:3002';  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
   const history = useHistory();
 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);

@@ -5,7 +5,7 @@ import {jwtDecode} from 'jwt-decode'; // Corrected import statement
 import './App.css';
 
 const PasswordReset = () => {
-  const backendURL = 'https://fdrs-backend.up.railway.app';  
+  const backendURL = 'http://localhost:3002';  
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');

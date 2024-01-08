@@ -209,7 +209,7 @@ exports.search_resource = asyncHandler(async (req, res, next) => {
   console.log(searchTerm)
   const searchResults = await Resource.find({
     $and: [
-      { facultyID: facultyID }, // Add this line to filter by facultyID
+      { Faculty: facultyID }, // Add this line to filter by facultyID
       {
         $or: [
           { Title: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for title
@@ -236,6 +236,7 @@ exports.search_resource = asyncHandler(async (req, res, next) => {
 
   // Filter out resources with null ResourceAuthor (unpopulated authors)
   if (searchResults.length === 0) {
+    console.log(searchResults)
     return res.status(404).json({ message: 'No matching resources found' });
   }
   console.log(searchResults)

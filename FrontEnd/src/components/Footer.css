@@ -1,13 +1,27 @@
+/* Footer.css */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1; /* This will allow the content to expand and push the footer down */
+}
+
 .footer {
   background-color: #333;
   color: white;
   text-align: center;
   width: 100%;
-  height: 150px; /* Fixed height of the footer */
+  height: 150px;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centers the content vertically */
-  
+  justify-content: center;
 }
 
 .footer-content {
@@ -18,7 +32,8 @@
 .about-us, .contact-us {
   flex-basis: 45%;
 }
+
 .footer a {
-  color: #fff; 
+  color: #fff;
   text-decoration: none;
 }

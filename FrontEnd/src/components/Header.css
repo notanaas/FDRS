@@ -155,7 +155,7 @@
   display: inline-block;
   position: relative;
   transition: all 0.3s ease;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.7);
   border: 1px solid white;
   margin-right: 5px;
 }
@@ -356,18 +356,51 @@
 }
 
 .action-buttons h1 {
-  font-size: x-large;
   position: fixed;
-  left: 0%;
-  width: 100%;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%; /* Assuming you want the title to span the full width of the screen */
+  padding: 10px 0; /* Add some padding to ensure the text doesn't touch the edges */
+  box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+/* Responsive font sizes based on screen width */
+@media (max-width: 1200px) {
+  .action-buttons h1 {
+    font-size: large; /* Smaller font size for smaller screens */
+    top: 21%;
+  }
+}
+
+@media (max-width: 992px) {
+  .action-buttons h1 {
+    font-size: medium; /* Even smaller font size for tablets */
+    top: 9%;
+
+  }
 }
 
 @media (max-width: 768px) {
   .action-buttons h1 {
-    padding-top: 30px;
+    font-size: small; /* Small font size for landscape phones */
+    top: 21%;
+
   }
 }
 
+@media (max-width: 576px) {
+  .action-buttons h1 {
+    font-size: x-small; /* Extra small font size for portrait phones */
+    top: 19%;
+
+  }
+}
 .input-icon-container {
   position: relative;
   display: flex;
@@ -414,6 +447,7 @@
   margin-top: 20px;
   text-align: center;
 }
+
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
@@ -424,8 +458,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .feedbackSuccess {

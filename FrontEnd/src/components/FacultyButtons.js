@@ -34,7 +34,7 @@ const FacultyButtons = () => {
     fetchFaculties();
   }, []);
 
-  if (loading) return <div> <Header isLoading={loading} /> {/* @saif */}  </div>;
+  if (loading) return <div>  {/* @saif */}  </div>;
   if (error) return <div>Error: {error}</div>;
 
   const goToFacultyPage = (faculty) => {
@@ -48,13 +48,7 @@ const FacultyButtons = () => {
   };
   return (
     <div className='faculty-buttons-container'>
-      <Link 
-        to="/about-us" 
-        className="faculty-button" 
-        style={{ backgroundImage: `url(${aboutUsImageUrl})` }}
-      >
-        About Us
-      </Link>
+      
       {faculties.length > 0 ? (
         faculties.map(faculty => {
           // Convert faculty name to kebab-case for the image filename
@@ -79,6 +73,13 @@ const FacultyButtons = () => {
       ) : (
         <p>No faculties found.</p>
       )}
+      <Link 
+        to="/about-us" 
+        className="faculty-button" 
+        style={{ backgroundImage: `url(${aboutUsImageUrl})` }}
+      >
+        About Us
+      </Link>
     </div>
   );
 };

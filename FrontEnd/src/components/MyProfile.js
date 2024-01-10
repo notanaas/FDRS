@@ -289,7 +289,6 @@ const MyProfile = () => {
   };
   return (
     <div className="profile-container">
-          <Header isLoading={loading} /> {/* @saif */}
           <div className="profile-content">
 
       {showSuccessMessage && (

@@ -209,3 +209,27 @@ body {
   }
 }
 
+.sidebar button {
+  background-color: #333; /* Dark background */
+  color: white; /* Light text */
+  padding: 10px 20px;
+  border: none; /* Remove border */
+  margin-bottom: 10px; /* Space between buttons */
+  width: 100%; /* Full-width */
+  text-align: left; /* Align text to the left */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effect */
+  font-size: 16px; /* Adjust font size as needed */
+  cursor: pointer; /* Change mouse pointer on hover */
+}
+
+.sidebar button:hover {
+  background-color: #555; /* Slightly lighter background on hover */
+  transform: translateX(10px); /* Move button to the right on hover */
+}
+
+/* Add an 'active' class in your component when the button is selected */
+.sidebar button.active {
+  background-color: #666; /* Even lighter background for active button */
+  /* Add any other styles for an active button, such as a left border */
+}

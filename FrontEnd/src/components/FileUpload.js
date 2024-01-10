@@ -275,7 +275,6 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
             <button onClick={handleUpload} className="authButton" disabled={isLoading}>
               {isLoading ? 'Uploading...' : 'Upload'}
             </button>
-            <button onClick={closeModal} className="authButton">Close</button>
           </div>
         </Modal>
       )}

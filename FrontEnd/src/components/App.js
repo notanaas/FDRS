@@ -92,37 +92,38 @@ function App() {
       />
     );
   };
+
   return (
     <Router>
-    <AuthProvider>
-      <RouteParamsProvider>
-      <ActiveSectionProvider> 
-        <div className="App">
-        <Header 
-              setIsModalOpen={setIsModalOpen} 
-              onSearch={handleSearch} 
-              showFeedbackButton={showFeedbackButton}
-            />
-          {isModalOpen && <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
-          <div className="contentContainer">
-            <Switch>
-              <Route exact path="/">
-                <Redirect to="/welcomingpage" />
-              </Route>
-              <Route path="/welcomingpage" exact component={WelcomingPage} />
-              <Route path="/about-us" exact component={AboutUs} />
-              <Route path="/reset-password" component={PasswordReset} />
-              <Route path="/my-profile" component={MyProfile} />
-              <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} searchResults={searchResults} />} />
-              <Route path="/resource/:resourceId" component={ResourcePage} />
-            </Switch>
-          </div>
-        </div>
-        </ActiveSectionProvider>
-      </RouteParamsProvider>
-    </AuthProvider>
-  </Router>
-);
+      <AuthProvider>
+        <RouteParamsProvider>
+          <ActiveSectionProvider>
+            <div className="App">
+              <Header 
+                setIsModalOpen={setIsModalOpen} 
+                onSearch={handleSearch} 
+                showFeedbackButton={showFeedbackButton}
+              />
+              {isModalOpen && <FileUpload isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
+              <div className="contentContainer">
+                <Switch>
+                  <Route exact path="/">
+                    <Redirect to="/welcomingpage" />
+                  </Route>
+                  <Route path="/welcomingpage" exact component={WelcomingPage} />
+                  <Route path="/about-us" exact component={AboutUs} />
+                  <Route path="/reset-password" component={PasswordReset} />
+                  <ProtectedRoute path="/my-profile" component={MyProfile} /> {/* Protected route for My Profile */}
+                  <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} searchResults={searchResults} />} />
+                  <Route path="/resource/:resourceId" component={ResourcePage} />
+                </Switch>
+              </div>
+            </div>
+          </ActiveSectionProvider>
+        </RouteParamsProvider>
+      </AuthProvider>
+    </Router>
+  );
 }
 
 export default App;

@@ -62,7 +62,7 @@ const FacultyButtons = () => {
               className="faculty-button"
               style={{ backgroundImage: `url(${imageUrl})` }}
             >
-              {faculty.FacultyName}
+              <b>{faculty.FacultyName}</b>
             </Link>
           );
         })

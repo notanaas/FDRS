@@ -14,8 +14,10 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
+
       {isProfilePage &&(
        <div>
+        <h1>Your Profile</h1>
         <button onClick={() => setActiveSection('profileInfo')} className={activeSection === 'profileInfo' ? 'active' : ''}>
           User Profile Information
         </button>
@@ -32,6 +34,7 @@ const Sidebar = () => {
         )}
       </div>
       )}
+      <h1>Faculties</h1>
       <FacultyButtons />
     </div>
   );

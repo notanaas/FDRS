@@ -186,7 +186,7 @@ bodY {
 
 .faculty-button::before {
   content: '';
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   position: absolute;
   top: 0;
   right: 0;
@@ -197,12 +197,13 @@ bodY {
 }
 
 .faculty-button:hover {
-  transform: scale(1.05);
+  transform: scale(1.10);
 }
 
 h1 {
   text-align: center;
   color: #ffffff;
+  border-radius: 6px;
 }
 
 html, body, #root {

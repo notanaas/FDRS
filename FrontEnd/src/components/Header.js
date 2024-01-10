@@ -5,19 +5,14 @@ import FacultyButtons from './FacultyButtons';
 import FileUpload from './FileUpload';
 import FeedbackForm from './FeedbackForm';
 import Modal from './Modal';
+import Sidebar from './Sidebar';
 import axios from 'axios';
 import './Header.css';
 import { RouteParamsContext } from './context/RouteParamsContext';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import './Sidebar.css';
 
-const Sidebar = () => {
-  return (
-    <div className="sidebar">
-      <FacultyButtons />
-    </div>
-  );
-};
+
 
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (

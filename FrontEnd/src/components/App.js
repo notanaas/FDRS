@@ -1,7 +1,6 @@
 import React, { useState, useEffect,useContext} from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import axios from 'axios';
-
 import WelcomingPage from './WelcomingPage';
 import ResourcePage from './ResourcePage';
 import FacultyPage from './FacultyPage';
@@ -10,10 +9,9 @@ import MyProfile from './MyProfile';
 import AboutUs from './AboutUs';
 import Header from './Header';
 import FileUpload from './FileUpload';
-
 import { AuthProvider } from './context/AuthContext';
 import { RouteParamsProvider} from './context/RouteParamsContext';
-
+import { ActiveSectionProvider } from './context/ActiveSectionContext';
 import './App.css';
 
 function App() {
@@ -98,6 +96,7 @@ function App() {
     <Router>
     <AuthProvider>
       <RouteParamsProvider>
+      <ActiveSectionProvider> 
         <div className="App">
         <Header 
               setIsModalOpen={setIsModalOpen} 
@@ -119,6 +118,7 @@ function App() {
             </Switch>
           </div>
         </div>
+        </ActiveSectionProvider>
       </RouteParamsProvider>
     </AuthProvider>
   </Router>

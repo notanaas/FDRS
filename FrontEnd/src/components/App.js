@@ -9,7 +9,6 @@ import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile';
 import AboutUs from './AboutUs';
 import Header from './Header';
-import Footer from './Footer';
 import FileUpload from './FileUpload';
 
 import { AuthProvider } from './context/AuthContext';
@@ -119,7 +118,6 @@ function App() {
               <Route path="/resource/:resourceId" component={ResourcePage} />
             </Switch>
           </div>
-          <Footer/>
         </div>
       </RouteParamsProvider>
     </AuthProvider>

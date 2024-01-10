@@ -12,12 +12,21 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const aboutUsImageUrl = '/about-us.png'; // The path to your "About Us" image
   return (
     <div className="sidebar">
       <FacultyButtons />
+      <Link 
+        to="/about-us" 
+        className="faculty-button" 
+        style={{ backgroundImage: `url(${aboutUsImageUrl})` }}
+      >
+        About Us
+      </Link>
     </div>
   );
-}
+};
+
 
 const Input = ({ type, id, name, value, onChange, placeholder }) => (
   <div className="form-group">

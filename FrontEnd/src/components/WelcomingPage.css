@@ -1,0 +1,16 @@
+.welcoming-container {
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+              url('/WelcomingPage.png') no-repeat center center;
+  background-size: cover;
+  height: 100vh; /* Adjust the height as needed */
+}
+
+.header-message {
+  /* Style your message header as needed */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white; /* Example text color */
+  /* Add other styles as needed */
+}

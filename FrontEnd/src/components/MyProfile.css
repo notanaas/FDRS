@@ -1,5 +1,5 @@
 body, html {
-  overflow: auto; /* or 'scroll' */
+  overflow: auto;
 }
 
 .profile-sections {
@@ -7,7 +7,6 @@ body, html {
   flex-direction: column;
 }
 
-/* If you want them to wrap when the screen size is small */
 @media (max-width: 768px) {
   .profile-sections {
     flex-wrap: wrap;
@@ -31,14 +30,12 @@ body, html {
 
 .contentContainer .my-profile .profile-sections .f
 
-/* Style for individual sections */
 .section {
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #f9f9f9;
 }
 
-/* Styling for buttons */
 .document-actions .authButton {
   border: none;
   color: rgb(0, 0, 0);
@@ -50,7 +47,6 @@ body, html {
   height: 20px;
 }
 
-/* Success and error message styling */
 .success-message-header, .error-message-header {
   color: #fff;
   padding: 10px;
@@ -59,13 +55,12 @@ body, html {
 }
 
 .success-message-header {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
 }
 
 .error-message-header {
-  background-color: #f44336; /* Red */
+  background-color: #f44336;
 }
-
 
 body {
   display:block;
@@ -77,101 +72,70 @@ body {
   overflow: auto; 
 }
 
-/* Add a media query for screens smaller than 768 pixels */
 @media (max-width: 768px) {
   body {
-      font-size: 14px; /* Adjust the font size for smaller screens */
+      font-size: 14px;
       margin-top: 50px;
       overflow: auto;
   }
 }
-.accordion-title {
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  align-items: center;
-  height: 80px; /* Increased button height */
-  padding: 10px 20px; /* Add padding for bigger button size */
-  margin: 10px auto; /* Center your button with automatic horizontal margins */
-  margin-bottom: 15px; /* Increased bottom margin for better spacing between buttons */
-  font-size: large;
-  display: block; /* Make the buttons stack vertically */
-  width: 80%; /* Set width to a percentage of the container for consistent sizing */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  position: relative;
-  z-index: 0;
-  text-align: center; /* Center the text inside the button */
-  left: 60px;
-  overflow: auto; 
+
+.user-resources {
+  display: flex; 
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-@media (max-width: 768px) {
-  .accordion-title {
-    width: 336px;
-    margin-right:200px ;
-  }
-
-}
-
-.accordion-content {
-  /* Styles for the accordion content */
-  max-height: 0; /* Use max-height for a smooth animation */
-  overflow: hidden;
-  width: 90%; /* Match the width to the accordion title */
-  margin: 0 auto; /* Center the content */
-}
-
-.accordion-content.open {
-  max-height: 100%;
-  width: 70%;
-  box-sizing: border-box;
-  border: 1px solid black;
-  background: rgba(0, 0, 0, 0.6);
-}
-
-/* Style for the content inside the accordion */
-.panel {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  transition: max-height 0.2s ease-out;
-}
-
-/* Additional styles may follow */
-.user-info {
-  margin: 3px;
-}
-
-.card {
-  width: 300px;
-  box-sizing: border-box;
+.user-resources > div {
+  flex: 0 0 auto;
   margin: 10px;
-  margin-top: 100px;
+  width: calc(33.333% - 20px);
+}
+
+@media (max-width: 1024px) {
+  .user-resources > div {
+    width: calc(50% - 20px);
+  }
 }
 
 @media (max-width: 768px) {
-  .accordion{
-    width: 510px; /* Set a fixed width for smaller screens */
-    margin-top: 0 auto;
-    
+  .user-resources > div {
+    width: calc(100% - 20px);
+  }
+}
+
+.main-content .user-info,
+.main-content .user-resources,
+.main-content .user-favorites,
+.main-content .admin-actions {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+@media (min-width: 768px) {
+  .main-content .user-info,
+  .main-content .user-resources,
+  .main-content .user-favorites,
+  .main-content .admin-actions {
+    margin-left: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content .user-info {
+    margin-left: 300px;
+  }
+  .main-content .user-resources,
+  .main-content .user-favorites,
+  .main-content .admin-actions {
+    margin-left: 250px;
   }
 }
 
 .resource-details .resource-title {
   opacity: .75;
   text-overflow: ellipsis;
-  overflow: hidden;
-}
-.accordion {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.accordion-content {
-  max-height: 0;
   overflow: hidden;
 }
 
@@ -196,7 +160,6 @@ body {
   margin: 5px;
 }
 
-
 @media (max-width: 768px) {
   .edit-profile {
     margin-left: 80px;
@@ -210,26 +173,49 @@ body {
 }
 
 .sidebar button {
-  background-color: #333; /* Dark background */
-  color: white; /* Light text */
+  background-color: #333;
+  color: white; 
   padding: 10px 20px;
-  border: none; /* Remove border */
-  margin-bottom: 10px; /* Space between buttons */
-  width: 100%; /* Full-width */
-  text-align: left; /* Align text to the left */
-  border-radius: 5px; /* Rounded corners */
-  transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effect */
-  font-size: 16px; /* Adjust font size as needed */
-  cursor: pointer; /* Change mouse pointer on hover */
+  border: none;
+  margin-bottom: 10px;
+  width: 100%;
+  text-align: left;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .sidebar button:hover {
-  background-color: #555; /* Slightly lighter background on hover */
-  transform: translateX(10px); /* Move button to the right on hover */
+  background-color: #555;
+  transform: translateX(10px); 
+}
+.sidebar button.active {
+  background-color: #666; 
 }
 
-/* Add an 'active' class in your component when the button is selected */
-.sidebar button.active {
-  background-color: #666; /* Even lighter background for active button */
-  /* Add any other styles for an active button, such as a left border */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 10px;
+  justify-content: center; 
+  align-items: flex-start;
+  padding: 10px;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: 200px;
+  margin: 10px; 
+}
+
+@media (max-width: 1024px) {
+  .card {
+    width: calc(50% - 20px);
+  }
+}
+@media (max-width: 768px){
+  .card {
+    width: calc(100% - 20px); 
+  }
 }

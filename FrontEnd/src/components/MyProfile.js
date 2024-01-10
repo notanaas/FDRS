@@ -4,7 +4,6 @@ import { AuthContext } from './context/AuthContext';
 import DocumentCard from './DocumentCard'; // Ensure this is the correct path
 import './MyProfile.css';
 import { useHistory, useLocation } from 'react-router-dom';
-import Accordion from './Accordion'; // Make sure to create this component
 import Header from './Header'; // Ensure this is the correct path
 
 
@@ -27,14 +26,21 @@ const MyProfile = () => {
   const [updateSuccess, setUpdateSuccess] = useState('');
   const [updateError, setUpdateError] = useState('');
   const history = useHistory();
+  const [activeSection, setActiveSection] = useState('profileInfo');
   const isProfilePage = location.pathname.includes(`/my-profile`);
-  const backgroundImage = `/my-profile.png`;
+  const backgroundImage = `/img_avatar.png`;
+
+  const sidebarSections = [
+    { name: 'User Profile Information', key: 'profileInfo' },
+    { name: 'Your Resources', key: 'resources' },
+    { name: 'Your Favorites', key: 'favorites' },
+    { name: 'Admin Actions', key: 'adminActions' }
+  ];
+
   const validateEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return emailRegex.test(email);
   };
-
-  // Validation function for username
   const validateUsername = (username) => {
     return username.trim().length >= 3;
   };
@@ -297,57 +303,68 @@ const MyProfile = () => {
       {showErrorMessage && (
         <div className="error-message-header">{errorMessage}</div>
       )}
-      <Accordion title="User Profile Information">
-        {isEditMode ? (
-          <div className="edit-profile">
-            <label htmlFor="username"><b>Username:</b></label>
-            <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
-            {validationErrors.username && <div className="error-message">{validationErrors.username}</div>}
-            <label htmlFor="email"><b>Email:</b></label>
-            <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
-            {validationErrors.email && <div className="error-message">{validationErrors.email}</div>}
-            <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
-            <button className="authButton" onClick={handleEditToggle}>Cancel</button>
-            {successMessage && <div className="success-message">{successMessage}</div>}
-          </div>
-        ) : (
+      <div className="sidebar">
+        <button onClick={() => setActiveSection('profileInfo')} className={activeSection === 'profileInfo' ? 'active' : ''}>
+          User Profile Information
+        </button>
+        <button onClick={() => setActiveSection('resources')} className={activeSection === 'resources' ? 'active' : ''}>
+          Your Resources
+        </button>
+        <button onClick={() => setActiveSection('favorites')} className={activeSection === 'favorites' ? 'active' : ''}>
+          Your Favorites
+        </button>
+        {isAdmin && (
+          <button onClick={() => setActiveSection('adminActions')} className={activeSection === 'adminActions' ? 'active' : ''}>
+            Admin Actions
+          </button>
+        )}
+      </div>
+      <div className="main-content">
+        {activeSection === 'profileInfo' && (
           <div className="user-info">
-            <h3>Username: {profile.username}</h3>
-            <h3>Email: {profile.email}</h3>
-            <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
-            <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
-
+            {isEditMode ? (
+              // Form for editing profile information
+              <div className="edit-profile">
+              <label htmlFor="username"><b>Username:</b></label>
+              <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
+              {validationErrors.username && <div className="error-message">{validationErrors.username}</div>}
+              <label htmlFor="email"><b>Email:</b></label>
+              <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
+              {validationErrors.email && <div className="error-message">{validationErrors.email}</div>}
+              <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
+              <button className="authButton" onClick={handleEditToggle}>Cancel</button>
+              {successMessage && <div className="success-message">{successMessage}</div>}
+              </div>
+            ) : (
+              // Display profile information
+              <div>
+                <h3>Username: {profile.username}</h3>
+                <h3>Email: {profile.email}</h3>
+                <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
+                <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
+              </div>
+            )}
           </div>
         )}
-
-      </Accordion>
-      <div className="profile-sections">
-        <Accordion title="Your Resources">
-
-        <div className="user-resources section">
-  <div className="card-container">
-    {userResources.length > 0 ? (
-      userResources.map((resource) => (
-        <DocumentCard
-          cardType="resource"
-          key={resource._id}
-          document={resource}
-          onClick={() => handleCardClick(resource._id)}
-          onDelete={deleteDocument}
-        />
-      ))
-    ) : (
-      <p>No resources available.</p>
-    )}
-  </div>
-</div>
-
-        </Accordion>
-        <div className="user-favorites section">
-          <Accordion title="Your Favorites">
-
-            <div className="card-container">
-              {userFavorites.length > 0 ? (
+        {activeSection === 'resources' && (
+          <div className="user-resources">
+            {userResources.length > 0 ? (
+              userResources.map((resource) => (
+                <DocumentCard
+                  key={resource._id}
+                  cardType="resource"
+                  document={resource}
+                  onClick={() => handleCardClick(resource._id)}
+                  onDelete={deleteDocument}                />
+              ))
+            ) : (
+              <p>No resources available.</p>
+            )}
+          </div>
+        )}
+        {activeSection === 'favorites' && (
+          <div className="user-favorites">
+             {userFavorites.length > 0 ? (
                 userFavorites.map((resource) => {
                   const resourceData = resource.Resource;
                   return resourceData ? (
@@ -366,16 +383,11 @@ const MyProfile = () => {
                 <p>No favorites available.</p>
               )}
             </div>
-          </Accordion>
-        </div>
-      </div>
-
-      {profile.isAdmin && (
-        <Accordion title="Admin Actions">
-
-          <div className="admin-section">
-            <h2>Unauthorized Documents</h2>
-            <div className="card-container">
+        )}
+        {activeSection === 'adminActions' && isAdmin && (
+          <div className="admin-actions">
+            <div className="unauthorized-documents">
+              <h2>Unauthorized Documents</h2>
               {documents.map((doc) => (
                 <DocumentCard
                   cardType="adminActions"
@@ -387,31 +399,25 @@ const MyProfile = () => {
                 />
               ))}
             </div>
-          </div>
-          <div className="feedbacks-section">
-            <h2>Feedbacks</h2>
-            <div className="card-container">
-              {feedbacks.length > 0 ? (
-                feedbacks.map(fb => (
-                  <DocumentCard
-                    key={fb._id}
-                    cardType="feedback"
-                    document={fb}
-                    deleteFeedback={deleteFeedback}
-                    sendEmail={sendEmail}
-                  />
-
-                ))
-              ) : (
-                <p>No feedbacks to display.</p>
-              )}
+            <div className="feedbacks-section">
+              <h2>Feedbacks</h2>
+              {feedbacks.map((fb) => (
+                <DocumentCard
+                  key={fb._id}
+                  cardType="feedback"
+                  document={fb}
+                  deleteFeedback={deleteFeedback}
+                  sendEmail={sendEmail}               
+                   />
+              ))}
             </div>
           </div>
-        </Accordion>
-      )}
-</div>
+        )}
+      </div>
+    </div>
     </div>
   );
 };
+
 
 export default MyProfile;

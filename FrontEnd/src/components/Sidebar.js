@@ -13,7 +13,7 @@ const Sidebar = () => {
   const isProfilePage = location.pathname.includes(`/my-profile`);
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isProfilePage ? 'sidebar-open' : ''}`}>
 
       {isProfilePage &&(
        <div>

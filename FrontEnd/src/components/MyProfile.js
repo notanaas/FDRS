@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import DocumentCard from './DocumentCard'; // Ensure this is the correct path
-import './MyProfile.css';
+import DocumentCard from './DocumentCard'; 
+import { ActiveSectionContext } from './context/ActiveSectionContext';
 import { useHistory, useLocation } from 'react-router-dom';
-import Header from './Header'; // Ensure this is the correct path
+import './MyProfile.css';
 
 
 const MyProfile = () => {
@@ -26,9 +26,9 @@ const MyProfile = () => {
   const [updateSuccess, setUpdateSuccess] = useState('');
   const [updateError, setUpdateError] = useState('');
   const history = useHistory();
-  const [activeSection, setActiveSection] = useState('profileInfo');
   const isProfilePage = location.pathname.includes(`/my-profile`);
   const backgroundImage = `/img_avatar.png`;
+  const { activeSection } = useContext(ActiveSectionContext);
 
  
 
@@ -264,15 +264,11 @@ const MyProfile = () => {
       }
     } catch (error) {
       console.error('Error deleting feedback:', error);
-      // Handle error (e.g., show error message)
     }
   };
   const sendEmail = (emailAddress) => {
-    // Optionally, add subject and body to the email
     const subject = encodeURIComponent("Your Feedback");
     const body = encodeURIComponent("Thank you for your feedback!");
-
-    // Construct the mailto link
     window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
   };
   const deleteDocument = async (resourceId) => {
@@ -297,27 +293,12 @@ const MyProfile = () => {
       {showErrorMessage && (
         <div className="error-message-header">{errorMessage}</div>
       )}
-      <div className="sidebar">
-        <button onClick={() => setActiveSection('profileInfo')} className={activeSection === 'profileInfo' ? 'active' : ''}>
-          User Profile Information
-        </button>
-        <button onClick={() => setActiveSection('resources')} className={activeSection === 'resources' ? 'active' : ''}>
-          Your Resources
-        </button>
-        <button onClick={() => setActiveSection('favorites')} className={activeSection === 'favorites' ? 'active' : ''}>
-          Your Favorites
-        </button>
-        {isAdmin && (
-          <button onClick={() => setActiveSection('adminActions')} className={activeSection === 'adminActions' ? 'active' : ''}>
-            Admin Actions
-          </button>
-        )}
-      </div>
+     
       <div className="main-content">
         {activeSection === 'profileInfo' && (
           <div className="user-info">
+            <h1>User Profile Information</h1>
             {isEditMode ? (
-              // Form for editing profile information
               <div className="edit-profile">
               <label htmlFor="username"><b>Username:</b></label>
               <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
@@ -330,7 +311,6 @@ const MyProfile = () => {
               {successMessage && <div className="success-message">{successMessage}</div>}
               </div>
             ) : (
-              // Display profile information
               <div>
                 <h3>Username: {profile.username}</h3>
                 <h3>Email: {profile.email}</h3>
@@ -342,6 +322,7 @@ const MyProfile = () => {
         )}
         {activeSection === 'resources' && (
           <div className="user-resources">
+           <h1>Your Resources</h1>
             {userResources.length > 0 ? (
               userResources.map((resource) => (
                 <DocumentCard
@@ -358,6 +339,7 @@ const MyProfile = () => {
         )}
         {activeSection === 'favorites' && (
           <div className="user-favorites">
+            <h1>Your Favorites</h1>
              {userFavorites.length > 0 ? (
                 userFavorites.map((resource) => {
                   const resourceData = resource.Resource;
@@ -380,6 +362,7 @@ const MyProfile = () => {
         )}
         {activeSection === 'adminActions' && isAdmin && (
           <div className="admin-actions">
+            <h1>Admin Actions</h1>
             <div className="unauthorized-documents">
               <h2>Unauthorized Documents</h2>
               {documents.map((doc) => (

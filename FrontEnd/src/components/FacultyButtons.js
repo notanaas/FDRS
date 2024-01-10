@@ -12,7 +12,8 @@ const FacultyButtons = () => {
   const history = useHistory();
   const [error, setError] = useState('');
   const { user, authToken,refreshTokenFunc } = useContext(AuthContext);
-  
+  const aboutUsImageUrl = '/about-us.png'; // The path to your "About Us" image
+
   useEffect(() => {
     const fetchFaculties = async () => {
       try {
@@ -47,12 +48,19 @@ const FacultyButtons = () => {
   };
   return (
     <div className='faculty-buttons-container'>
-      
+      <Link 
+        to="/about-us" 
+        className="faculty-button" 
+        style={{ backgroundImage: `url(${aboutUsImageUrl})` }}
+      >
+        About Us
+      </Link>
       {faculties.length > 0 ? (
         faculties.map(faculty => {
           // Convert faculty name to kebab-case for the image filename
           const imageUrl = `/images/${faculty.FacultyName.toLowerCase().replace(/ /g, '-')}.png`;
           return (
+
             <Link 
               key={faculty._id}
               to={{
@@ -63,7 +71,9 @@ const FacultyButtons = () => {
               style={{ backgroundImage: `url(${imageUrl})` }}
             >
               <b>{faculty.FacultyName}</b>
+              
             </Link>
+            
           );
         })
       ) : (

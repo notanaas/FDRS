@@ -30,12 +30,7 @@ const MyProfile = () => {
   const isProfilePage = location.pathname.includes(`/my-profile`);
   const backgroundImage = `/img_avatar.png`;
 
-  const sidebarSections = [
-    { name: 'User Profile Information', key: 'profileInfo' },
-    { name: 'Your Resources', key: 'resources' },
-    { name: 'Your Favorites', key: 'favorites' },
-    { name: 'Admin Actions', key: 'adminActions' }
-  ];
+ 
 
   const validateEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;

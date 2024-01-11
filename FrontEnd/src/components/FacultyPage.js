@@ -121,7 +121,7 @@ const FacultyPage = ({ searchResults }) => {
   return (
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">
-        <div className="faculty-container">
+        <div style={pageStyle} className="faculty-container">
           {showSearchResults ? (
             // Display search results using DocumentCard
             searchResults.map((result) => (

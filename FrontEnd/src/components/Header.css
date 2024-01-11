@@ -313,6 +313,22 @@
   cursor: pointer;
 }
 
+.upload-modal-content .modal-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 999;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  font-size: 24px;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0);
+  transition: all 0.3s ease;
+}
+
 
 .success-message {
   padding: 10px;
@@ -389,7 +405,7 @@
 @media (max-width: 768px) {
   .action-buttons h1 {
     font-size: small; /* Small font size for landscape phones */
-    top: 21%;
+    top: 14%;
 
   }
 }
@@ -397,7 +413,7 @@
 @media (max-width: 576px) {
   .action-buttons h1 {
     font-size: x-small; /* Extra small font size for portrait phones */
-    top: 19%;
+    top: 15%;
 
   }
 }

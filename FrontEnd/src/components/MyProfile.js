@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
-import DocumentCard from './DocumentCard'; 
+import DocumentCard from './DocumentCard';
 import { ActiveSectionContext } from './context/ActiveSectionContext';
 import { useHistory, useLocation } from 'react-router-dom';
 import './MyProfile.css';
@@ -12,7 +12,7 @@ const MyProfile = () => {
   const [loading, setLoading] = useState(true);//////////
   const [documents, setDocuments] = useState([]);
   const { authToken, isAdmin } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002';  const [isEditMode, setIsEditMode] = useState(false);
+  const backendURL = 'http://localhost:3002'; const [isEditMode, setIsEditMode] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -30,7 +30,7 @@ const MyProfile = () => {
   const backgroundImage = `/img_avatar.png`;
   const { activeSection } = useContext(ActiveSectionContext);
 
- 
+
 
   const validateEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -97,7 +97,7 @@ const MyProfile = () => {
       console.error('Error fetching profile data:', error);
     }
     finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -132,8 +132,8 @@ const MyProfile = () => {
       setErrorMessage(error.response?.data?.message || 'Failed to request password reset.');
       setShowErrorMessage(true);
       setTimeout(() => setShowErrorMessage(false), 5000);
-    }finally {
-      setLoading(false); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -176,7 +176,7 @@ const MyProfile = () => {
       });
       return;
     }
-      const updateData = {
+    const updateData = {
       newUsername: editedProfile.username.trim(),
       newEmail: editedProfile.email.trim(),
     };
@@ -207,8 +207,8 @@ const MyProfile = () => {
       setErrorMessage(error.response?.data?.message || 'Failed to update profile.');
       setShowErrorMessage(true);
       setTimeout(() => setShowErrorMessage(false), 5000);
-    }finally {
-      setLoading(false); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -252,7 +252,7 @@ const MyProfile = () => {
       fetchUnauthorizedResources();
     }
   }, [profile.isAdmin, authToken, backendURL]);
-  
+
   const deleteFeedback = async (feedbackId) => {
     try {
       const response = await axios.delete(`${backendURL}/api_feedback/delete-feedback/${feedbackId}`, {
@@ -285,62 +285,72 @@ const MyProfile = () => {
   };
   return (
     <div className="profile-container">
-          <div className="profile-content">
+      <div className="profile-content">
 
-      {showSuccessMessage && (
-        <div className="success-message-header">{successMessage}</div>
-      )}
-      {showErrorMessage && (
-        <div className="error-message-header">{errorMessage}</div>
-      )}
-     
-      <div className="main-content">
-        {activeSection === 'profileInfo' && (
-          <div className="user-info">
-            <h1>User Profile Information</h1>
-            {isEditMode ? (
-              <div className="edit-profile">
-              <label htmlFor="username"><b>Username:</b></label>
-              <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
-              {validationErrors.username && <div className="error-message">{validationErrors.username}</div>}
-              <label htmlFor="email"><b>Email:</b></label>
-              <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
-              {validationErrors.email && <div className="error-message">{validationErrors.email}</div>}
-              <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
-              <button className="authButton" onClick={handleEditToggle}>Cancel</button>
-              {successMessage && <div className="success-message">{successMessage}</div>}
-              </div>
-            ) : (
-              <div>
-                <h3>Username: {profile.username}</h3>
-                <h3>Email: {profile.email}</h3>
-                <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
-                <button className="authButton" onClick={handlePasswordResetRequest}>Change Password</button>
-              </div>
-            )}
-          </div>
+        {showSuccessMessage && (
+          <div className="success-message-header">{successMessage}</div>
         )}
-        {activeSection === 'resources' && (
-          <div className="user-resources">
-           <h1>Your Resources</h1>
-            {userResources.length > 0 ? (
-              userResources.map((resource) => (
-                <DocumentCard
-                  key={resource._id}
-                  cardType="resource"
-                  document={resource}
-                  onClick={() => handleCardClick(resource._id)}
-                  onDelete={deleteDocument}                />
-              ))
-            ) : (
-              <p>No resources available.</p>
-            )}
-          </div>
+        {showErrorMessage && (
+          <div className="error-message-header">{errorMessage}</div>
         )}
-        {activeSection === 'favorites' && (
-          <div className="user-favorites">
-            <h1>Your Favorites</h1>
-             {userFavorites.length > 0 ? (
+
+        <div className="main-content">
+          {activeSection === 'profileInfo' && (
+            <div className="user-info">
+              <h1>User Profile Information</h1>
+              {isEditMode ? (
+                <div className="edit-profile">
+                  <label htmlFor="username"><b>Username:</b></label>
+                  <input id="username" type="text" name="username" className="inputBarC" placeholder="Enter new username" value={editedProfile.username} onChange={handleProfileChange} />
+                  {validationErrors.username && <div className="error-message">{validationErrors.username}</div>}
+                  <label htmlFor="email"><b>Email:</b></label>
+                  <input id="email" type="email" name="email" className="inputBarC" placeholder="Enter new email" value={editedProfile.email} onChange={handleProfileChange} />
+                  {validationErrors.email && <div className="error-message">{validationErrors.email}</div>}
+                  <button className="authButton" onClick={handleProfileUpdate}>Save Changes</button>
+                  <button className="authButton" onClick={handleEditToggle}>Cancel</button>
+                  {successMessage && <div className="success-message">{successMessage}</div>}
+                </div>
+              ) : (
+                <div className='information'>
+                  <h3>Username: {profile.username}</h3>
+                  <h3>Email: {profile.email}</h3>
+                  <button className="authButton" onClick={handleEditToggle}>Edit Profile</button>
+                  <button
+                    className="authButton"
+                    onClick={handlePasswordResetRequest}
+                    disabled={loading} // Optionally disable the button when loading
+                    style={loading ? { color: 'green' } : {}}
+                  >
+                    {loading ? 'Loading...' : 'Change Password'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          {activeSection === 'resources' && (
+            <div className="user-resources">
+              <h1 className="resources-title">Your Resources</h1>
+              {userResources.length > 0 ? (
+                <div className="cards-container">
+                  {userResources.map((resource) => (
+                    <DocumentCard
+                      key={resource._id}
+                      cardType="resource"
+                      document={resource}
+                      onClick={() => handleCardClick(resource._id)}
+                      onDelete={deleteDocument}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="no-resources-message">No resources available.</p>
+              )}
+            </div>
+          )}
+          {activeSection === 'favorites' && (
+            <div className="user-favorites">
+              <h1>Your Favorites</h1>
+              {userFavorites.length > 0 ? (
                 userFavorites.map((resource) => {
                   const resourceData = resource.Resource;
                   return resourceData ? (
@@ -359,40 +369,40 @@ const MyProfile = () => {
                 <p>No favorites available.</p>
               )}
             </div>
-        )}
-        {activeSection === 'adminActions' && isAdmin && (
-          <div className="admin-actions">
-            <h1>Admin Actions</h1>
-            <div className="unauthorized-documents">
-              <h2>Unauthorized Documents</h2>
-              {documents.map((doc) => (
-                <DocumentCard
-                  cardType="adminActions"
-                  key={doc._id}
-                  document={doc}
-                  onAuthorize={authorizeResource}
-                  onUnauthorize={unauthorizeResource}
-                  showAdminActions={true}
-                />
-              ))}
+          )}
+          {activeSection === 'adminActions' && isAdmin && (
+            <div className="admin-actions">
+              <h1>Admin Actions</h1>
+              <div className="unauthorized-documents">
+                <h2>Unauthorized Documents</h2>
+                {documents.map((doc) => (
+                  <DocumentCard
+                    cardType="adminActions"
+                    key={doc._id}
+                    document={doc}
+                    onAuthorize={authorizeResource}
+                    onUnauthorize={unauthorizeResource}
+                    showAdminActions={true}
+                  />
+                ))}
+              </div>
+              <div className="feedbacks-section">
+                <h2>Feedbacks</h2>
+                {feedbacks.map((fb) => (
+                  <DocumentCard
+                    key={fb._id}
+                    cardType="feedback"
+                    document={fb}
+                    deleteFeedback={deleteFeedback}
+                    sendEmail={sendEmail}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="feedbacks-section">
-              <h2>Feedbacks</h2>
-              {feedbacks.map((fb) => (
-                <DocumentCard
-                  key={fb._id}
-                  cardType="feedback"
-                  document={fb}
-                  deleteFeedback={deleteFeedback}
-                  sendEmail={sendEmail}               
-                   />
-              ))}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-    </div>
+    </div >
   );
 };
 

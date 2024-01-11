@@ -36,6 +36,7 @@ body, html {
   background-color: #f9f9f9;
 }
 
+/* Styling for buttons */
 .document-actions .authButton {
   border: none;
   color: rgb(0, 0, 0);
@@ -47,6 +48,7 @@ body, html {
   height: 20px;
 }
 
+/* Success and error message styling */
 .success-message-header, .error-message-header {
   color: #fff;
   padding: 10px;
@@ -61,6 +63,7 @@ body, html {
 .error-message-header {
   background-color: #f44336;
 }
+
 
 body {
   display:block;
@@ -80,57 +83,15 @@ body {
   }
 }
 
-.user-resources {
-  display: flex; 
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+.user-info {
+  margin: 3px;
 }
 
-.user-resources > div {
-  flex: 0 0 auto;
+.card {
+  width: 300px;
+  box-sizing: border-box;
   margin: 10px;
-  width: calc(33.333% - 20px);
-}
-
-@media (max-width: 1024px) {
-  .user-resources > div {
-    width: calc(50% - 20px);
-  }
-}
-
-@media (max-width: 768px) {
-  .user-resources > div {
-    width: calc(100% - 20px);
-  }
-}
-
-.main-content .user-info,
-.main-content .user-resources,
-.main-content .user-favorites,
-.main-content .admin-actions {
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
-@media (min-width: 768px) {
-  .main-content .user-info,
-  .main-content .user-resources,
-  .main-content .user-favorites,
-  .main-content .admin-actions {
-    margin-left: 20px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .main-content .user-info {
-    margin-left: 300px;
-  }
-  .main-content .user-resources,
-  .main-content .user-favorites,
-  .main-content .admin-actions {
-    margin-left: 250px;
-  }
+  margin-top: 100px;
 }
 
 .resource-details .resource-title {
@@ -144,7 +105,15 @@ body {
   width: 50%;
   justify-content: center;
   margin: 15px;
-  margin-left: 276px;
+  margin-left: 200px;
+  background-color: #0000008f;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+  border-radius: 15px;
+  
 }
 
 .edit-profile .inputBar {
@@ -160,6 +129,7 @@ body {
   margin: 5px;
 }
 
+
 @media (max-width: 768px) {
   .edit-profile {
     margin-left: 80px;
@@ -174,11 +144,11 @@ body {
 
 .sidebar button {
   background-color: #333;
-  color: white; 
+  color: white;
   padding: 10px 20px;
   border: none;
   margin-bottom: 10px;
-  width: 100%;
+  width: 100%; 
   text-align: left;
   border-radius: 5px;
   transition: background-color 0.3s, transform 0.3s;
@@ -188,34 +158,49 @@ body {
 
 .sidebar button:hover {
   background-color: #555;
-  transform: translateX(10px); 
+  transform: translateX(10px);
 }
+
 .sidebar button.active {
-  background-color: #666; 
+  background-color: #666;
 }
 
 .cards-container {
   display: flex;
-  flex-wrap: wrap; 
-  gap: 10px;
-  justify-content: center; 
-  align-items: flex-start;
-  padding: 10px;
+  flex-wrap: wrap;
+  justify-content: space-around; 
+  align-items: flex-start; 
+  margin: 10px;
 }
 
 .card {
-  flex: 0 0 auto;
-  width: 200px;
-  margin: 10px; 
+  box-sizing: border-box;
+  margin: 10px;
 }
 
-@media (max-width: 1024px) {
-  .card {
-    width: calc(50% - 20px);
-  }
+.user-info .information {
+  background-color: #0000008a;
+  padding: 15px;
+  border-radius: 15px;
 }
-@media (max-width: 768px){
-  .card {
-    width: calc(100% - 20px); 
-  }
+
+.user-info h1 {
+  background-color: #0000008f;
+}
+
+.user-resources h1 {
+  background-color: #0000008f;
+}
+
+.user-favorites h1 {
+  background-color: #0000008f;
+}
+
+.admin-actions h1{
+  background-color: #0000008f;
+}
+
+.authButton.loading,
+.authButton.loading .loadingIndicator {
+    color: green;
 }

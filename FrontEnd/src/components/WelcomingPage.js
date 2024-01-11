@@ -48,7 +48,7 @@ const WelcomingPage = () => {
   }, []);
 
   return (
-    <div >
+    <div className='wlcImage'>
     <img src="/logo.png" alt="Website Logo"  />
     <div className="bottom-left-text">
         <h1>{messages[currentMessageIndex]}</h1>

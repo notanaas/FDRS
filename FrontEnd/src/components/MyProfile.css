@@ -102,10 +102,7 @@ body {
 
 .edit-profile {
   display: grid;
-  width: 50%;
   justify-content: center;
-  margin: 15px;
-  margin-left: 200px;
   background-color: #0000008f;
   padding: 10px;
   color: white;

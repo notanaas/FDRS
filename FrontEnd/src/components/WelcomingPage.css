@@ -1,10 +1,10 @@
 
 .arrow-container-top {
   position: absolute;
-  left: 40px; /* Center the arrow horizontally */
-  top: 90px; /* Adjust this value to be just below your header/sidebar button */
+  left: 40px;
+  top: 90px; 
   animation: bounce 1s infinite;
-  transform: translateX(-50%); /* Center the container */
+  transform: translateX(-50%);
 }
 
 .arrow-top {
@@ -12,31 +12,31 @@
   height: 0;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
-  border-bottom: 20px solid white; /* Adjust color to match your design */
-  display: block; /* Needed to stack text under the arrow */
-  margin: 0 auto; /* Center the arrow in the container */
+  border-bottom: 20px solid white;
+  display: block;
+  margin: 0 auto;
 }
 
 .arrow-text-top {
   text-align: center;
   display: block;
-  margin-top: 5px; /* Add space between the arrow and the text */
+  margin-top: 5px;
   color: white;
-  width: auto; /* Make sure the width is enough to contain the text */
-  overflow: visible; /* Ensure text is not cut off */
+  width: auto; 
+  overflow: visible; 
 }
 
 
 .arrow-to-profile{
   width: 0;
   height: 0;
-  border-left: 20px solid transparent; /* Adjust size as needed */
-  border-right: 20px solid transparent; /* Adjust size as needed */
-  border-bottom: 20px solid white; /* Adjust color to match your design */
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent; 
+  border-bottom: 20px solid white;
   position: absolute;
-  right: 10px; /* Center the arrow horizontally */
-  top: 90px; /* Adjust this value to be just below your header/sidebar button */
-  transform: translateX(-50%); /* Center the arrow */
+  right: 10px; 
+  top: 90px; 
+  transform: translateX(-50%); 
   animation: bounce 1s infinite;
 }
 
@@ -56,6 +56,25 @@
 
 .bottom-left-text {
   position: absolute;
-  left: 1000px; /* adjust as needed */
-  bottom: 150px; /* adjust as needed */
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .bottom-left-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.wlcImage img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
 }

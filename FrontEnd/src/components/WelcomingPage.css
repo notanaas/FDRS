@@ -1,16 +1,36 @@
-.welcoming-container {
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-              url('/WelcomingPage.png') no-repeat center center;
-  background-size: cover;
-  height: 100vh; /* Adjust the height as needed */
+.message-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  color: white;
 }
 
-.header-message {
-  /* Style your message header as needed */
+.bounce-arrow {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+.top-left-logo {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white; /* Example text color */
-  /* Add other styles as needed */
+  left: 10px; /* adjust as needed */
+  top: 10px; /* adjust as needed */
+  height: 100px; /* adjust as needed */
+  width: auto; /* this will maintain the aspect ratio */
+}
+.bottom-left-text {
+  position: absolute;
+  left: 10px; /* adjust as needed */
+  bottom: 10px; /* adjust as needed */
 }

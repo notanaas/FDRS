@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Header from './Header';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
-
+const messages = [
+  'Create Your Account',
+  'Login',
+  'Search for resources',
+  'Not Found? Send us a feedback we will find it',
+  'Upload resources to your faculty',
+  'Your Dashboard'
+];
 const WelcomingPage = () => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const { authToken } = useContext(AuthContext);
   const backgroundImage = `/WelcomingPage.png`;
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const dashboardIndex = messages.indexOf('Your Dashboard'); // Get the index of 'Your Dashboard' message
 
   useEffect(() => {
     const originalStyle = {
@@ -27,23 +35,32 @@ const WelcomingPage = () => {
       document.body.style.overflow = originalStyle.overflow;
       document.body.style.backgroundImage = originalStyle.backgroundImage;
     };
+    
   }, [backgroundImage]);
   
   useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
+    }, 4000); // Change text every 2 seconds
 
-    const timer = setTimeout(() => {
-      setShowMessage(false);
-    }, 4000); // Message disappears after 4 seconds
-
-    return () => clearTimeout(timer); // Clear timer on unmount
-  }, [authToken]);
+    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+  }, []);
 
   return (
-    <div className="welcoming-container">
-      <Header />
-      {showMessage && <div className="header-message">{message}</div>}
-
-    </div>
+    <div >
+    <img src="/logo.png" alt="Website Logo"  />
+    <div className="bottom-left-text">
+        <h1>{messages[currentMessageIndex]}</h1>
+      </div>
+      {currentMessageIndex === dashboardIndex && (
+        <div className="arrow-to-profile"> 
+        </div>
+      )}
+         <div className="arrow-container-top">
+          <div className="arrow-top"></div>
+          <span className="arrow-text-top">Explore Faculties</span> {/* Text to accompany the arrow-top */}
+          </div>      
+        </div>
   );
 };
 

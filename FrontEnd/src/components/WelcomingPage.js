@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
-import './App.css';
+import './WelcomingPage.css';
 const messages = [
   'Create Your Account',
   'Login',
@@ -51,6 +51,7 @@ const WelcomingPage = () => {
     <img src="/logo.png" alt="Website Logo"  />
     <div className="bottom-left-text">
         <h1>{messages[currentMessageIndex]}</h1>
+        
       </div>
       {currentMessageIndex === dashboardIndex && (
         <div className="arrow-to-profile"> 
@@ -58,8 +59,9 @@ const WelcomingPage = () => {
       )}
          <div className="arrow-container-top">
           <div className="arrow-top"></div>
-          <span className="arrow-text-top">Explore Faculties</span> {/* Text to accompany the arrow-top */}
-          </div>      
+          <span className="arrow-text-top">Explore</span> {/* Text to accompany the arrow-top */}
+          </div>   
+         
         </div>
   );
 };

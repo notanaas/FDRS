@@ -6,7 +6,6 @@ import ResourcePage from './ResourcePage';
 import FacultyPage from './FacultyPage';
 import PasswordReset from './PasswordReset';
 import MyProfile from './MyProfile';
-import AboutUs from './AboutUs';
 import Header from './Header';
 import FileUpload from './FileUpload';
 import { AuthProvider } from './context/AuthContext';
@@ -111,7 +110,6 @@ function App() {
                     <Redirect to="/welcomingpage" />
                   </Route>
                   <Route path="/welcomingpage" exact component={WelcomingPage} />
-                  <Route path="/about-us" exact component={AboutUs} />
                   <Route path="/reset-password" component={PasswordReset} />
                   <ProtectedRoute path="/my-profile" component={MyProfile} /> {/* Protected route for My Profile */}
                   <Route path="/faculty/:facultyId" render={(props) => <FacultyPage {...props} searchResults={searchResults} />} />

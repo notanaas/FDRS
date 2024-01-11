@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { Link } from 'react-router-dom';
-import Header from './Header'; // Ensure this is the correct path
 import './App.css';
 
 const FacultyButtons = () => {
@@ -34,7 +33,7 @@ const FacultyButtons = () => {
     fetchFaculties();
   }, []);
 
-  if (loading) return <div>  {/* @saif */}  </div>;
+  if (loading) return <div> loading </div>;
   if (error) return <div>Error: {error}</div>;
 
   const goToFacultyPage = (faculty) => {
@@ -73,13 +72,7 @@ const FacultyButtons = () => {
       ) : (
         <p>No faculties found.</p>
       )}
-      <Link 
-        to="/about-us" 
-        className="faculty-button" 
-        style={{ backgroundImage: `url(${aboutUsImageUrl})` }}
-      >
-        About Us
-      </Link>
+     
     </div>
   );
 };

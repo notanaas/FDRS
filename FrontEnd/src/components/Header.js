@@ -379,6 +379,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
               authToken={authToken} 
               onSearch={onSearch}
               showFeedbackButton={showFeedbackButton}
+              
             />
             }
           </div>

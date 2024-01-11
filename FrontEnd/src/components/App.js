@@ -16,10 +16,18 @@ import './App.css';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [searchResults, setSearchResults] = useState([]); // State to store search results
+  const [searchResults, setSearchResults] = useState([]); 
   const [showFeedbackButton, setShowFeedbackButton] = useState(false);
   const backendURL = 'http://localhost:3002';
-  
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      const timer = setTimeout(() => {
+        setSearchResults([]);
+      }, 4000); 
+
+      return () => clearTimeout(timer); 
+    }
+  }, [searchResults]); 
   useEffect(() => {
     const configureAxios = () => {
       const token = localStorage.getItem('token');
@@ -62,7 +70,7 @@ function App() {
         params: { term: searchTerm }
       });
       setSearchResults(response.data);
-      setShowFeedbackButton(response.data.length === 0); // Show button if no results
+      setShowFeedbackButton(response.data.length === 0); 
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setShowFeedbackButton(true); // Show button on 404 error

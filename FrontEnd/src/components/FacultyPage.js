@@ -49,22 +49,28 @@ const FacultyPage = ({ searchResults }) => {
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
+  const fetchResources = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${backendURL}/api_resource/faculty/${facultyId}`);
+      setResources(response.data.resource_list);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching faculty resources:', err);
+      setError(err.response?.data?.error || 'An error occurred while fetching resources.');
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${backendURL}/api_resource/faculty/${facultyId}`);
-        setResources(response.data.resource_list);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching faculty resources:', err);
-        setError(err.response?.data?.error || 'An error occurred while fetching resources.');
-        setLoading(false);
-      }
-    };
-
     fetchResources();
   }, [facultyId, backendURL]);
+  useEffect(() => {
+    // This effect checks if searchResults is empty and fetches resources if needed
+    if (!searchResults || searchResults.length === 0) {
+      fetchResources();
+    }
+  }, [searchResults]);
+
   useEffect(() => {
     const fetchFavorites = async () => {
       if (authToken) {
@@ -109,6 +115,7 @@ const FacultyPage = ({ searchResults }) => {
   };
 
   const showSearchResults = searchResults && searchResults.length > 0;
+  const displayResources = showSearchResults ? searchResults : resources;
 
   if (loading) {
     return <div>Loading...</div>;
@@ -117,28 +124,15 @@ const FacultyPage = ({ searchResults }) => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  
+
   return (
     <CSSTransition in={true} appear={true} timeout={300} classNames="fade">
       <div style={pageStyle} className="faculty-page">
         <div style={pageStyle} className="faculty-container">
-          {showSearchResults ? (
-            // Display search results using DocumentCard
-            searchResults.map((result) => (
+          {displayResources.length > 0 ? (
+            displayResources.map((resource) => (
               <DocumentCard
-                cardType="search"
-                key={result._id}
-                document={result}
-                onClick={() => handleCardClick(result._id)}
-                isFavorited={isResourceFavorited(result._id)}
-                onToggleFavorite={() => toggleFavorite(result._id)}
-              />
-            ))
-          ) : (
-            // Display standard faculty resources using DocumentCard
-            resources.map((resource) => (
-              <DocumentCard
-                cardType="faculty"
+                cardType={showSearchResults ? "search" : "faculty"}
                 key={resource._id}
                 document={resource}
                 onClick={() => handleCardClick(resource._id)}
@@ -146,15 +140,14 @@ const FacultyPage = ({ searchResults }) => {
                 onToggleFavorite={() => toggleFavorite(resource._id)}
               />
             ))
-          )}
-
-          {(!showSearchResults && resources.length === 0) && (
-            <p>No resources found for this faculty.</p>
+          ) : (
+            <p>No resources found {showSearchResults ? "for this search" : "for this faculty"}.</p>
           )}
         </div>
       </div>
     </CSSTransition>
   );
 };
+
 
 export default FacultyPage;

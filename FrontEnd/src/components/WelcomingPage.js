@@ -7,6 +7,7 @@ const messages = [
   'Search for resources',
   'Not Found? Send us a feedback we will find it',
   'Upload resources to your faculty',
+  'Wait for Authorization',
   'Your Dashboard'
 ];
 const WelcomingPage = () => {

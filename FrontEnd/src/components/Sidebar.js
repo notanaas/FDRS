@@ -45,7 +45,7 @@ const Sidebar = () => {
             <a href="https://www.linkedin.com/in/anas-alseid-cs" target="_blank" rel="noopener noreferrer">
               <img src="/linkedin-icon.png" alt="LinkedIn Anas Alseid" /> Anas Alseid
             </a>
-            <a href="https://www.linkedin.com/in/saif-karborani-a25a98222?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.linkedin.com/in/saif-karborani-a25a98222" target="_blank" rel="noopener noreferrer">
               <img src="/linkedin-icon.png" alt="LinkedIn Saif Karborani" /> Saif Karborani
             </a>
             <a href="https://www.linkedin.com/in/wasef-jayousi-5022aa250/" target="_blank" rel="noopener noreferrer">

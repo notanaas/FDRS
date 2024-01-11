@@ -142,28 +142,6 @@ body {
   }
 }
 
-.sidebar button {
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  margin-bottom: 10px;
-  width: 100%; 
-  text-align: left;
-  border-radius: 5px;
-  transition: background-color 0.3s, transform 0.3s;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.sidebar button:hover {
-  background-color: #555;
-  transform: translateX(10px);
-}
-
-.sidebar button.active {
-  background-color: #666;
-}
 
 .cards-container {
   display: flex;

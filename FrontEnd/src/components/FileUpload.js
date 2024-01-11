@@ -134,24 +134,32 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      if (selectedFile.size > 50 * 1024 * 1024) {
-        setError('File size should be less than 50MB');
-        return;
-      }
-      setFile(selectedFile);
-      setError(''); // Reset error message
-    }
+    const selectedFile = e.target.files[0];
+    handleSelectedFile(selectedFile, 'application/pdf', 'Only PDF files are allowed');
   };
   
-
   const handleImgChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setImg(e.target.files[0]);
-    }
+    const selectedImage = e.target.files[0];
+    handleSelectedFile(selectedImage, ['image/jpeg', 'image/jpg', 'image/png'], 'Only JPEG, JPG, and PNG files are allowed');
   };
 
+  const handleSelectedFile = (file, acceptedTypes, errorMessage) => {
+    if (!file) return;
+
+    const types = Array.isArray(acceptedTypes) ? acceptedTypes : [acceptedTypes];
+    if (!types.includes(file.type)) {
+      setError(errorMessage);
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      setError('File size should be less than 50MB');
+      return;
+    }
+
+    file.type.startsWith('application') ? setFile(file) : setImg(file);
+    setError('');
+  };
 
   const handleUpload = async () => {
     setIsLoading(true);
@@ -270,7 +278,7 @@ const FileUpload = ({ isModalOpen, setIsModalOpen }) => {
           <Input placeholder="Description" type="text" id="description" name="description" value={description} onChange={handleFieldChange}  maxLength={500} showCounter={true}/>
           {validationErrors.description && <div className="error-message">{validationErrors.description}</div>}
 
-          <Input placeholder="File To upload(PDF)" type="file" id="documentFile" name="file" accept="application/pdf"  />
+          <Input placeholder="File To upload(PDF)" type="file" id="documentFile" name="file" accept="application/pdf"  onChange={handleFileChange}/>
           {validationErrors.file && <div className="error-message">{validationErrors.file}</div>}
 
           <Input placeholder="Related Image" type="file" id="imageFile" name="img" accept="image/jpeg, image/jpg, image/png" onChange={handleImgChange} />

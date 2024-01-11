@@ -2,14 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import FacultyButtons from './FacultyButtons';
-
 import './Sidebar.css';
 import { ActiveSectionContext } from './context/ActiveSectionContext';
 
 const Sidebar = () => {
   const { activeSection, setActiveSection } = useContext(ActiveSectionContext);
   const { authToken, isAdmin } = useContext(AuthContext);
-  const location = useLocation(); // This hook gets the current location object
+  const location = useLocation(); 
   const isProfilePage = location.pathname.includes(`/my-profile`);
 
   return (

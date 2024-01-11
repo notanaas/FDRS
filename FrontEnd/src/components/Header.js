@@ -302,14 +302,14 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
 
       if (response.data.message) {
         setForgotPasswordSuccessMessage('Password reset email sent!');
-        // Close the modal after 1 second
         setTimeout(() => {
           setIsForgotPasswordOpen(false);
         }, 1000);
+        setForgotPasswordSuccessMessage('');
+
       }
     } catch (error) {
       if (error.response) {
-        // Specific error message based on the response
         const errorMessage = error.response.data.message || 'An error occurred. Please try again later.';
         setForgotPasswordErrorMessage(errorMessage);
       } else {

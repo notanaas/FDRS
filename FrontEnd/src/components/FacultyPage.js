@@ -4,13 +4,13 @@ import axios from 'axios';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 import { CSSTransition } from 'react-transition-group';
 
 const FacultyPage = ({ searchResults }) => {
   const { setRouteParams } = useContext(RouteParamsContext);
   const location = useLocation();
-  const facultyName = location.state?.facultyName || 'Faculty'; 
+  const facultyName = location.state?.facultyName || 'Faculty';
   const [resources, setResources] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -141,7 +141,10 @@ const FacultyPage = ({ searchResults }) => {
               />
             ))
           ) : (
-            <p>No resources found {showSearchResults ? "for this search" : "for this faculty"}.</p>
+
+            <div className='no-resources'>
+              <p>No resources found {showSearchResults ? "for this search" : "for this faculty"}.</p>
+            </div>
           )}
         </div>
       </div>

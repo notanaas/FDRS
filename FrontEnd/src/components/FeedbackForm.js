@@ -125,7 +125,7 @@ const FeedbackForm = ({ authToken, onSearch, showFeedbackButton }) => {
           </button>
           {showFeedbackButton && (
                 <button
-                    className="authButton"
+                    className="authButtonA"
                     onClick={submitFeedback}
                     style={{
                         padding: '10px 20px',

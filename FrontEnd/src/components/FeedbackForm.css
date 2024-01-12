@@ -61,3 +61,23 @@
     visibility: hidden;
   }
 }
+
+
+.authButtonA {
+  padding: 1.5em 2em; /* Use relative units for padding */
+  margin: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: green;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+/* Adjust styles for smaller screens */
+@media screen and (max-width: 600px) {
+  .authButtonA {
+    width: 100%; /* Make the button take full width on smaller screens */
+    margin-right: 0; /* Remove right margin for better spacing */
+  }
+}

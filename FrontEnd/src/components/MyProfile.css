@@ -85,6 +85,8 @@ body {
 
 .user-info {
   margin: 3px;
+  display:inline-block;
+  width: 60%;
 }
 
 .card {
@@ -157,14 +159,18 @@ body {
   background-color: #0000008a;
   padding: 15px;
   border-radius: 15px;
+  overflow: hidden; /* Add this line */
 }
-
 .user-info h1 {
   background-color: #0000008f;
 }
 
 .user-resources h1 {
   background-color: #0000008f;
+}
+.user-resources{
+  width: 70%;
+  display: inline-block;
 }
 
 .user-favorites h1 {

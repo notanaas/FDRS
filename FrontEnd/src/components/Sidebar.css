@@ -22,8 +22,14 @@
     display: flex;
     align-items: center;
     justify-content: end;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin-right: 0;
   }
 }
+
+
 
 .profile-button img {
   margin-right: 10px;
@@ -42,7 +48,7 @@
     height: 35px;
     z-index: 1;
   }
-} 
+}
 
 .profile-button:hover {
   background-color: #ffffff0c;
@@ -99,12 +105,14 @@ div.content {
   padding: 1px 16px;
   height: 1000px;
 }
+
 .sides a {
   display: block;
   color: rgb(255, 255, 255);
   padding: 16px;
   text-decoration: none;
 }
+
 @media screen and (max-width: 760px) {
   .sides a {
     display: block;
@@ -112,6 +120,7 @@ div.content {
 
   }
 }
+
 .social-buttons a {
   display: flex;
   text-decoration: none;
@@ -121,7 +130,7 @@ div.content {
   padding: 10px 20px;
   border: none;
   margin-bottom: 10px;
-  width: 100%; 
+  width: 100%;
   text-align: left;
   border-radius: 5px;
   transition: background-color 0.3s, transform 0.3s;
@@ -135,11 +144,11 @@ div.content {
 }
 
 .social-buttons img {
-  display: block; 
-  max-width: 24px; 
-  max-height: 24px; 
-  width: auto; 
-  height: auto; 
+  display: block;
+  max-width: 24px;
+  max-height: 24px;
+  width: auto;
+  height: auto;
   margin-right: 10px;
   vertical-align: middle;
 }
@@ -151,7 +160,7 @@ div.content {
   padding: 10px 20px;
   border: none;
   margin-bottom: 10px;
-  width: 100%; 
+  width: 100%;
   text-align: left;
   border-radius: 5px;
   transition: background-color 0.3s, transform 0.3s;

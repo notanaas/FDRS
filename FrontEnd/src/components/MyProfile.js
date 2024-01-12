@@ -348,46 +348,53 @@ const MyProfile = () => {
             </div>
           )}
           {activeSection === 'favorites' && (
-            <div className="user-favorites">
-              <h1>Your Favorites</h1>
+            <div className="user-resources">
+              <h1 className="resources-title">Your Favorites</h1>
               {userFavorites.length > 0 ? (
-                userFavorites.map((resource) => {
-                  const resourceData = resource.Resource;
-                  return resourceData ? (
-                    <DocumentCard
-                      cardType="favorite"
-                      key={resourceData._id}
-                      document={resourceData}
-                      showAdminActions={false}
-                      onClick={() => handleCardClick(resourceData._id)}
-                    />
-                  ) : (
-                    <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
-                  );
-                })
+                <div className="cards-container">
+                  {userFavorites.map((resource) => {
+                    const resourceData = resource.Resource;
+                    return resourceData ? (
+                      <DocumentCard
+                        cardType="favorite"
+                        key={resourceData._id}
+                        document={resourceData}
+                        showAdminActions={false}
+                        onClick={() => handleCardClick(resourceData._id)}
+                      />
+                    ) : (
+                      <p key={`favorite-error-${resource._id}`}>This favorite resource is not available.</p>
+                    );
+                  })}
+                </div>
               ) : (
                 <p>No favorites available.</p>
               )}
             </div>
           )}
+
           {activeSection === 'adminActions' && isAdmin && (
-            <div className="admin-actions">
-              <h1>Admin Actions</h1>
+            <div className="user-resources">
+              <h1 className="resources-title">Admin Actions</h1>
               <div className="unauthorized-documents">
+
                 <h2>Unauthorized Documents</h2>
-                {documents.map((doc) => (
-                  <DocumentCard
-                    cardType="adminActions"
-                    key={doc._id}
-                    document={doc}
-                    onAuthorize={authorizeResource}
-                    onUnauthorize={unauthorizeResource}
-                    showAdminActions={true}
-                  />
-                ))}
+                <div className="cards-container">
+                  {documents.map((doc) => (
+
+                    <DocumentCard
+                      cardType="adminActions"
+                      key={doc._id}
+                      document={doc}
+                      onAuthorize={authorizeResource}
+                      onUnauthorize={unauthorizeResource}
+                      showAdminActions={true}
+                    />
+
+                  ))} </div>
               </div>
               <div className="feedbacks-section">
-                <h2>Feedbacks</h2>
+                <h2 className="resources-title">Feedbacks</h2>
                 {feedbacks.map((fb) => (
                   <DocumentCard
                     key={fb._id}

@@ -182,8 +182,8 @@
 .authButton:hover,
 .authButtonL:hover,
 .sidebarToggle:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.507);
-  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 20px rgba(116, 116, 116, 0.507);
+  background: rgba(95, 95, 95, 0.8);
 }
 
 .action-buttons .authButton:hover {

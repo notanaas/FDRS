@@ -2,9 +2,16 @@
 .arrow-container-top {
   position: absolute;
   left: 40px;
-  top: 90px; 
+  top: 40px; 
   animation: bounce 1s infinite;
   transform: translateX(-50%);
+}
+
+@media screen and (max-width: 768px) {
+  .arrow-container-top {
+    top: -40px; /* Adjust the top value based on your design */
+    transform: translateX(-50%);
+  }
 }
 
 .arrow-top {
@@ -14,7 +21,6 @@
   border-right: 20px solid transparent;
   border-bottom: 20px solid white;
   display: block;
-  margin: 0 auto;
 }
 
 .arrow-text-top {
@@ -26,6 +32,15 @@
   overflow: visible; 
 }
 
+@media screen and (max-width: 768px) {
+  .arrow-top {
+    margin: 10px auto;
+  }
+
+  .arrow-text-top {
+    margin-top: 10px;
+  }
+}
 
 .arrow-to-profile{
   width: 0;
@@ -35,9 +50,16 @@
   border-bottom: 20px solid white;
   position: absolute;
   right: 10px; 
-  top: 90px; 
   transform: translateX(-50%); 
   animation: bounce 1s infinite;
+  top: 40px;
+}
+
+@media screen and (max-width: 768px) {
+  .arrow-to-profile {
+    top: -40px; /* Adjust the top value based on your design */
+    transform: translateX(-50%);
+  }
 }
 
 
@@ -70,10 +92,26 @@
     transform: translate(-50%, -50%);
   }
 }
+.wlcImage{
+  position: relative;
+  bottom: 150px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
 .wlcImage img {
   width: 100%;
   max-width: 500px;
   height: auto;
   
+  
+}
+
+.welcome-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
 }

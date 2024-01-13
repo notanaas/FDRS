@@ -7,8 +7,7 @@
 
 .card {
   position: relative;
-  flex: 0 1 calc(33.333% - 1rem); 
-  margin: 0.5rem;
+  flex: 0 1 calc(25% - 1rem);  margin: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
   background-size: cover;
@@ -22,11 +21,10 @@
   color: white;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: 300px;
-  top: 100px;
 }
 .feedbackcard {
   position: relative;
-  flex: 0 1 calc(33.333% - 1rem); 
+  flex: 0 1 calc(25% - 1rem);
   margin: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -180,8 +178,24 @@
   color: #d9534f;
 }
 
-
-
+.cards {
+  position: relative;
+  flex: 0 1 calc(33.333% - 1rem);
+  margin: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 300px;
+}
 button.trashButton {
   background-color: transparent !important; 
   border: none;

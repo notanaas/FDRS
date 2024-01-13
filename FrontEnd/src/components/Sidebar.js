@@ -15,7 +15,7 @@ const Sidebar = () => {
     <div className={`sidebar ${isProfilePage ? 'sidebar-open' : ''}`}>
 
       {isProfilePage &&(
-       <div>
+       <div className='sidesButton'>
         <h1>Your Profile</h1>
         <button onClick={() => setActiveSection('profileInfo')} className={activeSection === 'profileInfo' ? 'active' : ''}>
           User Profile Information

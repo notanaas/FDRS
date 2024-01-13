@@ -55,18 +55,16 @@
 
 
 .bottom-left-text {
-  position: absolute;
-  top: 50%; 
   left: 50%; 
   transform: translate(-50%, -50%); 
-  display: flex;
+  position: relative;
   align-items: center;
   justify-content: center;
 }
 
 @media screen and (max-width: 768px) {
   .bottom-left-text {
-    position: fixed;
+    display: flex;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -77,4 +75,5 @@
   width: 100%;
   max-width: 500px;
   height: auto;
+  
 }

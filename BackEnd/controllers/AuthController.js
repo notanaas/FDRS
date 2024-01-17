@@ -72,12 +72,12 @@ exports.register = [
 ]
 
 exports.login = asyncHandler(async (req, res, next) => {
-    const user = await Users.findOne({
-      $or: [
-        { Username: req.body.username },
+  const user = await Users.findOne({
+    $or: [
+        { Username: { $regex: new RegExp(req.body.username, 'i') } },
         { Email: req.body.email }
-      ]
-    });
+    ]
+});
   
     if (!user) {
       return res.status(400).json({ message: "Invalid username or password" });

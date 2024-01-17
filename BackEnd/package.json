@@ -1,5 +1,4 @@
 {
-  
   "name": "backend",
   "version": "0.0.0",
   "private": true,
@@ -7,6 +6,7 @@
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "serverstart": "SET DEBUG=BackEnd:* & npm start",
+    "integration-test": "mocha",
     "test": "jest"
   },
   "dependencies": {
@@ -38,18 +38,22 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
+    "chai-http": "^4.4.0",
     "jest": "^29.7.0",
     "jest-html-reporter": "^3.10.2",
+    "mongodb-memory-server": "^9.1.4",
     "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
   },
   "jest": {
     "reporters": [
       "default",
-      ["jest-html-reporter", {
-        "pageTitle": "Test Report"
-      }]
+      [
+        "jest-html-reporter",
+        {
+          "pageTitle": "Test Report"
+        }
+      ]
     ]
   }
-  
 }

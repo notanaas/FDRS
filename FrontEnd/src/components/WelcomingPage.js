@@ -63,37 +63,6 @@ const WelcomingPage = () => {
         <span className="arrow-text-top">Explore</span> {/* Text to accompany the arrow-top */}
       </div>
 
-      {/*Test text*/}
-    <div className="welcome-container">
-        <h1>Welcome to our Educational Platform</h1>
-        <h2>
-          Explore a world of knowledge. Sign up for free and access a wealth of
-          educational resources.
-        </h2>
-        <h2>
-          <p>
-          Free Registration:
-          Our platform allows students to register easily and for free, opening doors to access a wide range of educational resources.
-          </p>
-          Valuable Educational References:
-          The site offers a rich collection of educational references covering various subjects. Students can easily download these references and save them on their devices for convenient access anytime, anywhere.
-
-          Diverse Study Categories:
-          The platform includes educational resources in a variety of subjects and academic levels, enabling students to find content that suits their individual learning needs.
-
-          Interactive and User-Friendly:
-          The site's interface is designed to be interactive and user-friendly, making it comfortable for students of all age groups to browse resources and download references.
-
-          Technical Support:
-          We provide technical support to students in case they encounter any difficulties using the site or downloading resources, ensuring a smooth and effective learning experience.
-
-          Our Vision:
-          We aim to promote self-directed learning and provide high-quality educational opportunities for everyone, contributing to the development of a cultured and educated community.
-
-          We hope you have a fruitful learning experience on our platform, where learning is enjoyable and accessible to all.
-        </h2>
-    </div>
-    {/*test text*/}
     </div>
 
   );

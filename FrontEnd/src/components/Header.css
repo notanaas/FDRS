@@ -520,9 +520,10 @@
 }
 
 .feedbackError {
-  position: relative;
+  position: absolute;
   background: #6a0000;
   height: 35px;
+  width: 250px;
   border-radius: 10px;
   font-size: larger;
   z-index: 5;

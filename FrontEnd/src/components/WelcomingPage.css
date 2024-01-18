@@ -1,15 +1,14 @@
 
 .arrow-container-top {
-  position: absolute;
+  position: fixed;
   left: 40px;
-  top: 40px; 
+  top: 90px; 
   animation: bounce 1s infinite;
   transform: translateX(-50%);
 }
 
 @media screen and (max-width: 768px) {
   .arrow-container-top {
-    top: -40px; /* Adjust the top value based on your design */
     transform: translateX(-50%);
   }
 }
@@ -48,16 +47,15 @@
   border-left: 20px solid transparent;
   border-right: 20px solid transparent; 
   border-bottom: 20px solid white;
-  position: absolute;
+  position: fixed;
+  top: 90px;
   right: 10px; 
   transform: translateX(-50%); 
   animation: bounce 1s infinite;
-  top: 40px;
 }
 
 @media screen and (max-width: 768px) {
   .arrow-to-profile {
-    top: -40px; /* Adjust the top value based on your design */
     transform: translateX(-50%);
   }
 }
@@ -94,7 +92,6 @@
 }
 .wlcImage{
   position: relative;
-  bottom: 150px;
   left: 0;
   width: 100%;
   padding: 10px;
@@ -103,7 +100,7 @@
 
 .wlcImage img {
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
   height: auto;
   
   

@@ -395,7 +395,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
       <div className="authButtons">
         {isLoggedIn ? (
           <div className='button'>
-            <button className="authButtonL" onClick={handleLogout}>🔚
+            <button className="authButtonL" onClick={handleLogout}>Logout
             </button>
             <button onClick={goToUserProfile} className="profile-button">
               <img src={`${process.env.PUBLIC_URL}/img_avatar.png`} alt="Profile" />

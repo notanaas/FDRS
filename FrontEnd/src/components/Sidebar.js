@@ -41,7 +41,7 @@ const Sidebar = () => {
             <a href="https://www.youtube.com/channel/UCvvQh8RPnGf8Z-AZrahYEbA" target="_blank" rel="noopener noreferrer"><img src="/youtube-icon.png" alt="YouTube" /> YouTube Channel</a>
             <a href="https://www.linkedin.com/in/anas-alseid-cs" target="_blank" rel="noopener noreferrer"><img src="/linkedin-icon.png" alt="LinkedIn Anas Alseid" /> Anas Alseid</a>
             <a href="https://www.linkedin.com/in/saif-karborani-a25a98222" target="_blank" rel="noopener noreferrer"><img src="/linkedin-icon.png" alt="LinkedIn Saif Karborani" /> Saif Karborani</a>
-            <a href="https://www.linkedin.com/in/wasef-jayousi-5022aa250/" target="_blank" rel="noopener noreferrer"><img src="/linkedin-icon.png" alt="LinkedIn Wasef Joyousi" /> Wasef Joyousi</a>
+            <a href="https://www.linkedin.com/in/wasef-jayousi-5022aa250/" target="_blank" rel="noopener noreferrer"><img src="/linkedin-icon.png" alt="LinkedIn Wasef Jayousi" /> Wasef Jayousi</a>
             <a href="https://github.com/notanaas/FDRS.git" target="_blank" rel="noopener noreferrer"><img src="/github-icon.png" alt="GitHub" /> GitHub Repository</a>
             
           </div>

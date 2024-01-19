@@ -27,7 +27,7 @@ const MyProfile = () => {
   const [updateError, setUpdateError] = useState('');
   const history = useHistory();
   const isProfilePage = location.pathname.includes(`/my-profile`);
-  const backgroundImage = `/img_avatar.png`;
+  const backgroundImage = `/userprofile.jpg`;
   const { activeSection } = useContext(ActiveSectionContext);
 
 

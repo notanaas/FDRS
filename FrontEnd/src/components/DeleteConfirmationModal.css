@@ -1,0 +1,30 @@
+.confirmation-modal {
+    position: fixed;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.795);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.582);
+    text-align: center;
+    z-index: 500;
+  }
+  
+  .confirmation-modal p {
+    margin-bottom: 20px;
+  }
+  
+  .confirmation-modal button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .confirmation-modal button:hover {
+    background-color: #2980b9;
+  }

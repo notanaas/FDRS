@@ -3,7 +3,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-
 import './DocumentCard.css';
 
 const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, onDelete }) => {
@@ -11,7 +10,7 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   const [userFavorites, setUserFavorites] = useState([]);
   const [isFavorited, setIsFavorited] = useState(document?.isFavorited || false);
   const { authToken, isLoggedIn } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002'; const [feedbacks, setFeedbacks] = useState([]);
+  const backendURL = 'https://fdrs-backend.up.railway.app'; const [feedbacks, setFeedbacks] = useState([]);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const history = useHistory();
   const location = useLocation();
@@ -19,6 +18,28 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
   const [actionError, setActionError] = useState('');
   const [messageTimeout, setMessageTimeout] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [authorizationMessage, setAuthorizationMessage] = useState('');
+  const [isAuthorizationMessageVisible, setIsAuthorizationMessageVisible] = useState(false);
+
+
+  const handleConfirmDelete = async () => {
+    try {
+      await onDelete(document._id);
+      setMessageWithTimer('Resource deleted successfully.', '');
+    } catch (error) {
+      setMessageWithTimer('Failed to delete resource.');
+    }
+    setShowConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
+  };
+
+  const handleDeleteClick = () => {
+    setShowConfirmation(true);
+  };
+
   useEffect(() => {
     if (authToken && document && document._id) {
       const fetchFavorites = async () => {
@@ -47,29 +68,6 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
     setMessageTimeout(newTimeout);
   };
 
-  const handleConfirmDelete = async () => {
-    // Perform the delete action
-    try {
-      await onDelete(document._id);
-      setMessageWithTimer('Resource deleted successfully.', '');
-    } catch (error) {
-      setMessageWithTimer('Failed to delete resource.');
-    }
-
-    // Close the confirmation modal
-    setShowConfirmation(false);
-  };
-
-  const handleCancelDelete = () => {
-    // Close the confirmation modal
-    setShowConfirmation(false);
-  };
-
-  const handleDeleteClick = () => {
-    // Show the confirmation modal
-    setShowConfirmation(true);
-  };
-
   useEffect(() => {
     return () => {
       clearTimeout(messageTimeout);
@@ -92,43 +90,78 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
       setTimeout(() => setShowLoginPrompt(false), 4000);
       return;
     }
+  
+    if (!document || !document._id) {
+      console.error('Document ID is undefined.');
+      setMessageWithTimer('', 'Failed to update favorite status. Document ID is missing.');
+      return;
+    }
+  
     const action = isFavorited ? 'unfavorite' : 'favorite';
+    const method = isFavorited ? 'delete' : 'post';
+  
     try {
-      const method = isFavorited ? 'delete' : 'post';
-      await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
+      const response = await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setMessageWithTimer(`Resource has been ${isFavorited ? 'removed from' : 'added to'} favorites.`, '');
-      setIsFavorited(!isFavorited);
+  
+      if (response.status === 200 || response.status === 201) {
+        setMessageWithTimer(`Resource has been ${isFavorited ? 'removed from' : 'added to'} favorites.`, '');
+        setIsFavorited(!isFavorited);
+      } else {
+        throw new Error('Unexpected response status: ' + response.status);
+      }
     } catch (error) {
+      console.error('Failed to toggle favorite status:', error);
       setMessageWithTimer('', 'Failed to update favorite status.');
     }
+  };
+  
+  
+
+  const showAuthorizationMessage = (message) => {
+    setAuthorizationMessage(message);
+    setIsAuthorizationMessageVisible(true);
+    setTimeout(() => {
+      setIsAuthorizationMessageVisible(false);
+    }, 5000); // Hide the message after 5 seconds
   };
 
   const authorizeResource = async (resourceId) => {
     try {
-      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
+      const response = await axios.post(
+        `${backendURL}/api_user/admin/acceptance/${resourceId}`,
         { accept: true },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
+      console.log('Authorize response:', response); // Debugging log
       if (response.status === 200) {
+        showAuthorizationMessage('Resource successfully authorized.');
+        // Remove the document from the state to update the UI
         setDocuments(prevDocuments => prevDocuments.filter(doc => doc._id !== resourceId));
       }
     } catch (error) {
       console.error('Error authorizing the resource:', error);
+      showAuthorizationMessage('Failed to authorize the resource. Please try again later.');
     }
   };
+  
   const unauthorizeResource = async (resourceId) => {
     try {
-      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
+      const response = await axios.post(
+        `${backendURL}/api_user/admin/acceptance/${resourceId}`,
         { accept: false },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
+      console.log('Unauthorize response:', response); // Debugging log
       if (response.status === 200) {
+        showAuthorizationMessage('Resource successfully unauthorized.');
+        // Remove the document from the state to update the UI
         setDocuments(prevDocuments => prevDocuments.filter(doc => doc._id !== resourceId));
       }
     } catch (error) {
       console.error('Error unauthorizing the resource:', error);
+      showAuthorizationMessage('Failed to unauthorize the resource. Please try again later.');
     }
   };
 
@@ -177,7 +210,12 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
     };
 
 
-
+    const truncateText = (text, maxLength) => {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    };
     switch (cardType) {
       case 'adminActions':
         return (
@@ -204,32 +242,28 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
           </div>
         );
 
-      case 'resource':
-        return (
-          <div>
-            {actionSuccess && <div className="success-message">{actionSuccess}</div>}
-            {actionError && <div className="error-message">{actionError}</div>}
-      
-            {/* Your Document Card content */}
-            <div className="card" style={cardStyle} onClick={goToResourceDetail}>
-              {/* ... (Your existing card content) */}
-              <div className="card-description">
-                <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
-                <button className="trashButton" onClick={(e) => { e.stopPropagation(); handleDeleteClick(); }}>
-                  🗑️
-                </button>
+        case 'resource':
+          return (
+            <div>
+              {actionSuccess && <div className="success-message">{actionSuccess}</div>}
+              {actionError && <div className="error-message">{actionError}</div>}
+              <div className="card" style={cardStyle} onClick={goToResourceDetail}>
+                <div className="card-description">
+                  <a href={`${backendURL}/api_resource/download/${document._id}`} target='_blank' className="downloadButton">Download</a>
+                  <button className="trashButton" onClick={(e) => { e.stopPropagation(); handleDeleteClick(); }}>
+                    🗑️
+                  </button>
+                </div>
               </div>
+        
+              {showConfirmation && (
+                <DeleteConfirmationModal
+                  onCancel={handleCancelDelete}
+                  onConfirm={handleConfirmDelete}
+                />
+              )}
             </div>
-      
-            {/* Delete Confirmation Modal */}
-            {showConfirmation && (
-              <DeleteConfirmationModal
-                onCancel={handleCancelDelete}
-                onConfirm={handleConfirmDelete}
-              />
-            )}
-          </div>
-        );
+          );
       case 'favorite':
         return (
           <div className="card" style={cardStyle} onClick={goToResourceDetail}>
@@ -253,7 +287,9 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
               <h3 className="card-author">Author: {document.Author_first_name || "Unknown"} {document.Author_last_name || ""}</h3>
             </div>
             <div className="card-description">
-              {document.Description || "No description provided"}
+  <div className="card-description-text">
+    {truncateText(document.Description || "No description provided", 200)}
+  </div>
               <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
                 {isFavorited ? '\u2605' : '\u2606'}
               </button>
@@ -310,6 +346,9 @@ const DocumentCard = ({ cardType, document, onClick, deleteFeedback, sendEmail, 
 
   return (
     <div>
+      {isAuthorizationMessageVisible && (
+          <div className="authorization-message">{authorizationMessage}</div>
+        )}
       {actionSuccess && <div className="success-message">{actionSuccess}</div>}
       {actionError && <div className="error-message">{actionError}</div>}
       <CardContent onDelete={handleDelete} />

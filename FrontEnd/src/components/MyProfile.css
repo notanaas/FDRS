@@ -185,3 +185,16 @@ body {
 .authButton.loading .loadingIndicator {
     color: green;
 }
+
+.authorization-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #4caf50; /* Or any color you prefer */
+  color: white;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 1000; /* High z-index to ensure it's on top */
+}

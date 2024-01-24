@@ -23,22 +23,22 @@ const WelcomingPage = () => {
       overflow: document.body.style.overflow,
       backgroundImage: document.body.style.backgroundImage
     };
-
-    document.body.style.backgroundImage =
+  
+    document.body.style.backgroundImage = 
       `linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 1)), url(${backgroundImage})`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundRepeat = 'no-repeat';
     document.body.style.backgroundPosition = 'center center';
     document.body.style.backgroundAttachment = 'fixed';
-
+  
     // Cleanup function to revert styles
     return () => {
       document.body.style.overflow = originalStyle.overflow;
       document.body.style.backgroundImage = originalStyle.backgroundImage;
     };
-
+    
   }, [backgroundImage]);
-
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
@@ -49,22 +49,21 @@ const WelcomingPage = () => {
 
   return (
     <div className='wlcImage'>
-      <img src="/logo.png" alt="Website Logo" />
-      <div className="bottom-left-text">
+    <img src="/logo.png" alt="Website Logo"  />
+    <div className="bottom-left-text">
         <h1>{messages[currentMessageIndex]}</h1>
-
+        
       </div>
       {currentMessageIndex === dashboardIndex && (
-        <div className="arrow-to-profile">
+        <div className="arrow-to-profile"> 
         </div>
       )}
-      <div className="arrow-container-top">
-        <div className="arrow-top"></div>
-        <span className="arrow-text-top">Explore</span> {/* Text to accompany the arrow-top */}
-      </div>
-
-    </div>
-
+         <div className="arrow-container-top">
+          <div className="arrow-top"></div>
+          <span className="arrow-text-top">Explore</span> {/* Text to accompany the arrow-top */}
+          </div>   
+         
+        </div>
   );
 };
 

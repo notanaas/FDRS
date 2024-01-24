@@ -15,16 +15,18 @@ import './Sidebar.css';
 
 
 
-const Input = ({ type, id, name, value, onChange, placeholder }) => (
+const Input = ({ type, id, name, value, onChange, placeholder, onCopy }) => (
   <div className="form-group">
     <label htmlFor={id}>{placeholder}</label>
-    <input type={type} id={id} name={name} className="inputBarH" placeholder={placeholder} value={value} onChange={onChange} required />
+    <input type={type} id={id} name={name} className="inputBarH" placeholder={placeholder} value={value} onChange={onChange} onCopy={onCopy} required 
+    />
   </div>
 );
 
 
+
 const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => {
-  const backendURL = 'http://localhost:3002';
+  const backendURL = 'https://fdrs-backend.up.railway.app';
   const axiosInstance = axios.create({ baseURL: backendURL });
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -69,7 +71,15 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
   const [loginSuccessMessage, setLoginSuccessMessage] = useState('');
   const [signupSuccessMessage, setSignupSuccessMessage] = useState('');
   const [forgotPasswordSuccessMessage, setForgotPasswordSuccessMessage] = useState('');
-
+  const [passwordStrength, setPasswordStrength] = useState('');
+  const [passwordCriteria, setPasswordCriteria] = useState('');
+  const passwordStrengthColors = {
+    0: "transparent", // No strength
+    1: "red",         // Weak
+    2: "orange",      // Fair
+    3: "yellowgreen", // Good
+    4: "green"        // Strong
+  };
   const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return emailRegex.test(email);
@@ -111,8 +121,15 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
     setLoginErrorMessage('');
     setSignupErrorMessage('');
     setSuccessMessage('');
+    // Also clear the password strength and criteria
+    setPasswordStrength(0);
+    setPasswordCriteria({
+      length: false,
+      lowercase: false,
+      specialChar: false
+    });
   };
-
+  
   const handleSignupModalOpen = () => {
     setIsLoginModalOpen(false);
     setIsSignupOpen(true);
@@ -128,7 +145,15 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
   const closeSignupModal = () => {
     setIsSignupOpen(false);
     clearFormFields();
+    // Reset password strength and criteria
+    setPasswordStrength(0);
+    setPasswordCriteria({
+      length: false,
+      lowercase: false,
+      specialChar: false
+    });
   };
+  
   const closeLoginModal = () => {
     setIsLoginModalOpen(false);
     setUsernameOrEmail(''); // Clear username or email
@@ -158,16 +183,36 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
   
   const validateSignup = () => {
     let errors = {};
-    // Add your validation logic for signup fields
-    // Similar to validateLogin, but for signupData fields
+    
+    if (!passwordCriteria.length) {
+      errors.password = "Password must be at least 8 characters long.";
+    }
+    if (!passwordCriteria.lowercase) {
+      errors.password = "Password must include at least one lowercase character.";
+    }
+    if (!passwordCriteria.specialChar) {
+      errors.password = "Password must include at least one special character.";
+    }
+  
     setSignupValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
+  
   
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+  
+    // Check if all password criteria are met
+    const allCriteriaMet = passwordCriteria.length && passwordCriteria.lowercase && passwordCriteria.specialChar;
+    if (!allCriteriaMet) {
+      setSignupErrorMessage('Please ensure all password criteria are met.');
+      setLoading(false);
+      return;
+    }
+  
+    // Existing validation and submission logic...
     if (!validateSignup()) {
       setLoading(false);
       return;
@@ -184,8 +229,8 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
       return;
     }
 
-    if (signupData.password.length < 6) {
-      setSignupErrorMessage('Password must be at least 6 characters long.');
+    if (signupData.password.length < 8) {
+      setSignupErrorMessage('Password must be at least 8 characters long.');
       return;
     }
     if (passwordConfirm !== signupData.password) {
@@ -195,10 +240,15 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
 
     try {
       const response = await axiosInstance.post(`${backendURL}/api_auth/register`, signupData);
+      setSignupData({ username: '', email: '', password: '' });
+      setPasswordConfirm('');
+      setSignupErrorMessage('');
+      setSignupValidationErrors({});
       setSignupSuccessMessage('Registration successful!');
       setTimeout(() => {
+        setSignupSuccessMessage('');
         setIsSignupOpen(false);
-      }, 1000);   
+      }, 1000);
      } catch (error) {
       if (error.response && error.response.data && error.response.data.errors) {
         const backendErrors = error.response.data.errors.map(err => err.msg).join(", ");
@@ -243,14 +293,15 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
         setIsLoggedIn(true);
         setIsAdmin(user.isAdmin);
         setUser(user);
-        setEmail('');
+        setUsernameOrEmail('');
         setPassword('');
+        setLoginErrorMessage('');
+        setLoginValidationErrors({});
         setLoginSuccessMessage('Login Successful');
-        // Close the modal after 1 second
         setTimeout(() => {
+          setLoginSuccessMessage(''); 
           setIsLoginModalOpen(false);
         }, 1000);
-      
 
         if (updateLoginStatus) {
           updateLoginStatus(true, user.isAdmin, user);
@@ -261,15 +312,13 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
       }
     } catch (error) {
       console.error('Login error:', error);
-      // Set a specific error message for incorrect username/password
-      if (error.response && error.response.status === 401) { // Assuming 401 is the status code for unauthorized access
+      if (error.response && error.response.status === 401) { 
       } else {
-        // Generic error message for other types of errors
         setLoginErrorMessage('Incorrect username or password.');
       }
     }
     finally {
-      setLoading(false); // End loading
+      setLoading(false); 
     }
   };
   const handleLogout = async () => {
@@ -301,11 +350,13 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
       });
 
       if (response.data.message) {
+        setForgotPasswordData({ email: '' });
+        setForgotPasswordErrorMessage('');
         setForgotPasswordSuccessMessage('Password reset email sent!');
         setTimeout(() => {
+          setForgotPasswordSuccessMessage('');
           setIsForgotPasswordOpen(false);
         }, 1000);
-        setForgotPasswordSuccessMessage('');
 
       }
     } catch (error) {
@@ -329,12 +380,44 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
   };
+  const evaluatePasswordStrength = (password) => {
+    let strength = 0;
+    const criteria = {
+      length: false,
+      lowercase: false,
+      specialChar: false,
+    };
+  
+    if (password.length >= 8) {
+      strength++;
+      criteria.length = true;
+    }
+    if (/[a-z]/.test(password)) {
+      strength++;
+      criteria.lowercase = true;
+    }
+    if (/[!@#$%^&*]/.test(password)) {
+      strength++;
+      criteria.specialChar = true;
+    }
+  
+    return { strength, criteria };
+  };
+  
   const handleSignupInputChange = (e) => {
     const { name, value } = e.target;
     setSignupData({
       ...signupData,
       [name]: value,
     });
+  
+    if (name === 'password') {
+      const passwordStrength = evaluatePasswordStrength(value);
+      // Assuming you add a setPasswordStrength state hook
+      setPasswordStrength(passwordStrength.strength);
+      // Assuming you add a setPasswordCriteria state hook
+      setPasswordCriteria(passwordStrength.criteria);
+    }
   };
   const closeForgotPasswordModal = () => {
     setIsForgotPasswordOpen(false);
@@ -349,13 +432,11 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
 
   const handleUploadButtonClick = () => {
     if (!isLoggedIn) {
-      setShowLoginPrompt(true);
-      setTimeout(() => setShowLoginPrompt(false), 4000);
+      handleLoginModalOpen(); // Open the login modal if the user is not logged in
       return;
     }
-    setIsModalOpen(true);
+    setIsModalOpen(true); // Existing code to open the upload modal
   };
-
 
   return (
     <header className={`headerContainer ${isLoading ? 'loading' : ''}`}>
@@ -412,7 +493,7 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
         <FileUpload facultyId={facultyId} setIsModalOpen={setIsFileUploadOpen} />
       )}
 
-      <Modal isOpen={isSignupOpen} onClose={closeSignupModal}>
+<Modal isOpen={isSignupOpen} onClose={closeSignupModal}>
         <label htmlFor="username"><h1>SignUp</h1></label>
 
         {successMessage && (
@@ -432,24 +513,32 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
     <Input type="email" id="email" name="email" value={signupData.email} onChange={handleSignupInputChange} placeholder="Email" />
     {signupSuccessMessage && <div className="success-message">{signupSuccessMessage}</div>}
 
-    <div className="password-input-container">
-        <Input
-            type={showSignupPassword ? "text" : "password"}
-            id="password"
-            name="password"
-            value={signupData.password}
-            onChange={handleSignupInputChange}
-            placeholder="Password"
-        />
-        <div
-            className="icon"
-            onClick={() => setShowSignupPassword(!showSignupPassword)}
-        >
-            {showSignupPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-        </div>
-    </div>
-
-    <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password" />
+    <div className="form-group password-group">
+    <Input
+  type={showSignupPassword ? "text" : "password"}
+  id="password"
+  name="password"
+  value={signupData.password}
+  onChange={handleSignupInputChange}
+  placeholder="Password"
+  onCopy={(e) => e.preventDefault()} 
+/>
+  <div
+    className="icons"
+    onClick={() => setShowSignupPassword(!showSignupPassword)}>
+    {showSignupPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+  </div>
+  <div className="password-strength-bar" style={{ backgroundColor: passwordStrengthColors[passwordStrength] }}>
+    <div className="password-strength" style={{ width: `${passwordStrength * 25}%` }}></div>
+  </div>
+</div>
+<ul className="password-criteria">
+  <li className={passwordCriteria.length ? 'met' : ''}>At least 8 characters</li>
+  <li className={passwordCriteria.lowercase ? 'met' : ''}>1 lowercase character</li>
+  <li className={passwordCriteria.specialChar ? 'met' : ''}>1 special character</li>
+</ul>
+  
+    <Input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder="Confirm Password"   onCopy={(e) => e.preventDefault()} />
     <button type="submit" className="authButton">Submit</button>
 </form>
 
@@ -475,6 +564,9 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
           </button>
 
           {isResettingPassword && <div className="loading-message">Please wait...</div>}
+          <button type="button" className="authButton" onClick={() => {closeForgotPasswordModal();handleLoginModalOpen();}}>
+      Back to Login
+    </button>
 
         </form>
       </Modal>
@@ -523,6 +615,10 @@ const Header = ({ setIsModalOpen, isLoading, onSearch, showFeedbackButton }) => 
 
           <button type="submit" className="authButton" onClick={handleLoginSubmit}>Login</button>
           <button type="button" className="authButton" onClick={handleForgotPassword}>Forgot Password</button>
+          <div>
+        <p>Don't have an account?</p>
+        <button onClick={handleSignupModalOpen} className="authButton">Sign Up</button>
+      </div>
         </form>
       </Modal>
 

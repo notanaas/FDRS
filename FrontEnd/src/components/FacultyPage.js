@@ -4,19 +4,19 @@ import axios from 'axios';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { RouteParamsContext } from './context/RouteParamsContext';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; 
 import { CSSTransition } from 'react-transition-group';
 
 const FacultyPage = ({ searchResults }) => {
   const { setRouteParams } = useContext(RouteParamsContext);
   const location = useLocation();
-  const facultyName = location.state?.facultyName || 'Faculty';
+  const facultyName = location.state?.facultyName || 'Faculty'; 
   const [resources, setResources] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const history = useHistory();
-  const backendURL = 'http://localhost:3002';
+  const backendURL = 'https://fdrs-backend.up.railway.app';
   const { facultyId } = useParams();
   const { authToken, refreshTokenFunc } = useContext(AuthContext);
 
@@ -46,6 +46,7 @@ const FacultyPage = ({ searchResults }) => {
       document.body.style.overflow = '';
     };
   }, [backgroundImage]);
+  
   useEffect(() => {
     setRouteParams({ facultyId });
   }, [facultyId, setRouteParams]);
@@ -141,12 +142,12 @@ const FacultyPage = ({ searchResults }) => {
               />
             ))
           ) : (
-
             <div className='no-resources'>
-              <p>No resources found {showSearchResults ? "for this search" : "for this faculty"}.</p>
+            <p>No resources found {showSearchResults ? "for this search" : "for this faculty"}.</p>
             </div>
           )}
         </div>
+        
       </div>
     </CSSTransition>
   );

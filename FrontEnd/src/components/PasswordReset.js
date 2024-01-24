@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useHistory } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode'; // Corrected import statement
+import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import './App.css';
 
 const PasswordReset = () => {
-  const backendURL = 'http://localhost:3002';  
+  const backendURL = 'https://fdrs-backend.up.railway.app';  
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -15,8 +16,19 @@ const PasswordReset = () => {
   const location = useLocation();
   const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState(''); // Add state for password error message
+  const [passwordStrength, setPasswordStrength] = useState('');
+  const [passwordCriteria, setPasswordCriteria] = useState('');
+  const passwordStrengthColors = {
+    0: "transparent", // No strength
+    1: "red",         // Weak
+    2: "orange",      // Fair
+    3: "yellowgreen", // Good
+    4: "green"        // Strong
+  };
   const url = `${backendURL}/api_auth/post_reset-password/${userId}/${token}`;
-  const backgroundImage = `/my-profile.png`;
+  const backgroundImage = `/WelcomingPage.png`;
   useEffect(() => {
     const originalStyle = {
       overflow: document.body.style.overflow,
@@ -59,20 +71,58 @@ const PasswordReset = () => {
       }
     }
   }, [location]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage("Passwords don't match");
-      return;
+  const evaluatePasswordStrength = (password) => {
+    let strength = 0;
+    const criteria = {
+      length: false,
+      lowercase: false,
+      specialChar: false,
+    };
+  
+    if (password.length >= 8) {
+      strength++;
+      criteria.length = true;
+    }
+    if (/[a-z]/.test(password)) {
+      strength++;
+      criteria.lowercase = true;
+    }
+    if (/[!@#$%^&*]/.test(password)) {
+      strength++;
+      criteria.specialChar = true;
     }
   
+    return { strength, criteria };
+  };
+  
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+
+    // Evaluate password strength
+    const strengthEvaluation = evaluatePasswordStrength(newPassword);
+    setPasswordStrength(strengthEvaluation.strength);
+    setPasswordCriteria(strengthEvaluation.criteria);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setPasswordError(''); // Clear any existing error messages
+    setMessage(''); // Clear any existing messages
+
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords don't match.");
+      return;
+    }
+
     try {
-      const response = await axios.post(url, {
-        password,
-      });
+      const response = await axios.post(url, { password });
       setMessage(response.data.message);
-      history.push('/WelcomingPage'); // Redirect to welcoming page after successful password reset
+      history.push('/WelcomingPage'); // Redirect after successful reset
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data.message || 'Failed to reset password. Please try again later.');
@@ -84,51 +134,71 @@ const PasswordReset = () => {
     }
   };
   const togglePasswordVisibility = () => {
-    setShowPassword(true);
-  
-    setTimeout(() => {
-      setShowPassword(false);
-    }, 5000); 
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
   
   return (
     <div className="upload-modal-content">
-      <h1>Reset Your Password</h1>
-      {message && <div className="message">{message}</div>}
-      {!isTokenValid ? (
+
+        <h1>Reset Your Password</h1>
+        {passwordError && <div className="error-message">{passwordError}</div>}
+        {message && <div className="message">{message}</div>}
+        {!isTokenValid ? (
         <p>Token is invalid or expired. Please request a new password reset.</p>
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="form-group1">
             <label className='input-Box' htmlFor="password">New Password:</label>
-            <input
-          type={showPassword ? "text" : "password"}
-          placeholder='New Password:'
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button onClick={togglePasswordVisibility} className="password-toggle">
-          {showPassword ? 'Hide' : 'Show'}
-        </button>
+            <div className="password-field">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="New Password"
+                name="password" 
+                id="password"
+                value={password}
+                onChange={handlePasswordChange} 
+                required
+              />
+              <span onClick={togglePasswordVisibility}>
+                {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              </span>
+            </div>
+            <div className="password-strength-bar" style={{ backgroundColor: passwordStrengthColors[passwordStrength] }}>
+              <div className="password-strength" style={{ width: `${passwordStrength * 25}%` }}></div>
+            </div>
+            <ul className="password-criteria">
+              <li className={passwordCriteria.length ? 'met' : ''}>At least 8 characters</li>
+              <li className={passwordCriteria.lowercase ? 'met' : ''}>1 lowercase character</li>
+              <li className={passwordCriteria.specialChar ? 'met' : ''}>1 special character</li>
+            </ul>
           </div>
-          <div className="form-group1">
+            <div className="form-group1">
             <label className='input-Box' htmlFor="confirmPassword">Confirm New Password:</label>
-            <input
-              type="password"
-              placeholder='Confirm New Password:'
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" className="authButton">Reset Password</button>
-        </form>
-      )}
-    </div>
-  );
-};
+              <div className="password-field">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Confirm New Password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                <span onClick={toggleConfirmPasswordVisibility}>
+                  {showConfirmPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                </span>
+              </div>
+            </div>
+            <button type="submit" className="authButton">Reset Password</button>
+          </form>
+        )}
+      </div>
+    );
+  };
+  
+  export default PasswordReset;
 
-export default PasswordReset;
+

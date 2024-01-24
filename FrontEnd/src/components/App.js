@@ -18,12 +18,12 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState([]); 
   const [showFeedbackButton, setShowFeedbackButton] = useState(false);
-  const backendURL = 'http://localhost:3002';
+  const backendURL = 'https://fdrs-backend.up.railway.app';
   useEffect(() => {
     if (searchResults.length > 0) {
       const timer = setTimeout(() => {
         setSearchResults([]);
-      }, 4000); 
+      }, 30000); 
 
       return () => clearTimeout(timer); 
     }

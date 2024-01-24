@@ -12,7 +12,8 @@ const MyProfile = () => {
   const [loading, setLoading] = useState(true);//////////
   const [documents, setDocuments] = useState([]);
   const { authToken, isAdmin } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002'; const [isEditMode, setIsEditMode] = useState(false);
+  const backendURL = 'https://fdrs-backend.up.railway.app';
+  const [isEditMode, setIsEditMode] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -21,15 +22,14 @@ const MyProfile = () => {
   const [userFavorites, setUserFavorites] = useState([]);
   const [userResources, setUserResources] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
-  const location = useLocation(); // This hook gets the current location object
+  const location = useLocation(); 
   const [validationErrors, setValidationErrors] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState('');
-  const [updateError, setUpdateError] = useState('');
   const history = useHistory();
   const isProfilePage = location.pathname.includes(`/my-profile`);
-  const backgroundImage = `/userprofile.jpg`;
+  const backgroundImage = `/img_avatar.png`;
   const { activeSection } = useContext(ActiveSectionContext);
-
+  const [authorizationMessage, setAuthorizationMessage] = useState('');
+  const [isAuthorizationMessageVisible, setIsAuthorizationMessageVisible] = useState(false);
 
 
   const validateEmail = (email) => {
@@ -45,14 +45,12 @@ const MyProfile = () => {
       backgroundImage: document.body.style.backgroundImage
     };
 
-    // Apply styles
     document.body.style.backgroundImage = `url(${backgroundImage})`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundRepeat = 'no-repeat';
     document.body.style.backgroundPosition = 'center center';
     document.body.style.backgroundAttachment = 'fixed';
 
-    // Cleanup function to revert styles
     return () => {
       document.body.style.overflow = originalStyle.overflow;
       document.body.style.backgroundImage = originalStyle.backgroundImage;
@@ -60,20 +58,27 @@ const MyProfile = () => {
   }, [backgroundImage]);
   useEffect(() => {
     const fetchFeedbacks = async () => {
-      if (isProfilePage) {
-        try {
-          const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
-          setFeedbacks(response.data.feedbacks);
-        } catch (error) {
+      if (!isAdmin) {
+        return;
+      }
+      try {
+        const response = await axios.get(`${backendURL}/api_feedback/feedbacks`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        setFeedbacks(response.data.feedbacks);
+      } catch (error) {
+        if (error.response?.status === 404) {
+          setFeedbacks([]);
+        } else {
           console.error('Error fetching feedbacks:', error);
         }
       }
     };
-
+  
     fetchFeedbacks();
-  }, [authToken, isProfilePage, backendURL]);
+  }, [authToken, isAdmin, backendURL]);
+  
+  
 
   const fetchProfileData = async () => {
     try {
@@ -182,62 +187,78 @@ const MyProfile = () => {
     };
 
     try {
-      setLoading(true); ///////////
+      setLoading(true); 
       const response = await axios.put(`${backendURL}/api_user/update_profile`, updateData, {
-        headers: { Authorization: `Bearer ${authToken}` },
+          headers: { Authorization: `Bearer ${authToken}` },
       });
 
       if (response.status === 200) {
-        setProfile(prev => ({
-          ...prev,
-          username: updateData.newUsername,
-          email: updateData.newEmail,
-        }));
-        setSuccessMessage('Profile updated successfully.');
-        setShowSuccessMessage(true);
-        setTimeout(() => setShowSuccessMessage(false), 5000);
-        setIsEditMode(false);
+      } else if (response.status === 409) {
+          setErrorMessage('Email already exists. Please use a different email.');
+          setShowErrorMessage(true);
+          setTimeout(() => setShowErrorMessage(false), 5000);
       } else {
-        setErrorMessage('Failed to update profile. Please try again.');
-        setShowErrorMessage(true);
-        setTimeout(() => setShowErrorMessage(false), 5000);
+          setErrorMessage('Failed to update profile. Please try again.');
+          setShowErrorMessage(true);
+          setTimeout(() => setShowErrorMessage(false), 5000);
       }
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-      setErrorMessage(error.response?.data?.message || 'Failed to update profile.');
-      setShowErrorMessage(true);
-      setTimeout(() => setShowErrorMessage(false), 5000);
-    } finally {
+  } catch (error) {
+      if (error.response && error.response.status === 409) {
+          setErrorMessage('Email or Username already exists. Please use a different email.');
+          setShowErrorMessage(true);
+          setTimeout(() => setShowErrorMessage(false), 5000);
+      } else {
+          setErrorMessage(error.response?.data?.message || 'Failed to update profile.');
+          setShowErrorMessage(true);
+          setTimeout(() => setShowErrorMessage(false), 5000);
+      }
+  } finally {
       setLoading(false);
-    }
-  };
+  }
+};
 
+  const showAuthorizationMessage = (message) => {
+    setAuthorizationMessage(message);
+    setIsAuthorizationMessageVisible(true);
+    setTimeout(() => {
+      setIsAuthorizationMessageVisible(false);
+    }, 5000); 
+  };
 
   const authorizeResource = async (resourceId) => {
     try {
-      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
+      const response = await axios.post(
+        `${backendURL}/api_user/admin/acceptance/${resourceId}`,
         { accept: true },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
+      console.log('Authorize response:', response); 
       if (response.status === 200) {
+        showAuthorizationMessage('Resource successfully authorized.');
         setDocuments(prevDocuments => prevDocuments.filter(doc => doc._id !== resourceId));
       }
     } catch (error) {
       console.error('Error authorizing the resource:', error);
+      showAuthorizationMessage('Failed to authorize the resource. Please try again later.');
     }
   };
-
+  
   const unauthorizeResource = async (resourceId) => {
     try {
-      const response = await axios.post(`${backendURL}/api_user/admin/acceptance/${resourceId}`,
+      const response = await axios.post(
+        `${backendURL}/api_user/admin/acceptance/${resourceId}`,
         { accept: false },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
+      console.log('Unauthorize response:', response); // Debugging log
       if (response.status === 200) {
+        showAuthorizationMessage('Resource successfully unauthorized.');
+        // Remove the document from the state to update the UI
         setDocuments(prevDocuments => prevDocuments.filter(doc => doc._id !== resourceId));
       }
     } catch (error) {
       console.error('Error unauthorizing the resource:', error);
+      showAuthorizationMessage('Failed to unauthorize the resource. Please try again later.');
     }
   };
 
@@ -259,7 +280,6 @@ const MyProfile = () => {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.status === 200) {
-        // Update the state to reflect the deletion
         setFeedbacks(currentFeedbacks => currentFeedbacks.filter(feedback => feedback._id !== feedbackId));
       }
     } catch (error) {
@@ -286,7 +306,11 @@ const MyProfile = () => {
   return (
     <div className="profile-container">
       <div className="profile-content">
-
+      {isAuthorizationMessageVisible && (
+          <div className="authorization-message">{authorizationMessage}</div>
+        )}
+    
+  
         {showSuccessMessage && (
           <div className="success-message-header">{successMessage}</div>
         )}

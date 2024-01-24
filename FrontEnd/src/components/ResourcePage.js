@@ -21,7 +21,7 @@ const ResourcePage = () => {
   const [resourceDetails, setResourceDetails] = useState(null);
   const [comments, setComments] = useState([]);
   const { authToken, isLoggedIn, user, isAdmin } = useContext(AuthContext);
-  const backendURL = 'http://localhost:3002';  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
+  const backendURL = 'https://fdrs-backend.up.railway.app';  const [isFavorited, setIsFavorited] = useState(document?.isFavorited);
   const history = useHistory();
 
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -33,12 +33,13 @@ const ResourcePage = () => {
   const [actionSuccess, setActionSuccess] = useState('');
   const [actionError, setActionError] = useState('');
   const [messageTimeout, setMessageTimeout] = useState(null);
+
   useEffect(() => {
     setInProp(true);
   }, []);
   useEffect(() => {
-    if (authToken && resourceId) {
-      const fetchFavorites = async () => {
+    const fetchFavorites = async () => {
+      if (authToken && resourceId) {
         try {
           const response = await axios.get(`${backendURL}/api_user/profile`, {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -48,11 +49,12 @@ const ResourcePage = () => {
         } catch (error) {
           console.error(`Error fetching favorites: ${error}`);
         }
-      };
-
-      fetchFavorites();
-    }
-  }, [authToken, resourceId]);
+      }
+    };
+  
+    fetchFavorites();
+  }, [authToken, resourceId, resourceDetails]); 
+  
 
   useEffect(() => {
     const fetchResourceDetails = async () => {
@@ -87,15 +89,21 @@ const ResourcePage = () => {
     </div>;
   }
   const setMessageWithTimer = (successMsg, errorMsg) => {
+    if (messageTimeout) {
+      clearTimeout(messageTimeout);
+    }
+  
     setActionSuccess(successMsg);
     setActionError(errorMsg);
-    clearTimeout(messageTimeout);
+  
     const newTimeout = setTimeout(() => {
-        setActionSuccess('');
-        setActionError('');
+      setActionSuccess('');
+      setActionError('');
     }, 3000);
+  
     setMessageTimeout(newTimeout);
-};
+  };
+  
 const resetMessages = () => {
   setActionSuccess('');
   setActionError('');
@@ -107,18 +115,33 @@ const toggleFavorite = async () => {
     setTimeout(() => setShowLoginPrompt(false), 4000);
     return;
   }
+
+  if (!resourceDetails || !resourceDetails._id) {
+    console.error('Resource ID is undefined.');
+    setMessageWithTimer('', 'Failed to update favorite status. Resource ID is missing.');
+    return;
+  }
+
   const action = isFavorited ? 'unfavorite' : 'favorite';
+  const method = isFavorited ? 'delete' : 'post';
+
   try {
-    const method = isFavorited ? 'delete' : 'post';
-    await axios[method](`${backendURL}/api_favorite/resources/${document._id}/${action}`, {
+    const response = await axios[method](`${backendURL}/api_favorite/resources/${resourceDetails._id}/${action}`, {
       headers: { Authorization: `Bearer ${authToken}` },
     });
-    setMessageWithTimer(`Resource has been ${isFavorited ? 'removed from' : 'added to'} favorites.`, '');
-    setIsFavorited(!isFavorited);
+
+    if (response.status === 200 || response.status === 201) {
+      setIsFavorited(!isFavorited);
+      setMessageWithTimer(`Resource has been ${isFavorited ? 'removed from' : 'added to'} favorites.`, '');
+    } else {
+      throw new Error('Unexpected response status: ' + response.status);
+    }
   } catch (error) {
     setMessageWithTimer('', 'Failed to update favorite status.');
   }
 };
+
+
   const handleFavButtonClick = () => {
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
@@ -136,11 +159,15 @@ const toggleFavorite = async () => {
       console.error('Could not copy text: ', err);
     });
   };
- 
+  const bytesToMB = (bytes) => {
+    return (bytes / 1048576).toFixed(2); // Converts to MB and rounds to 2 decimal places
+  };
+  
   return (
     <CSSTransition in={inProp} timeout={300} classNames="fade" appear>
    <div className="resource-container">
-  
+   {actionSuccess && <div className="success-message">{actionSuccess}</div>}
+      {actionError && <div className="error-message">{actionError}</div>}
         <div className="resource-header">
           {resourceDetails.Cover && (
             <img 
@@ -150,11 +177,12 @@ const toggleFavorite = async () => {
             />
           )}
           <h1>{resourceDetails.Title}</h1>
-          <p className="author">Author: {`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
-          <p className="description">{resourceDetails.Description}</p>
+          <p className="author"><strong>Author : </strong>{`${resourceDetails.Author_first_name} ${resourceDetails.Author_last_name}`}</p>
+          <p className="description"><strong>Description : </strong>{resourceDetails.Description}</p>
+          <p className="description"><strong>File Size: </strong>{bytesToMB(resourceDetails.file_size)} MB</p>
           <p className="faculty"><strong>Faculty:</strong> {resourceDetails.Faculty.FacultyName}</p>
-          <p className="created-at"><strong>Created At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
-          <p className="user-email">{resourceDetails.User.Email}</p>
+          <p className="created-at"><strong>Uploaded At:</strong> {new Date(resourceDetails.created_at).toLocaleDateString()}</p>
+          <p className="user-email"><strong>Uploader : </strong>{resourceDetails.User.Email}</p>
 
         </div>
         
@@ -177,9 +205,10 @@ const toggleFavorite = async () => {
           >
             Download
           </a>
-          <button className="favorite-button" onClick={(e) => { e.stopPropagation(); handleFavButtonClick(); }}>
-                  {isFavorited ? '\u2605' : '\u2606'}
-                </button>
+          <button className="favorite-button" onClick={handleFavButtonClick}>
+  {isFavorited ? '\u2605' : '\u2606'}
+</button>
+
                 {showLoginPrompt && (
                   <div className="error-message">Please log in to add to favorites.</div>
                 )}

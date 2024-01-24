@@ -8,7 +8,7 @@ const Comments = ({ resourceId }) => {
     const [comments, setComments] = useState([]);
     const [editing, setEditing] = useState({ id: null, text: '' });
     const [newComment, setNewComment] = useState('');
-    const backendURL = 'http://localhost:3002';    const userId = user?._id;
+    const backendURL = 'https://fdrs-backend.up.railway.app';    const userId = user?._id;
     const [sortOrder, setSortOrder] = useState('newest'); // State to control sort order
     const handleSort = () => {
       // Toggle sort order between 'newest' and 'oldest'
@@ -116,7 +116,16 @@ const Comments = ({ resourceId }) => {
       console.error('Error updating comment:', error);
     }
   };
-
+  const canEditComment = (comment) => {
+    // User can edit if they are logged in and are the author of the comment
+    const commentOwnerId = comment.User._id || comment.User;
+    return isLoggedIn && user && user._id === commentOwnerId;
+  };
+  const canDeleteComment = (comment) => {
+    // Admins can delete any comment. Users can delete their own comments.
+    const commentOwnerId = comment.User._id || comment.User;
+    return isLoggedIn && (isAdmin || (user && user._id === commentOwnerId));
+  };
   const canEditOrDeleteComment = (comment) => {
     const commentOwnerId = comment.User._id || comment.User; 
     return isLoggedIn && (isAdmin || (user && user._id === commentOwnerId));  };
@@ -131,18 +140,18 @@ const Comments = ({ resourceId }) => {
   
   return (
     <div className="comments-container">
-<h2 className="comments-title">Comments</h2>
-     <button className="authButton sortButton" onClick={handleSort}>
-        Sort by {sortOrder === 'newest' ? 'Oldest' : 'Newest'}
-      </button>
+    <h2 className="comments-title">Comments</h2>
+    <button className="authButton sortButton" onClick={handleSort}>
+      Sort by {sortOrder === 'newest' ? 'Oldest' : 'Newest'}
+    </button>
     <div className="comments-list">
       {sortedComments.map(comment => (
         <div key={comment._id} className="comment">
           <div className="comment-header">
-            <span className="comment-author">{comment.User.Username || 'Anonymous'}</span>
+            <span className="comment-author"><strong>{comment.User.Username || 'Anonymous'}</strong></span>
             <span className="comment-date">{new Date(comment.Created_date).toLocaleString()}</span>
           </div>
-          <div className="comment-title">
+          <div className="comment-body">
             {editing.id === comment._id ? (
               <textarea
                 className="inputBarC"
@@ -150,24 +159,27 @@ const Comments = ({ resourceId }) => {
                 onChange={(e) => setEditing({ ...editing, text: e.target.value })}
               />
             ) : (
-              <h2>{comment.Comment}</h2> 
+              <p className="comment-text">{comment.Comment}</p>
             )}
           </div>
-          {canEditOrDeleteComment(comment) && (
-            <div className="comment-actions">
-              {editing.id === comment._id ? (
-                <button className="authButton" onClick={() => saveUpdatedComment(comment._id)}>Save</button>
-              ) : (
-                <button className="authButton" onClick={() => setEditing({ id: comment._id, text: comment.Comment })}>
-                  Edit
-                </button>
-              )}
-              <button className="authButton" onClick={() => deleteComment(comment._id)}>Delete</button>
-            </div>
-          )}
+          <div className="comment-actions">
+            {canEditOrDeleteComment(comment) && (
+              <>
+                {editing.id === comment._id ? (
+                  <button className="authButton" onClick={() => saveUpdatedComment(comment._id)}>Save</button>
+                ) : (
+                  <button className="authButton" onClick={() => setEditing({ id: comment._id, text: comment.Comment })}>Edit</button>
+                )}
+                <button className="authButton" onClick={() => deleteComment(comment._id)}>Delete</button>
+              </>
+            )}
+          </div>
         </div>
       ))}
     </div>
+    {!isLoggedIn &&(
+      <p>Please log in to add comments.</p>
+    )}
     {isLoggedIn && (
       <div className="add-comment">
         <textarea
@@ -176,9 +188,8 @@ const Comments = ({ resourceId }) => {
           onChange={handleTextChange}
           placeholder="Write your comment..."
         />
-        <div>
         <button className="authButton" onClick={addComment}>Post Comment</button>
-      </div></div>
+      </div>
     )}
   </div>
 );

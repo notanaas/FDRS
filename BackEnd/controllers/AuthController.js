@@ -72,12 +72,12 @@ exports.register = [
 ]
 
 exports.login = asyncHandler(async (req, res, next) => {
-  const user = await Users.findOne({
-    $or: [
-        { Username: { $regex: new RegExp(req.body.username, 'i') } },
+    const user = await Users.findOne({
+      $or: [
+        { Username: req.body.username },
         { Email: req.body.email }
-    ]
-});
+      ]
+    });
   
     if (!user) {
       return res.status(400).json({ message: "Invalid username or password" });
@@ -195,7 +195,7 @@ exports.forgot_password = [
           id: emailExists._id
         };
         const token = jwt.sign(payload, secret, { expiresIn: '20m' });
-        const link = `http://localhost:3000/reset-password/${emailExists._id}/${token}`;
+        const link = `https://fdrs.up.railway.app/reset-password/${emailExists._id}/${token}`;
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {

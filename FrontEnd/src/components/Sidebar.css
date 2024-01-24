@@ -163,39 +163,16 @@ div.content {
   width: 100%;
   text-align: left;
   border-radius: 5px;
-  transition: background-color 0.3s, transform 1.3s;
+  transition: background-color 0.3s, transform 0.3s;
   font-size: 16px;
   cursor: pointer;
-  position: relative;
-  z-index: 2;
 }
 
 .sidebar button:hover {
-  background-color: #e8e8e838;
+  background-color: #e8e8e8;
   transform: translateX(10px);
 }
 
 .sidebar button.active {
   background-color: #666;
-}
-
-
-
-.sidebar button:after{
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background: #0000002d;
-  transition: all .75s;
-}
-
-
-.sidebar button:hover:after{
-  width: 100%;
-}
-button:hover{
-  color: #e8e8e8;
 }

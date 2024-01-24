@@ -45,18 +45,16 @@
 }
 
 .upload-modal {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  justify-content: center;
+  display: flex;
   align-items: center;
-  overflow: auto;
-  z-index: 1000;
-
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Ensure it's above other content */
 }
 
 @keyframes loadingAnimation {
@@ -245,36 +243,47 @@
 }
 
 .upload-modal-content {
-  width: 400px;
+  max-width: 400px; /* Maximum width of the modal */
+  width: 90%; /* Modal width is 90% of the screen width */
   background-color: rgba(0, 0, 0, 0.5);
-  position: absolute;
-  transform: translate(-50%, -50%);
+  position: fixed; /* Use fixed position to keep the modal always in the viewport */
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%); /* Center the modal */
   border-radius: 10px;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
   padding: 50px 35px;
+  overflow-y: auto; /* Allows scrolling for longer content */
+  z-index: 1000; /* Ensure it's above other content */
 }
 
-
-@media (max-width: 768px) {
+/* Ensure that the modal is not too tall on smaller screens */
+@media (max-height: 500px) {
   .upload-modal-content {
-    width: 200px;
-    background-color: rgba(255, 255, 255, 0.13);
-    position: absolute;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-    padding: 50px 35px;
-    z-index: 11;
+    max-height: 80vh;
+    overflow-y: auto; /* Allows scrolling inside the modal if the content is too tall */
   }
 }
+
+/* Make padding smaller on smaller screens for better responsiveness */
+@media (max-width: 768px) {
+  .upload-modal-content {
+    padding: 25px 20px;
+  }
+}
+.modal {
+  position: fixed; /* or absolute */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100; /* Ensure it's above other content */
+  max-width: 90%; /* You can adjust this */
+  max-height: 90vh;
+  overflow-y: auto; /* Allows scrolling if the content is too long */
+}
+
 
 .upload-modal-content * {
   font-family: 'Poppins', sans-serif;
@@ -460,8 +469,8 @@
 }
 
 .password-input-container .icon {
+  right: -1px; /* Align to the right inside the container */
   position: absolute;
-  right: -15px;
   top: 0;
   margin-top: 15px;
   height: 100%;
@@ -556,5 +565,70 @@
   z-index: 1000; /* Ensure it's above other content */
 }
 
+.password-strength-indicator {
+  height: 5px;
+  width: 100%;
+  background-color: #ddd;
+  margin-bottom: 10px;
+}
 
+.password-strength-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.strength-1 .password-strength-bar { width: 33%; background-color: red; }
+.strength-2 .password-strength-bar { width: 66%; background-color: yellow; }
+.strength-3 .password-strength-bar { width: 100%; background-color: green; }
+
+.password-criteria li {
+  color: #888;
+}
+
+.password-criteria li.met {
+  color: green;
+}
+
+
+.password-group {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.password-strength-bar {
+  height: 5px;
+  width: 100%;
+  background-color: #ddd;
+  margin-top: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.password-strength {
+  height: 100%;
+  background-color: green;
+  transition: width 0.3s ease;
+  width: 0%; /* Default to no strength */
+}
+
+.password-criteria {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.password-criteria li {
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.password-criteria li.met {
+  color: #4BB543; /* or any color you prefer for met criteria */
+}
 
